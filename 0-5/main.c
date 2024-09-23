@@ -83,7 +83,7 @@ int main(void)
 					}
 				}
 
-				if (x2 > x1 && x2 < 29)
+				if (x2 >= x1 && x2 < 29)
 				{
 					x1 += 1;
 
@@ -98,7 +98,21 @@ int main(void)
 					}
 				}
 
-				else if (x2 == 29)
+				else if (x2 == 29 && x1 == 29)
+				{
+					x1 = 0;
+
+					x2 = 0;
+
+					for (int i = y1; i <= y2; i++)
+					{
+						board[i][0] = 0;
+
+						board[i][29] = 1;
+					}
+				}
+
+				else if (x2 == 29 && x1 != 29)
 				{
 					x1 += 1;
 
@@ -121,7 +135,7 @@ int main(void)
 					}
 				}
 
-				else if (x1 == 29)
+				else if (x1 == 29 && x2 != 29)
 				{
 					x1 = 0;
 
@@ -170,7 +184,7 @@ int main(void)
 					}
 				}
 
-				if (x2 > x1 && x1 > 0)
+				if (x2 >= x1 && x1 > 0)
 				{
 					x1 -= 1;
 
@@ -185,7 +199,21 @@ int main(void)
 					}
 				}
 
-				else if (x1 == 0)
+				else if (x2 == 0 && x1 == 0)
+				{
+					x1 = 29;
+
+					x2 = 29;
+
+					for (int i = y1; i <= y2; i++)
+					{
+						board[i][29] = 0;
+
+						board[i][0] = 1;
+					}
+				}
+
+				else if (x1 == 0 && x2 != 0)
 				{
 					x1 = 29;
 
@@ -208,7 +236,7 @@ int main(void)
 					}
 				}
 
-				else if (x2 == 0)
+				else if (x2 == 0 && x1 != 0)
 				{
 					x1 -= 1;
 
@@ -257,7 +285,7 @@ int main(void)
 					}
 				}
 
-				if (y2 > y1 && y2 < 29)
+				if (y2 >= y1 && y2 < 29)
 				{
 					y1 += 1;
 
@@ -272,7 +300,21 @@ int main(void)
 					}
 				}
 
-				else if (y2 == 29)
+				else if (y2 == 29 && y1 == 29)
+				{
+					y1 = 0;
+
+					y2 = 0;
+
+					for (int i = x1; i <= x2; i++)
+					{
+						board[0][i] = 1;
+
+						board[29][i] = 0;
+					}
+				}
+
+				else if (y2 == 29 && y1 != 29)
 				{
 					y1 += 1;
 
@@ -295,7 +337,7 @@ int main(void)
 					}
 				}
 
-				else if (y1 == 29)
+				else if (y1 == 29 && y2 != 29)
 				{
 					y1 = 0;
 
@@ -344,7 +386,7 @@ int main(void)
 					}
 				}
 
-				if (y2 > y1 && y1 > 0)
+				if (y2 >= y1 && y1 > 0)
 				{
 					y1 -= 1;
 
@@ -359,7 +401,21 @@ int main(void)
 					}
 				}
 
-				else if (y1 == 0)
+				else if (y2 == 0 && y1 == 0)
+				{
+					y1 = 29;
+
+					y2 = 29;
+
+					for (int i = x1; i <= x2; i++)
+					{
+						board[29][i] = 1;
+
+						board[0][i] = 0;
+					}
+				}
+
+				else if (y1 == 0 && y2 != 0)
 				{
 					y1 = 29;
 
@@ -382,7 +438,7 @@ int main(void)
 					}
 				}
 
-				else if (y2 == 0)
+				else if (y2 == 0 && y1 != 0)
 				{
 					y1 -= 1;
 
