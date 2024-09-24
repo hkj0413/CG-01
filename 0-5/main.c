@@ -479,19 +479,9 @@ int main(void)
 
 			else if (order == 's')
 			{
-				if (x1 > 0)
-				{
-					x1 -= 1;
-				}
-
 				if (x2 < 29)
 				{
 					x2 += 1;
-				}
-
-				if (y1 > 0)
-				{
-					y1 -= 1;
 				}
 
 				if (y2 < 29)
@@ -518,27 +508,13 @@ int main(void)
 					}
 				}
 
-				if (x1 + 1 == x2)
+				if (x1 != x2)
 				{
-					x1 += 1;
-				}
-
-				else if (x1 != x2)
-				{
-					x1 += 1;
-
 					x2 -= 1;
 				}
 
-				if (y1 + 1 == y2)
+				if (y1 != y2)
 				{
-					y1 += 1;
-				}
-
-				else if (y1 != y2)
-				{
-					y1 += 1;
-
 					y2 -= 1;
 				}
 
@@ -553,11 +529,6 @@ int main(void)
 
 			else if (order == 'i')
 			{
-				if (x1 > 0)
-				{
-					x1 -= 1;
-				}
-
 				if (x2 < 29)
 				{
 					x2 += 1;
@@ -582,15 +553,8 @@ int main(void)
 					}
 				}
 
-				if (x1 + 1 == x2)
+				if (x1 != x2)
 				{
-					x1 += 1;
-				}
-
-				else if (x1 != x2)
-				{
-					x1 += 1;
-
 					x2 -= 1;
 				}
 
@@ -605,11 +569,6 @@ int main(void)
 
 			else if (order == 'j')
 			{
-				if (y1 > 0)
-				{
-					y1 -= 1;
-				}
-
 				if (y2 < 29)
 				{
 					y2 += 1;
@@ -634,15 +593,8 @@ int main(void)
 					}
 				}
 
-				if (y1 + 1 == y2)
+				if (y1 != y2)
 				{
-					y1 += 1;
-				}
-
-				else if (y1 != y2)
-				{
-					y1 += 1;
-
 					y2 -= 1;
 				}
 
@@ -664,26 +616,13 @@ int main(void)
 						board[i][j] = 0;
 					}
 				}
-
-				if (x1 > 0)
-				{
-					x1 -= 1;
-				}
-
 				if (x2 < 29)
 				{
 					x2 += 1;
 				}
 
-				if (y1 + 1 == y2)
+				if (y1 != y2)
 				{
-					y1 += 1;
-				}
-
-				else if (y1 != y2)
-				{
-					y1 += 1;
-
 					y2 -= 1;
 				}
 
@@ -706,21 +645,9 @@ int main(void)
 					}
 				}
 
-				if (x1 + 1 == x2)
+				if (x1 != x2)
 				{
-					x1 += 1;
-				}
-
-				else if (x1 != x2)
-				{
-					x1 += 1;
-
 					x2 -= 1;
-				}
-
-				if (y1 > 0)
-				{
-					y1 -= 1;
 				}
 
 				if (y2 < 29)
