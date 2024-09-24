@@ -156,9 +156,11 @@ int main(void)
 			{
 				for (int j = 0; j < 5; j++)
 				{
-					board[i][j].state == 3;
+					board[i][j].state = 3;
 				}
 			}
+
+			PrintBoard(board);
 		}
 
 		else if (a == 'p' && x == '\n' && b == '\0' && y == '\0')
@@ -169,9 +171,11 @@ int main(void)
 			{
 				for (int j = 0; j < 5; j++)
 				{
-					board[i][j].state == 0;
+					board[i][j].state = 0;
 				}
 			}
+
+			PrintBoard(board);
 		}
 
 		else if (a == 'q' && x == '\n' && b == '\0' && y == '\0')
