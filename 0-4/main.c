@@ -148,6 +148,32 @@ int main(void)
 			chance = 10;
 		}
 
+		else if (a == 'o' && x == '\n' && b == '\0' && y == '\0')
+		{
+			getchar();
+
+			for (int i = 0; i < 5; i++)
+			{
+				for (int j = 0; j < 5; j++)
+				{
+					board[i][j].state == 3;
+				}
+			}
+		}
+
+		else if (a == 'p' && x == '\n' && b == '\0' && y == '\0')
+		{
+			getchar();
+
+			for (int i = 0; i < 5; i++)
+			{
+				for (int j = 0; j < 5; j++)
+				{
+					board[i][j].state == 0;
+				}
+			}
+		}
+
 		else if (a == 'q' && x == '\n' && b == '\0' && y == '\0')
 		{
 			getchar();
