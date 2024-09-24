@@ -552,9 +552,19 @@ int main(void)
 					x2 += 1;
 				}
 
+				else if (x2 == 29 && x1 != 0)
+				{
+					x1 -= 1;
+				}
+
 				if (y2 < 29)
 				{
 					y2 += 1;
+				}
+
+				else if (y2 == 29 && y1 != 0)
+				{
+					y1 -= 1;
 				}
 
 				for (int i = y1; i <= y2; i++)
@@ -1046,9 +1056,19 @@ int main(void)
 					x4 += 1;
 				}
 
+				else if (x4 == 29 && x3 != 0)
+				{
+					x3 -= 1;
+				}
+
 				if (y4 < 29)
 				{
 					y4 += 1;
+				}
+
+				else if (y4 == 29 && y3 != 0)
+				{
+					y3 -= 1;
 				}
 
 				for (int i = y3; i <= y4; i++)

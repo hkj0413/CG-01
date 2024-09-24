@@ -484,9 +484,19 @@ int main(void)
 					x2 += 1;
 				}
 
+				else if (x2 == 29 && x1 != 0)
+				{
+					x1 -= 1;
+				}
+
 				if (y2 < 29)
 				{
 					y2 += 1;
+				}
+
+				else if (y2 == 29 && y1 != 0)
+				{
+					y1 -= 1;
 				}
 
 				for (int i = y1; i <= y2; i++)
@@ -534,6 +544,11 @@ int main(void)
 					x2 += 1;
 				}
 
+				else if (x2 == 29 && x1 != 0)
+				{
+					x1 -= 1;
+				}
+
 				for (int i = y1; i <= y2; i++)
 				{
 					for (int j = x1; j <= x2; j++)
@@ -572,6 +587,11 @@ int main(void)
 				if (y2 < 29)
 				{
 					y2 += 1;
+				}
+
+				else if (y2 == 29 && y1 != 0)
+				{
+					y1 -= 1;
 				}
 
 				for (int i = y1; i <= y2; i++)
@@ -621,6 +641,11 @@ int main(void)
 					x2 += 1;
 				}
 
+				else if (x2 == 29 && x1 != 0)
+				{
+					x1 -= 1;
+				}
+
 				if (y1 != y2)
 				{
 					y2 -= 1;
@@ -653,6 +678,11 @@ int main(void)
 				if (y2 < 29)
 				{
 					y2 += 1;
+				}
+
+				else if (y2 == 29 && y1 != 0)
+				{
+					y1 -= 1;
 				}
 
 				for (int i = y1; i <= y2; i++)
