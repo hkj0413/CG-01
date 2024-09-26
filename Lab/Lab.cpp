@@ -7,6 +7,8 @@ GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
 
+float R = 1.0, G = 1.0, B = 1.0;
+
 int main(int argc, char** argv)
 {
 	glutInit(&argc, argv);
@@ -32,7 +34,7 @@ int main(int argc, char** argv)
 
 GLvoid drawScene()
 {
-	glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+	glClearColor(R, G, B, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glutSwapBuffers();
 }
@@ -44,13 +46,17 @@ GLvoid Reshape(int w, int h)
 
 GLvoid Keyboard(unsigned char key, int x, int y)
 {
-	switch (key) {
+	switch (key) 
+	{
 	case 'c':
-
+		R = 0.0, G = 1.0, B = 1.0;
+		break;
 	case 'm':
-
+		R = 1.0, G = 0.0, B = 1.0;
+		break;
 	case 'y':
-
+		R = 1.0, G = 1.0, B = 0.0;
+		break;
 	}
 	glutPostRedisplay();
 }
