@@ -1,7 +1,8 @@
 #include <iostream>
 #include <gl/glew.h>
 #include <gl/freeglut.h>
-#include <gl/freeglut_ext.h> 
+#include <gl/freeglut_ext.h>
+#include <random>
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
@@ -56,6 +57,18 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		break;
 	case 'y':
 		R = 1.0, G = 1.0, B = 0.0;
+		break;
+	case 'w':
+		R = 1.0, G = 1.0, B = 1.0;
+		break;
+	case 'k':
+		R = 0.0, G = 0.0, B = 0.0;
+		break;
+	case 'a':
+		std::random_device rd;
+		std::mt19937 mt(rd());
+		std::normal_distribution<float> dis(0, 1);
+		R = dis(mt), B = dis(mt), G = dis(mt);
 		break;
 	}
 	glutPostRedisplay();
