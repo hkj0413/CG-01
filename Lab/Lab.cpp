@@ -77,6 +77,8 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	case 's':
 		repeat = false;
 		break;
+	case 'q':
+		glutLeaveMainLoop();
 	}
 
 	glutPostRedisplay();
@@ -90,6 +92,7 @@ GLvoid TimerFunction(int value)
 	R = dis(mt), B = dis(mt), G = dis(mt);
 
 	glutPostRedisplay();
+
 	if (repeat)
 	{
 		glutTimerFunc(100, TimerFunction, 1);
