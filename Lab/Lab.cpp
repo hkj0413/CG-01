@@ -22,7 +22,7 @@ struct Rect
 
 }typedef Rect;
 
-Rect rect[4] = { -0.75, 0.75, -0.25, 0.25, 1.0, 0.75, 0.0, 
+Rect rect[4] = { -0.75, 0.25, -0.25, 0.75, 1.0, 0.75, 0.0, 
 				  0.25, 0.25, 0.75, 0.75, 0.25, 1.0, 0.0,
 				 -0.75, -0.75, -0.25, -0.25, 1.0, 0.5, 0.0, 
 				  0.25, -0.25, 0.75, -0.75, 0.5, 0.75, 1.0 };
@@ -74,5 +74,17 @@ GLvoid Mouse(int button, int state, int x, int y)
 	std::random_device rd;
 	std::mt19937 mt(rd());
 	std::normal_distribution<float> dis(0, 1);
-	R = dis(mt), B = dis(mt), G = dis(mt);
+
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && x > rect[0].x1 && x < rect[0].x2 && y > rect[0].y1 && y < rect[0].y2)
+	{
+		rect[0].R = dis(mt), rect[0].B = dis(mt), rect[0].G = dis(mt);
+	}
+
+	else
+	{
+		R = dis(mt), B = dis(mt), G = dis(mt);
+	}
+
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+		std::cout << "x = " << x << "y = " << y << std::endl;
 }
