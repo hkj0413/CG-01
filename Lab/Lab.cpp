@@ -25,7 +25,7 @@ struct Rect
 Rect rect[4] = { -0.75, 0.25, -0.25, 0.75, 1.0, 0.75, 0.0, 
 				  0.25, 0.25, 0.75, 0.75, 0.25, 1.0, 0.0,
 				 -0.75, -0.75, -0.25, -0.25, 1.0, 0.5, 0.0, 
-				  0.25, -0.25, 0.75, -0.75, 0.5, 0.75, 1.0 };
+				  0.25, -0.75, 0.75, -0.25, 0.5, 0.75, 1.0 };
 
 int main(int argc, char** argv)
 {
@@ -85,11 +85,23 @@ GLvoid Mouse(int button, int state, int x, int y)
 		rect[0].R = dis(mt), rect[0].B = dis(mt), rect[0].G = dis(mt);
 	}
 
-	else
+	else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && ox > rect[1].x1 && ox < rect[1].x2 && oy > rect[1].y1 && oy < rect[1].y2)
+	{
+		rect[1].R = dis(mt), rect[1].B = dis(mt), rect[1].G = dis(mt);
+	}
+
+	else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && ox > rect[2].x1 && ox < rect[2].x2 && oy > rect[2].y1 && oy < rect[2].y2)
+	{
+		rect[2].R = dis(mt), rect[2].B = dis(mt), rect[2].G = dis(mt);
+	}
+
+	else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && ox > rect[3].x1 && ox < rect[3].x2 && oy > rect[3].y1 && oy < rect[3].y2)
+	{
+		rect[3].R = dis(mt), rect[3].B = dis(mt), rect[3].G = dis(mt);
+	}
+
+	else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
 		R = dis(mt), B = dis(mt), G = dis(mt);
 	}
-
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-		std::cout << "x = " << x << ", y = " << y << std::endl;
 }
