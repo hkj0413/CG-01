@@ -126,21 +126,58 @@ GLvoid Mouse(int button, int state, int x, int y)
 
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && ox > rect[1].x1 && ox < rect[1].x2 && oy > rect[1].y1 && oy < rect[1].y2)
 	{
-		rect[1].R = dis(mt), rect[1].B = dis(mt), rect[1].G = dis(mt);
+		if (rect[1].x1 < 0.25 && rect[1].y1 < 0.25 && rect[1].x2 > 0.75 && rect[1].y2 > 0.75)
+		{
+			rect[1].x1 += 0.05;
+			rect[1].y1 += 0.05;
+			rect[1].x2 -= 0.05;
+			rect[1].y2 -= 0.05;
+		}
+	}
+
+	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && x > 500 && x < 1000 && y > 0 && y < 500)
+	{
+		rect[1].x1 -= 0.05;
+		rect[1].y1 -= 0.05;
+		rect[1].x2 += 0.05;
+		rect[1].y2 += 0.05;
 	}
 
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && ox > rect[2].x1 && ox < rect[2].x2 && oy > rect[2].y1 && oy < rect[2].y2)
 	{
-		rect[2].R = dis(mt), rect[2].B = dis(mt), rect[2].G = dis(mt);
+		if (rect[2].x1 < -0.75 && rect[2].y1 < -0.75 && rect[2].x2 > -0.25 && rect[2].y2 > -0.25)
+		{
+			rect[2].x1 += 0.05;
+			rect[2].y1 += 0.05;
+			rect[2].x2 -= 0.05;
+			rect[2].y2 -= 0.05;
+		}
+	}
+
+	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && x > 0 && x < 500 && y > 500 && y < 1000)
+	{
+		rect[2].x1 -= 0.05;
+		rect[2].y1 -= 0.05;
+		rect[2].x2 += 0.05;
+		rect[2].y2 += 0.05;
 	}
 
 	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && ox > rect[3].x1 && ox < rect[3].x2 && oy > rect[3].y1 && oy < rect[3].y2)
 	{
-		rect[3].R = dis(mt), rect[3].B = dis(mt), rect[3].G = dis(mt);
+		if (rect[3].x1 < 0.25 && rect[3].y1 < -0.75 && rect[3].x2 > 0.75 && rect[3].y2 > -0.25)
+		{
+			rect[3].x1 += 0.05;
+			rect[3].y1 += 0.05;
+			rect[3].x2 -= 0.05;
+			rect[3].y2 -= 0.05;
+		}
 	}
 
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && x > 500 && x < 1000 && y > 500 && y < 1000)
 	{
-		R = dis(mt), B = dis(mt), G = dis(mt);
+		rect[3].x1 -= 0.05;
+		rect[3].y1 -= 0.05;
+		rect[3].x2 += 0.05;
+		rect[3].y2 += 0.05;
 	}
 }
