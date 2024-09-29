@@ -88,7 +88,7 @@ GLvoid TimerFunction(int value)
 {
 	std::random_device rd;
 	std::mt19937 mt(rd());
-	std::normal_distribution<float> dis(0, 1);
+	std::uniform_real_distribution<float> dis(0, 1);
 	R = dis(mt), B = dis(mt), G = dis(mt);
 
 	glutPostRedisplay();

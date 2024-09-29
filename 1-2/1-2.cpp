@@ -75,7 +75,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 
 	std::random_device rd;
 	std::mt19937 mt(rd());
-	std::normal_distribution<float> dis(0, 1);
+	std::uniform_real_distribution<float> dis(0, 1);
 
 	ox = (float)(x - 500.0) / 500.0;
 	oy = -(float)(y - 500.0) / 500.0;
