@@ -3,12 +3,15 @@
 #include <gl/freeglut.h>
 #include <gl/freeglut_ext.h>
 #include <random>
+#include <vector>
+#include <algorithm>
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
+GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid Mouse(int button, int state, int x, int y);
 
-float R = 0.5, G = 0.5, B = 0.5;
+float R = 1.0, G = 1.0, B = 1.0;
 
 struct Rect
 {
@@ -22,10 +25,7 @@ struct Rect
 
 }typedef Rect;
 
-Rect rect[4] = { -0.75, 0.25, -0.25, 0.75, 1.0, 0.75, 0.0,
-				  0.25, 0.25, 0.75, 0.75, 0.25, 1.0, 0.0,
-				 -0.75, -0.75, -0.25, -0.25, 1.0, 0.5, 0.0, 
-				  0.25, -0.75, 0.75, -0.25, 0.5, 0.75, 1.0 };
+std::vector<Rect> rect;
 
 int main(int argc, char** argv)
 {
@@ -46,6 +46,7 @@ int main(int argc, char** argv)
 		std::cout << "GLEW Initialized\n";
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
+	glutKeyboardFunc(Keyboard);
 	glutMouseFunc(Mouse);
 	glutMainLoop();
 }
@@ -55,10 +56,10 @@ GLvoid drawScene()
 	glClearColor(R, G, B, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	for (int i = 0; i < 4; i++)
+	for (auto& list : rect)
 	{
-		glColor3f(rect[i].R, rect[i].G, rect[i].B);
-		glRectf(rect[i].x1, rect[i].y1, rect[i].x2, rect[i].y2);
+		glColor3f(list.R, list.G, list.B);
+		glRectf(list.x1, list.y1, list.x2, list.y2);
 	}
 
 	glutSwapBuffers();
@@ -67,6 +68,18 @@ GLvoid drawScene()
 GLvoid Reshape(int w, int h)
 {
 	glViewport(0, 0, w, h);
+}
+
+GLvoid Keyboard(unsigned char key, int x, int y)
+{
+	switch (key)
+	{
+	case 'a':
+		
+		break;
+	}
+
+	glutPostRedisplay();
 }
 
 GLvoid Mouse(int button, int state, int x, int y)
@@ -80,104 +93,5 @@ GLvoid Mouse(int button, int state, int x, int y)
 	ox = (float)(x - 500.0) / 500.0;
 	oy = -(float)(y - 500.0) / 500.0;
 
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && ox > rect[0].x1 && ox < rect[0].x2 && oy > rect[0].y1 && oy < rect[0].y2)
-	{
-		rect[0].R = dis(mt), rect[0].B = dis(mt), rect[0].G = dis(mt);
-	}
-
-	else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && ox > rect[1].x1 && ox < rect[1].x2 && oy > rect[1].y1 && oy < rect[1].y2)
-	{
-		rect[1].R = dis(mt), rect[1].B = dis(mt), rect[1].G = dis(mt);
-	}
-
-	else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && ox > rect[2].x1 && ox < rect[2].x2 && oy > rect[2].y1 && oy < rect[2].y2)
-	{
-		rect[2].R = dis(mt), rect[2].B = dis(mt), rect[2].G = dis(mt);
-	}
-
-	else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && ox > rect[3].x1 && ox < rect[3].x2 && oy > rect[3].y1 && oy < rect[3].y2)
-	{
-		rect[3].R = dis(mt), rect[3].B = dis(mt), rect[3].G = dis(mt);
-	}
-
-	else if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-	{
-		R = dis(mt), B = dis(mt), G = dis(mt);
-	}
-
-	if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && ox > rect[0].x1 && ox < rect[0].x2 && oy > rect[0].y1 && oy < rect[0].y2)
-	{
-		if (rect[0].x1 < -0.75 && rect[0].y1 < 0.25 && rect[0].x2 > -0.25 && rect[0].y2 > 0.75)
-		{
-			rect[0].x1 += 0.05;
-			rect[0].y1 += 0.05;
-			rect[0].x2 -= 0.05;
-			rect[0].y2 -= 0.05;
-		}
-	}
-
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && x > 0 && x < 500 && y > 0 && y < 500)
-	{
-		rect[0].x1 -= 0.05;
-		rect[0].y1 -= 0.05;
-		rect[0].x2 += 0.05;
-		rect[0].y2 += 0.05;
-	}
-
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && ox > rect[1].x1 && ox < rect[1].x2 && oy > rect[1].y1 && oy < rect[1].y2)
-	{
-		if (rect[1].x1 < 0.25 && rect[1].y1 < 0.25 && rect[1].x2 > 0.75 && rect[1].y2 > 0.75)
-		{
-			rect[1].x1 += 0.05;
-			rect[1].y1 += 0.05;
-			rect[1].x2 -= 0.05;
-			rect[1].y2 -= 0.05;
-		}
-	}
-
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && x > 500 && x < 1000 && y > 0 && y < 500)
-	{
-		rect[1].x1 -= 0.05;
-		rect[1].y1 -= 0.05;
-		rect[1].x2 += 0.05;
-		rect[1].y2 += 0.05;
-	}
-
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && ox > rect[2].x1 && ox < rect[2].x2 && oy > rect[2].y1 && oy < rect[2].y2)
-	{
-		if (rect[2].x1 < -0.75 && rect[2].y1 < -0.75 && rect[2].x2 > -0.25 && rect[2].y2 > -0.25)
-		{
-			rect[2].x1 += 0.05;
-			rect[2].y1 += 0.05;
-			rect[2].x2 -= 0.05;
-			rect[2].y2 -= 0.05;
-		}
-	}
-
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && x > 0 && x < 500 && y > 500 && y < 1000)
-	{
-		rect[2].x1 -= 0.05;
-		rect[2].y1 -= 0.05;
-		rect[2].x2 += 0.05;
-		rect[2].y2 += 0.05;
-	}
-
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && ox > rect[3].x1 && ox < rect[3].x2 && oy > rect[3].y1 && oy < rect[3].y2)
-	{
-		if (rect[3].x1 < 0.25 && rect[3].y1 < -0.75 && rect[3].x2 > 0.75 && rect[3].y2 > -0.25)
-		{
-			rect[3].x1 += 0.05;
-			rect[3].y1 += 0.05;
-			rect[3].x2 -= 0.05;
-			rect[3].y2 -= 0.05;
-		}
-	}
-
-	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN && x > 500 && x < 1000 && y > 500 && y < 1000)
-	{
-		rect[3].x1 -= 0.05;
-		rect[3].y1 -= 0.05;
-		rect[3].x2 += 0.05;
-		rect[3].y2 += 0.05;
-	}
+	
 }
