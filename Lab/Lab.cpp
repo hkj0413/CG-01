@@ -71,11 +71,16 @@ GLvoid Reshape(int w, int h)
 
 GLvoid Mouse(int button, int state, int x, int y)
 {
+	float ox = 0, oy = 0;
+
 	std::random_device rd;
 	std::mt19937 mt(rd());
 	std::normal_distribution<float> dis(0, 1);
 
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && x > rect[0].x1 && x < rect[0].x2 && y > rect[0].y1 && y < rect[0].y2)
+	ox = (float)(x - 500.0) / 500.0;
+	oy = -(float)(y - 500.0) / 500.0;
+
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && ox > rect[0].x1 && ox < rect[0].x2 && oy > rect[0].y1 && oy < rect[0].y2)
 	{
 		rect[0].R = dis(mt), rect[0].B = dis(mt), rect[0].G = dis(mt);
 	}
@@ -86,5 +91,5 @@ GLvoid Mouse(int button, int state, int x, int y)
 	}
 
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-		std::cout << "x = " << x << "y = " << y << std::endl;
+		std::cout << "x = " << x << ", y = " << y << std::endl;
 }
