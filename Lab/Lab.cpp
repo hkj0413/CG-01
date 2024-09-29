@@ -11,6 +11,11 @@ GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid Mouse(int button, int state, int x, int y);
 
+std::random_device rd;
+std::mt19937 mt(rd());
+std::uniform_real_distribution<float> dis(0, 1);
+std::uniform_real_distribution<float> fea(-1.0, 0.8);
+
 float R = 1.0, G = 1.0, B = 1.0;
 
 struct Rect
@@ -25,6 +30,8 @@ struct Rect
 
 }typedef Rect;
 
+Rect temp = {};
+
 std::vector<Rect> rect;
 
 int main(int argc, char** argv)
@@ -32,7 +39,7 @@ int main(int argc, char** argv)
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(0, 0);
-	glutInitWindowSize(1000, 1000);
+	glutInitWindowSize(800, 800);
 	glutCreateWindow("Example");
 
 	glewExperimental = GL_TRUE;
@@ -75,7 +82,20 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 	case 'a':
-		
+		temp.x1 = fea(mt);
+		temp.y1 = fea(mt);
+		temp.x2 = temp.x1 + 0.2;
+		temp.y2 = temp.y1 + 0.2;
+
+		rect.push_back(temp);
+		break;
+	case 'e':
+		temp.x1 = 0.8;
+		temp.y1 = 0.8;
+		temp.x2 = 1;
+		temp.y2 = 1;
+
+		rect.push_back(temp);
 		break;
 	}
 
@@ -86,12 +106,6 @@ GLvoid Mouse(int button, int state, int x, int y)
 {
 	float ox = 0, oy = 0;
 
-	std::random_device rd;
-	std::mt19937 mt(rd());
-	std::normal_distribution<float> dis(0, 1);
-
 	ox = (float)(x - 500.0) / 500.0;
 	oy = -(float)(y - 500.0) / 500.0;
-
-	
 }
