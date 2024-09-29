@@ -16,6 +16,8 @@ std::mt19937 mt(rd());
 std::uniform_real_distribution<float> dis(0, 1);
 std::uniform_real_distribution<float> fea(-1.0, 0.8);
 
+int max = 0;
+
 float R = 1.0, G = 1.0, B = 1.0;
 
 struct Rect
@@ -82,20 +84,20 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 	case 'a':
-		temp.x1 = fea(mt);
-		temp.y1 = fea(mt);
-		temp.x2 = temp.x1 + 0.2;
-		temp.y2 = temp.y1 + 0.2;
+		if (max < 10)
+		{
+			temp.x1 = fea(mt);
+			temp.y1 = fea(mt);
+			temp.x2 = temp.x1 + 0.2;
+			temp.y2 = temp.y1 + 0.2;
+			temp.R = dis(mt);
+			temp.G = dis(mt);
+			temp.B = dis(mt);
 
-		rect.push_back(temp);
-		break;
-	case 'e':
-		temp.x1 = 0.8;
-		temp.y1 = 0.8;
-		temp.x2 = 1;
-		temp.y2 = 1;
+			max++;
 
-		rect.push_back(temp);
+			rect.push_back(temp);
+		}
 		break;
 	}
 
