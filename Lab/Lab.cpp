@@ -10,6 +10,7 @@ GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid Mouse(int button, int state, int x, int y);
+GLvoid Motion(int x, int y);
 
 std::random_device rd;
 std::mt19937 mt(rd());
@@ -19,6 +20,10 @@ std::uniform_real_distribution<float> fea(-1.0, 0.8);
 int max = 0;
 
 float R = 1.0, G = 1.0, B = 1.0;
+
+float ox = 0, oy = 0, nx = 0, ny = 0;
+
+bool move;
 
 struct Rect
 {
@@ -57,6 +62,7 @@ int main(int argc, char** argv)
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(Keyboard);
 	glutMouseFunc(Mouse);
+	glutMotionFunc(Motion);
 	glutMainLoop();
 }
 
@@ -106,8 +112,33 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 
 GLvoid Mouse(int button, int state, int x, int y)
 {
-	float ox = 0, oy = 0;
+	ox = (float)(x - 400.0) / 400.0;
+	oy = -(float)(y - 400.0) / 400.0;
 
-	ox = (float)(x - 500.0) / 500.0;
-	oy = -(float)(y - 500.0) / 500.0;
+}
+
+GLvoid Motion(int x, int y)
+{
+	ox = (float)(x - 400.0) / 400.0;
+	oy = -(float)(y - 400.0) / 400.0;
+
+	for (auto& list : rect)
+	{
+		if (ox <= list.x1 || oy <= list.y1 || ox >= list.x2 || oy >= list.y2)
+		{
+			nx = 0, ny = 0;
+		}
+
+		else if (ox > list.x1 && oy > list.y1 && ox < list.x2 && oy < list.y2 && nx != 0 && ny != 0)
+		{
+			list.x1 += ox - nx;
+			list.y1 += oy - ny;
+			list.x2 = list.x1 + 0.2;
+			list.y2 = list.y1 + 0.2;
+		}
+	}
+
+	nx = ox, ny = oy;
+
+	glutPostRedisplay();
 }
