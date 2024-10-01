@@ -21,7 +21,7 @@ int max = 0;
 
 float R = 0.2, G = 0.2, B = 0.2;
 
-float ox = 0, oy = 0;
+float ox = 0, oy = 0, justice = 0;
 
 bool one, two, three, four;
 
@@ -342,10 +342,12 @@ GLvoid TimerFunction(int value)
 	{
 		for (auto& list : rect)
 		{
-			list.x1 -= fea(mt);
-			list.y1 += fea(mt);
-			list.x2 += fea(mt);
-			list.y2 += fea(mt);
+			justice = fea(mt);
+
+			list.x1 -= justice;
+			list.y1 -= justice;
+			list.x2 += justice;
+			list.y2 += justice;
 		}
 
 		glutTimerFunc(200, TimerFunction, 3);
