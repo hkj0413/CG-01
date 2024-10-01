@@ -34,6 +34,8 @@ struct Rect
 	float R;
 	float G;
 	float B;
+	bool Right;
+	bool Up;
 
 }typedef Rect;
 
@@ -115,7 +117,10 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case 's':
-
+		one = false;
+		two = false;
+		three = false;
+		four = false;
 		break;
 
 	case 'm':
@@ -156,6 +161,8 @@ GLvoid Mouse(int button, int state, int x, int y)
 			temp.R = dis(mt);
 			temp.G = dis(mt);
 			temp.B = dis(mt);
+			temp.Right = true;
+			temp.Up = true;
 
 			max++;
 
@@ -170,11 +177,16 @@ GLvoid TimerFunction(int value)
 	{
 		for (auto& list : rect)
 		{
-			glColor3f(list.R, list.G, list.B);
-			glRectf(list.x1, list.y1, list.x2, list.y2);
+			if (list.Right && list.Up)
+			{
+				list.x1 += 0.01;
+				list.y1 += 0.01;
+				list.x2 += 0.01;
+				list.y2 += 0.01;
+			}
 		}
 
-		glutTimerFunc(100, TimerFunction, 1);
+		glutTimerFunc(10, TimerFunction, 1);
 	}
 
 	if (value == 4 && four)
