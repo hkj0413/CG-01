@@ -37,7 +37,7 @@ struct Rect
 
 }typedef Rect;
 
-Rect temp = {};
+Rect temp = {}, check = {};
 
 std::vector<Rect> rect;
 
@@ -115,6 +115,36 @@ GLvoid Mouse(int button, int state, int x, int y)
 	ox = (float)(x - 400.0) / 400.0;
 	oy = -(float)(y - 400.0) / 400.0;
 
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+	{
+		nx = 0, ny = 0;
+
+		for (auto iter = rect.begin(); iter != rect.end();)
+		{
+			if (check.x1 < iter->x2 && check.y1 < iter->y2 && check.x2 > iter->x1 && check.y2 > iter->y1 && check.x1 != iter->x1 && check.y1 != iter->y1 && check.x2 != iter->x2 && check.y2 != iter->y2)
+			{
+				iter = rect.erase(iter);
+
+				for (auto& list : rect)
+				{
+					if (check.x1 == list.x1 && check.y1 == list.y1 && check.x2 == list.x2 && check.y2 == list.y2)
+					{
+						list.x1 -= 0.1;
+						list.y1 -= 0.1;
+						list.x2 += 0.1;
+						list.y2 += 0.1;
+					}
+				}
+
+				break;
+			}
+
+			else
+			{
+				++iter;
+			}
+		}
+	}
 }
 
 GLvoid Motion(int x, int y)
@@ -124,17 +154,17 @@ GLvoid Motion(int x, int y)
 
 	for (auto& list : rect)
 	{
-		if (ox <= list.x1 || oy <= list.y1 || ox >= list.x2 || oy >= list.y2)
-		{
-			nx = 0, ny = 0;
-		}
-
-		else if (ox > list.x1 && oy > list.y1 && ox < list.x2 && oy < list.y2 && nx != 0 && ny != 0)
+		if (ox > list.x1 && oy > list.y1 && ox < list.x2 && oy < list.y2 && nx != 0 && ny != 0)
 		{
 			list.x1 += ox - nx;
 			list.y1 += oy - ny;
-			list.x2 = list.x1 + 0.2;
-			list.y2 = list.y1 + 0.2;
+			list.x2 += ox - nx;
+			list.y2 += oy - ny;
+
+			check.x1 = list.x1;
+			check.y1 = list.y1;
+			check.x2 = list.x2;
+			check.y2 = list.y2;
 		}
 	}
 
