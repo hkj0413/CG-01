@@ -342,12 +342,24 @@ GLvoid TimerFunction(int value)
 	{
 		for (auto& list : rect)
 		{
-			justice = fea(mt);
+			list.x1 -= fea(mt);
+			list.y1 -= fea(mt);
+			list.x2 += fea(mt);
+			list.y2 += fea(mt);
 
-			list.x1 -= justice;
-			list.y1 -= justice;
-			list.x2 += justice;
-			list.y2 += justice;
+			if (list.x1 > list.x2)
+			{
+				justice = list.x2;
+				list.x2 = list.x1;
+				list.x1 = justice;
+			}
+
+			if (list.y1 > list.y2)
+			{
+				justice = list.y2;
+				list.y2 = list.y1;
+				list.y1 = justice;
+			}
 		}
 
 		glutTimerFunc(200, TimerFunction, 3);
