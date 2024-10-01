@@ -26,8 +26,6 @@ float R = 1.0, G = 1.0, B = 1.0;
 
 float ox = 0, oy = 0, nx = 0, ny = 0;
 
-bool move;
-
 struct Rect
 {
 	float x1;
