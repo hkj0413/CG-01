@@ -126,5 +126,21 @@ GLvoid Mouse(int button, int state, int x, int y)
 	ox = (float)(x - 400.0) / 400.0;
 	oy = -(float)(y - 400.0) / 400.0;
 
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+	{
+		if (max < 5)
+		{
+			temp.x1 = ox - 0.1;
+			temp.y1 = oy - 0.1;
+			temp.x2 = ox + 0.1;
+			temp.y2 = oy + 0.1;
+			temp.R = dis(mt);
+			temp.G = dis(mt);
+			temp.B = dis(mt);
 
+			max++;
+
+			rect.push_back(temp);
+		}
+	}
 }
