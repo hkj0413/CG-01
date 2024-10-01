@@ -110,6 +110,12 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case 'r':
+		for (auto iter = rect.begin(); iter != rect.end();)
+		{
+			iter = rect.erase(iter);
+
+			max = 0;
+		}
 
 		break;
 
