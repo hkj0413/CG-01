@@ -10,6 +10,7 @@ GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid Mouse(int button, int state, int x, int y);
+GLvoid TimerFunction(int value);
 
 std::random_device rd;
 std::mt19937 mt(rd());
@@ -21,6 +22,8 @@ int max = 0;
 float R = 0.2, G = 0.2, B = 0.2;
 
 float ox = 0, oy = 0;
+
+bool one, two, three, four;
 
 struct Rect
 {
@@ -86,7 +89,8 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 	case '1':
-		
+		glutTimerFunc(100, TimerFunction, 1);
+		one = true;
 		break;
 
 	case '2':
@@ -98,7 +102,16 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case '4':
+		if (!four)
+		{
+			glutTimerFunc(100, TimerFunction, 4);
+			four = true;
+		}
 
+		else if (four)
+		{
+			four = false;
+		}
 		break;
 
 	case 's':
@@ -149,4 +162,30 @@ GLvoid Mouse(int button, int state, int x, int y)
 			rect.push_back(temp);
 		}
 	}
+}
+
+GLvoid TimerFunction(int value)
+{
+	if (value == 1 && one)
+	{
+		for (auto& list : rect)
+		{
+			glColor3f(list.R, list.G, list.B);
+			glRectf(list.x1, list.y1, list.x2, list.y2);
+		}
+
+		glutTimerFunc(100, TimerFunction, 1);
+	}
+
+	if (value == 4 && four)
+	{
+		for (auto& list : rect)
+		{
+			list.R = dis(mt), list.B = dis(mt), list.G = dis(mt);
+		}
+
+		glutTimerFunc(100, TimerFunction, 4);
+	}
+
+	glutPostRedisplay();
 }
