@@ -144,6 +144,8 @@ GLvoid Mouse(int button, int state, int x, int y)
 						list.R = dis(mt);
 						list.G = dis(mt);
 						list.B = dis(mt);
+
+						max--;
 					}
 				}
 
