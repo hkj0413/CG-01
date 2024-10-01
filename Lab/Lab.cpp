@@ -18,9 +18,9 @@ std::uniform_real_distribution<float> fea(-1.0, 0.8);
 
 int max = 0;
 
-float R = 1.0, G = 1.0, B = 1.0;
+float R = 0.2, G = 0.2, B = 0.2;
 
-float ox = 0, oy = 0, nx = 0, ny = 0;
+float ox = 0, oy = 0;
 
 struct Rect
 {
@@ -85,8 +85,36 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-	case 'a':
+	case '1':
 		
+		break;
+
+	case '2':
+
+		break;
+
+	case '3':
+
+		break;
+
+	case '4':
+
+		break;
+
+	case 's':
+
+		break;
+
+	case 'm':
+
+		break;
+
+	case 'r':
+
+		break;
+
+	case 'q':
+		glutLeaveMainLoop();
 		break;
 	}
 
