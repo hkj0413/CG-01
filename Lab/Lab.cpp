@@ -31,6 +31,10 @@ struct Rect
 	float y1;
 	float x2;
 	float y2;
+	float ox1;
+	float oy1;
+	float ox2;
+	float oy2;
 	float R;
 	float G;
 	float B;
@@ -102,11 +106,18 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 			one = false;
 		}
 		break;
-
 	case '2':
+		if (!two)
+		{
+			glutTimerFunc(10, TimerFunction, 2);
+			two = true;
+		}
 
+		else if (two)
+		{
+			two = false;
+		}
 		break;
-
 	case '3':
 		if (!three)
 		{
@@ -119,7 +130,6 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 			three = false;
 		}
 		break;
-
 	case '4':
 		if (!four)
 		{
@@ -132,7 +142,6 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 			four = false;
 		}
 		break;
-
 	case 's':
 		one = false;
 		two = false;
@@ -141,9 +150,14 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case 'm':
-
+		for (auto& list : rect)
+		{
+			list.x1 = list.ox1;
+			list.y1 = list.oy1;
+			list.x2 = list.ox2;
+			list.y2 = list.oy2;
+		}
 		break;
-
 	case 'r':
 		for (auto iter = rect.begin(); iter != rect.end();)
 		{
@@ -153,7 +167,6 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		}
 
 		break;
-
 	case 'q':
 		glutLeaveMainLoop();
 		break;
@@ -175,6 +188,10 @@ GLvoid Mouse(int button, int state, int x, int y)
 			temp.y1 = oy - 0.1;
 			temp.x2 = ox + 0.1;
 			temp.y2 = oy + 0.1;
+			temp.ox1 = ox - 0.1;
+			temp.oy1 = oy - 0.1;
+			temp.ox2 = ox + 0.1;
+			temp.oy2 = oy + 0.1;
 			temp.R = dis(mt);
 			temp.G = dis(mt);
 			temp.B = dis(mt);
@@ -338,6 +355,154 @@ GLvoid TimerFunction(int value)
 		glutTimerFunc(10, TimerFunction, 1);
 	}
 
+	if (value == 2 && two)
+	{
+		for (auto& list : rect)
+		{
+			if (list.Right && list.Up)
+			{
+				list.x1 += 0.01;
+				list.y1 += 0.01;
+				list.x2 += 0.01;
+				list.y2 += 0.01;
+
+				if (list.x2 > 1 && list.y2 > 1)
+				{
+					list.x1 -= 0.01;
+					list.y1 -= 0.01;
+					list.x2 -= 0.01;
+					list.y2 -= 0.01;
+
+					list.Right = false;
+					list.Up = false;
+				}
+
+				else if (list.x2 > 1)
+				{
+					list.x1 -= 0.01;
+					list.x2 -= 0.01;
+
+					list.Right = false;
+				}
+
+				else if (list.y2 > 1)
+				{
+					list.y1 -= 0.01;
+					list.y2 -= 0.01;
+
+					list.Up = false;
+				}
+			}
+
+			else if (!list.Right && list.Up)
+			{
+				list.x1 -= 0.01;
+				list.y1 += 0.01;
+				list.x2 -= 0.01;
+				list.y2 += 0.01;
+
+				if (list.x1 < -1 && list.y2 > 1)
+				{
+					list.x1 += 0.01;
+					list.y1 -= 0.01;
+					list.x2 += 0.01;
+					list.y2 -= 0.01;
+
+					list.Right = true;
+					list.Up = false;
+				}
+
+				else if (list.x1 < -1)
+				{
+					list.x1 += 0.01;
+					list.x2 += 0.01;
+
+					list.Right = true;
+				}
+
+				else if (list.y2 > 1)
+				{
+					list.y1 -= 0.01;
+					list.y2 -= 0.01;
+
+					list.Up = false;
+				}
+			}
+
+			else if (list.Right && !list.Up)
+			{
+				list.x1 += 0.01;
+				list.y1 -= 0.01;
+				list.x2 += 0.01;
+				list.y2 -= 0.01;
+
+				if (list.x2 > 1 && list.y1 < -1)
+				{
+					list.x1 -= 0.01;
+					list.y1 += 0.01;
+					list.x2 -= 0.01;
+					list.y2 += 0.01;
+
+					list.Right = false;
+					list.Up = true;
+				}
+
+				else if (list.x2 > 1)
+				{
+					list.x1 -= 0.01;
+					list.x2 -= 0.01;
+
+					list.Right = false;
+				}
+
+				else if (list.y1 < -1)
+				{
+					list.y1 += 0.01;
+					list.y2 += 0.01;
+
+					list.Up = true;
+				}
+			}
+
+			else if (!list.Right && !list.Up)
+			{
+				list.x1 -= 0.01;
+				list.y1 -= 0.01;
+				list.x2 -= 0.01;
+				list.y2 -= 0.01;
+
+				if (list.x1 < -1 && list.y1 < -1)
+				{
+					list.x1 += 0.01;
+					list.y1 += 0.01;
+					list.x2 += 0.01;
+					list.y2 += 0.01;
+
+					list.Right = true;
+					list.Up = true;
+				}
+
+				else if (list.x1 < -1)
+				{
+					list.x1 += 0.01;
+					list.x2 += 0.01;
+
+					list.Right = true;
+				}
+
+				else if (list.y1 < -1)
+				{
+					list.y1 += 0.01;
+					list.y2 += 0.01;
+
+					list.Up = true;
+				}
+			}
+		}
+
+		glutTimerFunc(10, TimerFunction, 1);
+	}
+
 	if (value == 3 && three)
 	{
 		for (auto& list : rect)
@@ -360,6 +525,11 @@ GLvoid TimerFunction(int value)
 				list.y2 = list.y1;
 				list.y1 = justice;
 			}
+
+			list.ox1 = list.x1;
+			list.oy1 = list.y1;
+			list.ox2 = list.x2;
+			list.oy2 = list.y2;
 		}
 
 		glutTimerFunc(200, TimerFunction, 3);
