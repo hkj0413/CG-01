@@ -79,6 +79,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		break;
 	case 'q':
 		glutLeaveMainLoop();
+		break;
 	}
 
 	glutPostRedisplay();
