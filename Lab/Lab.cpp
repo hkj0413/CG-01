@@ -5,6 +5,7 @@
 #include <random>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
@@ -359,148 +360,92 @@ GLvoid TimerFunction(int value)
 	{
 		for (auto& list : rect)
 		{
-			if (list.Right && list.Up)
+			if (list.Right)
 			{
 				list.x1 += 0.01;
-				list.y1 += 0.01;
 				list.x2 += 0.01;
-				list.y2 += 0.01;
 
-				if (list.x2 > 1 && list.y2 > 1)
+				if (list.x2 > 1 && list.Up)
 				{
 					list.x1 -= 0.01;
-					list.y1 -= 0.01;
+					list.y1 += 0.1;
 					list.x2 -= 0.01;
-					list.y2 -= 0.01;
+					list.y2 += 0.1;
 
 					list.Right = false;
-					list.Up = false;
+
+					if (list.y2 > 1)
+					{
+						list.y1 -= 0.1;
+						list.y2 -= 0.1;
+
+						list.Up = false;
+					}
 				}
 
-				else if (list.x2 > 1)
+				else if (list.x2 > 1 && !list.Up)
 				{
 					list.x1 -= 0.01;
+					list.y1 -= 0.1;
 					list.x2 -= 0.01;
+					list.y2 -= 0.1;
 
 					list.Right = false;
-				}
 
-				else if (list.y2 > 1)
-				{
-					list.y1 -= 0.01;
-					list.y2 -= 0.01;
+					if (list.y2 > 1)
+					{
+						list.y1 += 0.1;
+						list.y2 += 0.1;
 
-					list.Up = false;
+						list.Up = true;
+					}
 				}
 			}
 
-			else if (!list.Right && list.Up)
+			else if (!list.Right)
 			{
 				list.x1 -= 0.01;
-				list.y1 += 0.01;
 				list.x2 -= 0.01;
-				list.y2 += 0.01;
 
-				if (list.x1 < -1 && list.y2 > 1)
+				if (list.x1 < -1 && list.Up)
 				{
 					list.x1 += 0.01;
-					list.y1 -= 0.01;
+					list.y1 += 0.1;
 					list.x2 += 0.01;
-					list.y2 -= 0.01;
-
-					list.Right = true;
-					list.Up = false;
-				}
-
-				else if (list.x1 < -1)
-				{
-					list.x1 += 0.01;
-					list.x2 += 0.01;
-
-					list.Right = true;
-				}
-
-				else if (list.y2 > 1)
-				{
-					list.y1 -= 0.01;
-					list.y2 -= 0.01;
-
-					list.Up = false;
-				}
-			}
-
-			else if (list.Right && !list.Up)
-			{
-				list.x1 += 0.01;
-				list.y1 -= 0.01;
-				list.x2 += 0.01;
-				list.y2 -= 0.01;
-
-				if (list.x2 > 1 && list.y1 < -1)
-				{
-					list.x1 -= 0.01;
-					list.y1 += 0.01;
-					list.x2 -= 0.01;
-					list.y2 += 0.01;
+					list.y2 += 0.1;
 
 					list.Right = false;
-					list.Up = true;
+
+					if (list.y2 > 1)
+					{
+						list.y1 -= 0.1;
+						list.y2 -= 0.1;
+
+						list.Up = false;
+					}
 				}
 
-				else if (list.x2 > 1)
+				else if (list.x1 < -1 && !list.Up)
 				{
-					list.x1 -= 0.01;
-					list.x2 -= 0.01;
+					list.x1 += 0.01;
+					list.y1 -= 0.1;
+					list.x2 += 0.01;
+					list.y2 -= 0.1;
 
 					list.Right = false;
-				}
 
-				else if (list.y1 < -1)
-				{
-					list.y1 += 0.01;
-					list.y2 += 0.01;
+					if (list.y2 > 1)
+					{
+						list.y1 += 0.1;
+						list.y2 += 0.1;
 
-					list.Up = true;
-				}
-			}
-
-			else if (!list.Right && !list.Up)
-			{
-				list.x1 -= 0.01;
-				list.y1 -= 0.01;
-				list.x2 -= 0.01;
-				list.y2 -= 0.01;
-
-				if (list.x1 < -1 && list.y1 < -1)
-				{
-					list.x1 += 0.01;
-					list.y1 += 0.01;
-					list.x2 += 0.01;
-					list.y2 += 0.01;
-
-					list.Right = true;
-					list.Up = true;
-				}
-
-				else if (list.x1 < -1)
-				{
-					list.x1 += 0.01;
-					list.x2 += 0.01;
-
-					list.Right = true;
-				}
-
-				else if (list.y1 < -1)
-				{
-					list.y1 += 0.01;
-					list.y2 += 0.01;
-
-					list.Up = true;
+						list.Up = true;
+					}
 				}
 			}
 		}
 
-		glutTimerFunc(10, TimerFunction, 1);
+		glutTimerFunc(10, TimerFunction, 2);
 	}
 
 	if (value == 3 && three)
@@ -529,7 +474,7 @@ GLvoid TimerFunction(int value)
 			list.ox1 = list.x1;
 			list.oy1 = list.y1;
 			list.ox2 = list.x2;
-			list.oy2 = list.y2;
+			list.oy2 = list.y2;;
 		}
 
 		glutTimerFunc(200, TimerFunction, 3);
