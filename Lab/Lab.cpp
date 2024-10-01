@@ -15,7 +15,7 @@ GLvoid TimerFunction(int value);
 std::random_device rd;
 std::mt19937 mt(rd());
 std::uniform_real_distribution<float> dis(0, 1);
-std::uniform_real_distribution<float> fea(-1.0, 0.8);
+std::uniform_real_distribution<float> fea(-0.1, 0.1);
 
 int max = 0;
 
@@ -91,8 +91,16 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 	case '1':
-		glutTimerFunc(100, TimerFunction, 1);
-		one = true;
+		if (!one)
+		{
+			glutTimerFunc(10, TimerFunction, 1);
+			one = true;
+		}
+
+		else if (one)
+		{
+			one = false;
+		}
 		break;
 
 	case '2':
@@ -100,7 +108,16 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		break;
 
 	case '3':
+		if (!three)
+		{
+			glutTimerFunc(200, TimerFunction, 3);
+			three = true;
+		}
 
+		else if (three)
+		{
+			three = false;
+		}
 		break;
 
 	case '4':
@@ -183,10 +200,155 @@ GLvoid TimerFunction(int value)
 				list.y1 += 0.01;
 				list.x2 += 0.01;
 				list.y2 += 0.01;
+
+				if (list.x2 > 1 && list.y2 > 1)
+				{
+					list.x1 -= 0.01;
+					list.y1 -= 0.01;
+					list.x2 -= 0.01;
+					list.y2 -= 0.01;
+
+					list.Right = false;
+					list.Up = false;
+				}
+				
+				else if (list.x2 > 1)
+				{
+					list.x1 -= 0.01;
+					list.x2 -= 0.01;
+
+					list.Right = false;
+				}
+
+				else if (list.y2 > 1)
+				{
+					list.y1 -= 0.01;
+					list.y2 -= 0.01;
+
+					list.Up = false;
+				}
+			}
+
+			else if (!list.Right && list.Up)
+			{
+				list.x1 -= 0.01;
+				list.y1 += 0.01;
+				list.x2 -= 0.01;
+				list.y2 += 0.01;
+
+				if (list.x1 < -1 && list.y2 > 1)
+				{
+					list.x1 += 0.01;
+					list.y1 -= 0.01;
+					list.x2 += 0.01;
+					list.y2 -= 0.01;
+
+					list.Right = true;
+					list.Up = false;
+				}
+
+				else if (list.x1 < -1)
+				{
+					list.x1 += 0.01;
+					list.x2 += 0.01;
+
+					list.Right = true;
+				}
+
+				else if (list.y2 > 1)
+				{
+					list.y1 -= 0.01;
+					list.y2 -= 0.01;
+
+					list.Up = false;
+				}
+			}
+
+			else if (list.Right && !list.Up)
+			{
+				list.x1 += 0.01;
+				list.y1 -= 0.01;
+				list.x2 += 0.01;
+				list.y2 -= 0.01;
+
+				if (list.x2 > 1 && list.y1 < -1)
+				{
+					list.x1 -= 0.01;
+					list.y1 += 0.01;
+					list.x2 -= 0.01;
+					list.y2 += 0.01;
+
+					list.Right = false;
+					list.Up = true;
+				}
+
+				else if (list.x2 > 1)
+				{
+					list.x1 -= 0.01;
+					list.x2 -= 0.01;
+
+					list.Right = false;
+				}
+
+				else if (list.y1 < -1)
+				{
+					list.y1 += 0.01;
+					list.y2 += 0.01;
+
+					list.Up = true;
+				}
+			}
+
+			else if (!list.Right && !list.Up)
+			{
+				list.x1 -= 0.01;
+				list.y1 -= 0.01;
+				list.x2 -= 0.01;
+				list.y2 -= 0.01;
+
+				if (list.x1 < -1 && list.y1 < -1)
+				{
+					list.x1 += 0.01;
+					list.y1 += 0.01;
+					list.x2 += 0.01;
+					list.y2 += 0.01;
+
+					list.Right = true;
+					list.Up = true;
+				}
+
+				else if (list.x1 < -1)
+				{
+					list.x1 += 0.01;
+					list.x2 += 0.01;
+
+					list.Right = true;
+				}
+
+				else if (list.y1 < -1)
+				{
+					list.y1 += 0.01;
+					list.y2 += 0.01;
+
+					list.Up = true;
+				}
 			}
 		}
 
 		glutTimerFunc(10, TimerFunction, 1);
+	}
+
+	if (value == 3 && three)
+	{
+		for (auto& list : rect)
+		{
+			list.x1 -= fea(mt);
+			list.y1 += fea(mt);
+			list.x2 += fea(mt);
+			list.y2 += fea(mt);
+		}
+
+		glutTimerFunc(200, TimerFunction, 3);
 	}
 
 	if (value == 4 && four)
