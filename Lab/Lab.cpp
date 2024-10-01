@@ -6,6 +6,9 @@
 #include <vector>
 #include <algorithm>
 
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define MAX(a, b) (((a) > (b)) ? (a) : (b))
+
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
@@ -37,7 +40,7 @@ struct Rect
 
 }typedef Rect;
 
-Rect temp = {}, check = {};
+Rect temp = {}, check = {}, die = {};
 
 std::vector<Rect> rect;
 
@@ -123,16 +126,21 @@ GLvoid Mouse(int button, int state, int x, int y)
 		{
 			if (check.x1 < iter->x2 && check.y1 < iter->y2 && check.x2 > iter->x1 && check.y2 > iter->y1 && check.x1 != iter->x1 && check.y1 != iter->y1 && check.x2 != iter->x2 && check.y2 != iter->y2)
 			{
+				die.x1 = iter->x1;
+				die.y1 = iter->y1;
+				die.x2 = iter->x2;
+				die.y2 = iter->y2;
+
 				iter = rect.erase(iter);
 
 				for (auto& list : rect)
 				{
 					if (check.x1 == list.x1 && check.y1 == list.y1 && check.x2 == list.x2 && check.y2 == list.y2)
 					{
-						list.x1 -= 0.1;
-						list.y1 -= 0.1;
-						list.x2 += 0.1;
-						list.y2 += 0.1;
+						list.x1 = MIN(die.x1, list.x1);
+						list.y1 = MIN(die.y1, list.y1);
+						list.x2 = MAX(die.x2, list.x2);
+						list.y2 = MAX(die.y2, list.y2);
 					}
 				}
 
