@@ -8,21 +8,20 @@
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
-GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid Mouse(int button, int state, int x, int y);
-GLvoid Motion(int x, int y);
+GLvoid TimerFunction(int value);
 
 std::random_device rd;
 std::mt19937 mt(rd());
-std::uniform_int_distribution<int> start(20, 40);
+std::uniform_int_distribution<int> start(5, 10);
+std::uniform_int_distribution<int> chance(0, 3);
 std::uniform_real_distribution<float> dis(0, 1);
-std::uniform_real_distribution<float> fea(-1, 0.9);
+std::uniform_real_distribution<float> fea(-1, 0.6);
+std::uniform_real_distribution<float> mut(0.2, 0.4);
 
 float R = 1.0, G = 1.0, B = 1.0;
 
-float ox = 0, oy = 0, kill = 0.1;
-
-bool execute;
+float ox = 0, oy = 0, fire;
 
 struct Rect
 {
@@ -36,7 +35,7 @@ struct Rect
 
 }typedef Rect;
 
-Rect temp = {}, eraser = {};
+Rect temp = {};
 
 std::vector<Rect> rect;
 
@@ -50,6 +49,23 @@ int main(int argc, char** argv)
 	glutInitWindowSize(800, 800);
 	glutCreateWindow("Example");
 
+	ran = start(mt);
+
+	for (int i = 0; i < ran; i++)
+	{
+		fire = mut(mt);
+
+		temp.x1 = fea(mt);
+		temp.y1 = fea(mt);
+		temp.x2 = temp.x1 + fire;
+		temp.y2 = temp.y1 + fire;
+		temp.R = dis(mt);
+		temp.G = dis(mt);
+		temp.B = dis(mt);
+
+		rect.push_back(temp);
+	}
+
 	glewExperimental = GL_TRUE;
 
 	if (glewInit() != GLEW_OK)
@@ -61,9 +77,7 @@ int main(int argc, char** argv)
 		std::cout << "GLEW Initialized\n";
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
-	glutKeyboardFunc(Keyboard);
 	glutMouseFunc(Mouse);
-	glutMotionFunc(Motion);
 	glutMainLoop();
 }
 
@@ -78,53 +92,12 @@ GLvoid drawScene()
 		glRectf(list.x1, list.y1, list.x2, list.y2);
 	}
 
-	if (execute)
-	{
-		glColor3f(eraser.R, eraser.G, eraser.B);
-		glRectf(eraser.x1, eraser.y1, eraser.x2, eraser.y2);
-	}
-
 	glutSwapBuffers();
 }
 
 GLvoid Reshape(int w, int h)
 {
 	glViewport(0, 0, w, h);
-}
-
-GLvoid Keyboard(unsigned char key, int x, int y)
-{
-	switch (key)
-	{
-	case 'r':
-		for (auto iter = rect.begin(); iter != rect.end();)
-		{
-			iter = rect.erase(iter);
-		}
-
-		ran = start(mt);
-
-		for (int i = 0; i < ran; i++)
-		{
-			temp.x1 = fea(mt);
-			temp.y1 = fea(mt);
-			temp.x2 = temp.x1 + 0.1;
-			temp.y2 = temp.y1 + 0.1;
-			temp.R = dis(mt);
-			temp.G = dis(mt);
-			temp.B = dis(mt);
-
-			rect.push_back(temp);
-		}
-
-		kill = 0.1;
-		break;
-	case 'q':
-		glutLeaveMainLoop();
-		break;
-	}
-
-	glutPostRedisplay();
 }
 
 GLvoid Mouse(int button, int state, int x, int y)
@@ -134,45 +107,11 @@ GLvoid Mouse(int button, int state, int x, int y)
 
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-		execute = true;
-	}
-
-	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
-	{
-		execute = false;
-
-		eraser.R = 0.0, eraser.G = 0.0, eraser.B = 0.0;
+		
 	}
 }
 
-GLvoid Motion(int x, int y)
+GLvoid TimerFunction(int value)
 {
-	ox = (float)(x - 400.0) / 400.0;
-	oy = -(float)(y - 400.0) / 400.0;
-
-	eraser.x1 = ox - kill;
-	eraser.y1 = oy - kill;
-	eraser.x2 = ox + kill;
-	eraser.y2 = oy + kill;
-
-	for (auto iter = rect.begin(); iter != rect.end();)
-	{
-		if (eraser.x1 < iter->x2 && eraser.y1 < iter->y2 && eraser.x2 > iter->x1 && eraser.y2 > iter->y1)
-		{
-			eraser.R = iter->R;
-			eraser.G = iter->G;
-			eraser.B = iter->B;
-
-			iter = rect.erase(iter);
-
-			kill += 0.025;
-		}
-
-		else
-		{
-			++iter;
-		}
-	}
-
-	glutPostRedisplay();
+	
 }
