@@ -50,6 +50,21 @@ int main(int argc, char** argv)
 	glutInitWindowSize(800, 800);
 	glutCreateWindow("Example");
 
+	ran = start(mt);
+
+	for (int i = 0; i < ran; i++)
+	{
+		temp.x1 = fea(mt);
+		temp.y1 = fea(mt);
+		temp.x2 = temp.x1 + 0.1;
+		temp.y2 = temp.y1 + 0.1;
+		temp.R = dis(mt);
+		temp.G = dis(mt);
+		temp.B = dis(mt);
+
+		rect.push_back(temp);
+	}
+
 	glewExperimental = GL_TRUE;
 
 	if (glewInit() != GLEW_OK)
