@@ -5,26 +5,24 @@
 #include <random>
 #include <vector>
 #include <algorithm>
-#include <cmath>
 
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid Mouse(int button, int state, int x, int y);
-GLvoid TimerFunction(int value);
+GLvoid Motion(int x, int y);
 
 std::random_device rd;
 std::mt19937 mt(rd());
+std::uniform_int_distribution<int> start(20, 40);
 std::uniform_real_distribution<float> dis(0, 1);
-std::uniform_real_distribution<float> fea(-0.1, 0.1);
+std::uniform_real_distribution<float> fea(-1, 0.9);
 
-int max = 0;
+float R = 1.0, G = 1.0, B = 1.0;
 
-float R = 0.2, G = 0.2, B = 0.2;
+float ox = 0, oy = 0, kill = 0.1;
 
-float ox = 0, oy = 0, justice = 0;
-
-bool one, two, three, four;
+bool execute;
 
 struct Rect
 {
@@ -32,21 +30,17 @@ struct Rect
 	float y1;
 	float x2;
 	float y2;
-	float ox1;
-	float oy1;
-	float ox2;
-	float oy2;
 	float R;
 	float G;
 	float B;
-	bool Right;
-	bool Up;
 
 }typedef Rect;
 
-Rect temp = {};
+Rect temp = {}, eraser = {};
 
 std::vector<Rect> rect;
+
+int ran = 0;
 
 int main(int argc, char** argv)
 {
@@ -69,6 +63,7 @@ int main(int argc, char** argv)
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(Keyboard);
 	glutMouseFunc(Mouse);
+	glutMotionFunc(Motion);
 	glutMainLoop();
 }
 
@@ -83,6 +78,12 @@ GLvoid drawScene()
 		glRectf(list.x1, list.y1, list.x2, list.y2);
 	}
 
+	if (execute)
+	{
+		glColor3f(eraser.R, eraser.G, eraser.B);
+		glRectf(eraser.x1, eraser.y1, eraser.x2, eraser.y2);
+	}
+
 	glutSwapBuffers();
 }
 
@@ -95,78 +96,28 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-	case '1':
-		if (!one)
-		{
-			glutTimerFunc(10, TimerFunction, 1);
-			one = true;
-		}
-
-		else if (one)
-		{
-			one = false;
-		}
-		break;
-	case '2':
-		if (!two)
-		{
-			glutTimerFunc(10, TimerFunction, 2);
-			two = true;
-		}
-
-		else if (two)
-		{
-			two = false;
-		}
-		break;
-	case '3':
-		if (!three)
-		{
-			glutTimerFunc(200, TimerFunction, 3);
-			three = true;
-		}
-
-		else if (three)
-		{
-			three = false;
-		}
-		break;
-	case '4':
-		if (!four)
-		{
-			glutTimerFunc(100, TimerFunction, 4);
-			four = true;
-		}
-
-		else if (four)
-		{
-			four = false;
-		}
-		break;
-	case 's':
-		one = false;
-		two = false;
-		three = false;
-		four = false;
-		break;
-
-	case 'm':
-		for (auto& list : rect)
-		{
-			list.x1 = list.ox1;
-			list.y1 = list.oy1;
-			list.x2 = list.ox2;
-			list.y2 = list.oy2;
-		}
-		break;
 	case 'r':
 		for (auto iter = rect.begin(); iter != rect.end();)
 		{
 			iter = rect.erase(iter);
-
-			max = 0;
 		}
 
+		ran = start(mt);
+
+		for (int i = 0; i < ran; i++)
+		{
+			temp.x1 = fea(mt);
+			temp.y1 = fea(mt);
+			temp.x2 = temp.x1 + 0.1;
+			temp.y2 = temp.y1 + 0.1;
+			temp.R = dis(mt);
+			temp.G = dis(mt);
+			temp.B = dis(mt);
+
+			rect.push_back(temp);
+		}
+
+		kill = 0.1;
 		break;
 	case 'q':
 		glutLeaveMainLoop();
@@ -183,311 +134,44 @@ GLvoid Mouse(int button, int state, int x, int y)
 
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-		if (max < 5)
-		{
-			temp.x1 = ox - 0.1;
-			temp.y1 = oy - 0.1;
-			temp.x2 = ox + 0.1;
-			temp.y2 = oy + 0.1;
-			temp.ox1 = ox - 0.1;
-			temp.oy1 = oy - 0.1;
-			temp.ox2 = ox + 0.1;
-			temp.oy2 = oy + 0.1;
-			temp.R = dis(mt);
-			temp.G = dis(mt);
-			temp.B = dis(mt);
-			temp.Right = true;
-			temp.Up = true;
+		execute = true;
+	}
 
-			max++;
+	else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+	{
+		execute = false;
 
-			rect.push_back(temp);
-		}
+		eraser.R = 0.0, eraser.G = 0.0, eraser.B = 0.0;
 	}
 }
 
-GLvoid TimerFunction(int value)
+GLvoid Motion(int x, int y)
 {
-	if (value == 1 && one)
+	ox = (float)(x - 400.0) / 400.0;
+	oy = -(float)(y - 400.0) / 400.0;
+
+	eraser.x1 = ox - kill;
+	eraser.y1 = oy - kill;
+	eraser.x2 = ox + kill;
+	eraser.y2 = oy + kill;
+
+	for (auto iter = rect.begin(); iter != rect.end();)
 	{
-		for (auto& list : rect)
+		if (eraser.x1 < iter->x2 && eraser.y1 < iter->y2 && eraser.x2 > iter->x1 && eraser.y2 > iter->y1)
 		{
-			if (list.Right && list.Up)
-			{
-				list.x1 += 0.01;
-				list.y1 += 0.01;
-				list.x2 += 0.01;
-				list.y2 += 0.01;
+			eraser.R = iter->R;
+			eraser.G = iter->G;
+			eraser.B = iter->B;
 
-				if (list.x2 > 1 && list.y2 > 1)
-				{
-					list.x1 -= 0.01;
-					list.y1 -= 0.01;
-					list.x2 -= 0.01;
-					list.y2 -= 0.01;
+			iter = rect.erase(iter);
 
-					list.Right = false;
-					list.Up = false;
-				}
-				
-				else if (list.x2 > 1)
-				{
-					list.x1 -= 0.01;
-					list.x2 -= 0.01;
-
-					list.Right = false;
-				}
-
-				else if (list.y2 > 1)
-				{
-					list.y1 -= 0.01;
-					list.y2 -= 0.01;
-
-					list.Up = false;
-				}
-			}
-
-			else if (!list.Right && list.Up)
-			{
-				list.x1 -= 0.01;
-				list.y1 += 0.01;
-				list.x2 -= 0.01;
-				list.y2 += 0.01;
-
-				if (list.x1 < -1 && list.y2 > 1)
-				{
-					list.x1 += 0.01;
-					list.y1 -= 0.01;
-					list.x2 += 0.01;
-					list.y2 -= 0.01;
-
-					list.Right = true;
-					list.Up = false;
-				}
-
-				else if (list.x1 < -1)
-				{
-					list.x1 += 0.01;
-					list.x2 += 0.01;
-
-					list.Right = true;
-				}
-
-				else if (list.y2 > 1)
-				{
-					list.y1 -= 0.01;
-					list.y2 -= 0.01;
-
-					list.Up = false;
-				}
-			}
-
-			else if (list.Right && !list.Up)
-			{
-				list.x1 += 0.01;
-				list.y1 -= 0.01;
-				list.x2 += 0.01;
-				list.y2 -= 0.01;
-
-				if (list.x2 > 1 && list.y1 < -1)
-				{
-					list.x1 -= 0.01;
-					list.y1 += 0.01;
-					list.x2 -= 0.01;
-					list.y2 += 0.01;
-
-					list.Right = false;
-					list.Up = true;
-				}
-
-				else if (list.x2 > 1)
-				{
-					list.x1 -= 0.01;
-					list.x2 -= 0.01;
-
-					list.Right = false;
-				}
-
-				else if (list.y1 < -1)
-				{
-					list.y1 += 0.01;
-					list.y2 += 0.01;
-
-					list.Up = true;
-				}
-			}
-
-			else if (!list.Right && !list.Up)
-			{
-				list.x1 -= 0.01;
-				list.y1 -= 0.01;
-				list.x2 -= 0.01;
-				list.y2 -= 0.01;
-
-				if (list.x1 < -1 && list.y1 < -1)
-				{
-					list.x1 += 0.01;
-					list.y1 += 0.01;
-					list.x2 += 0.01;
-					list.y2 += 0.01;
-
-					list.Right = true;
-					list.Up = true;
-				}
-
-				else if (list.x1 < -1)
-				{
-					list.x1 += 0.01;
-					list.x2 += 0.01;
-
-					list.Right = true;
-				}
-
-				else if (list.y1 < -1)
-				{
-					list.y1 += 0.01;
-					list.y2 += 0.01;
-
-					list.Up = true;
-				}
-			}
+			kill += 0.025;
 		}
 
-		glutTimerFunc(10, TimerFunction, 1);
-	}
-
-	if (value == 2 && two)
-	{
-		for (auto& list : rect)
+		else
 		{
-			if (list.Right)
-			{
-				list.x1 += 0.01;
-				list.x2 += 0.01;
-
-				if (list.x2 > 1 && list.Up)
-				{
-					list.x1 -= 0.01;
-					list.y1 += 0.1;
-					list.x2 -= 0.01;
-					list.y2 += 0.1;
-
-					list.Right = false;
-
-					if (list.y2 > 1)
-					{
-						list.y1 -= 0.1;
-						list.y2 -= 0.1;
-
-						list.Up = false;
-					}
-				}
-
-				else if (list.x2 > 1 && !list.Up)
-				{
-					list.x1 -= 0.01;
-					list.y1 -= 0.1;
-					list.x2 -= 0.01;
-					list.y2 -= 0.1;
-
-					list.Right = false;
-
-					if (list.y2 > 1)
-					{
-						list.y1 += 0.1;
-						list.y2 += 0.1;
-
-						list.Up = true;
-					}
-				}
-			}
-
-			else if (!list.Right)
-			{
-				list.x1 -= 0.01;
-				list.x2 -= 0.01;
-
-				if (list.x1 < -1 && list.Up)
-				{
-					list.x1 += 0.01;
-					list.y1 += 0.1;
-					list.x2 += 0.01;
-					list.y2 += 0.1;
-
-					list.Right = false;
-
-					if (list.y2 > 1)
-					{
-						list.y1 -= 0.1;
-						list.y2 -= 0.1;
-
-						list.Up = false;
-					}
-				}
-
-				else if (list.x1 < -1 && !list.Up)
-				{
-					list.x1 += 0.01;
-					list.y1 -= 0.1;
-					list.x2 += 0.01;
-					list.y2 -= 0.1;
-
-					list.Right = false;
-
-					if (list.y2 > 1)
-					{
-						list.y1 += 0.1;
-						list.y2 += 0.1;
-
-						list.Up = true;
-					}
-				}
-			}
+			++iter;
 		}
-
-		glutTimerFunc(10, TimerFunction, 2);
-	}
-
-	if (value == 3 && three)
-	{
-		for (auto& list : rect)
-		{
-			list.x1 -= fea(mt);
-			list.y1 -= fea(mt);
-			list.x2 += fea(mt);
-			list.y2 += fea(mt);
-
-			if (list.x1 > list.x2)
-			{
-				justice = list.x2;
-				list.x2 = list.x1;
-				list.x1 = justice;
-			}
-
-			if (list.y1 > list.y2)
-			{
-				justice = list.y2;
-				list.y2 = list.y1;
-				list.y1 = justice;
-			}
-
-			list.ox1 = list.x1;
-			list.oy1 = list.y1;
-			list.ox2 = list.x2;
-			list.oy2 = list.y2;;
-		}
-
-		glutTimerFunc(200, TimerFunction, 3);
-	}
-
-	if (value == 4 && four)
-	{
-		for (auto& list : rect)
-		{
-			list.R = dis(mt), list.B = dis(mt), list.G = dis(mt);
-		}
-
-		glutTimerFunc(100, TimerFunction, 4);
 	}
 
 	glutPostRedisplay();
