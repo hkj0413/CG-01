@@ -107,7 +107,18 @@ GLvoid Mouse(int button, int state, int x, int y)
 
 	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-		
+		for (auto iter = rect.begin(); iter != rect.end();)
+		{
+			if (ox > iter->x1 && oy > iter->y1 && ox < iter->x2 && oy < iter->y2)
+			{
+				iter = rect.erase(iter);
+			}
+
+			else
+			{
+				++iter;
+			}
+		}
 	}
 }
 
