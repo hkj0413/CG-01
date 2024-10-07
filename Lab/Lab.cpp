@@ -19,7 +19,7 @@ float halfmoon(float x, float y);
 std::random_device rd;
 std::mt19937 mt(rd());
 std::uniform_int_distribution<int> start(5, 10);
-std::uniform_int_distribution<int> chance(1, 4);
+std::uniform_int_distribution<int> chance(2, 3);
 std::uniform_real_distribution<float> dis(0, 1);
 std::uniform_real_distribution<float> fea(-1, 0.6);
 std::uniform_real_distribution<float> mut(0.2, 0.4);
@@ -183,7 +183,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 					temp.R = iter->R;
 					temp.G = iter->G;
 					temp.B = iter->B;
-					temp.state = 1;
+					temp.state = 5;
 
 					alpha.push_back(temp);
 
@@ -194,7 +194,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 					temp.R = iter->R;
 					temp.G = iter->G;
 					temp.B = iter->B;
-					temp.state = 2;
+					temp.state = 6;
 
 					alpha.push_back(temp);
 
@@ -205,7 +205,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 					temp.R = iter->R;
 					temp.G = iter->G;
 					temp.B = iter->B;
-					temp.state = 3;
+					temp.state = 7;
 
 					alpha.push_back(temp);
 
@@ -216,7 +216,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 					temp.R = iter->R;
 					temp.G = iter->G;
 					temp.B = iter->B;
-					temp.state = 4;
+					temp.state = 8;
 
 					alpha.push_back(temp);
 				}
@@ -383,6 +383,58 @@ GLvoid TimerFunction(int value)
 
 				iter->x1 += 0.005;
 				iter->x2 += 0.005;
+			}
+
+			else if (iter->state == 5)
+			{
+				iter->x1 += 0.0005;
+				iter->y1 += 0.0005;
+				iter->x2 -= 0.0005;
+				iter->y2 -= 0.0005;
+
+				iter->x1 -= 0.005;
+				iter->y1 += 0.005;
+				iter->x2 -= 0.005;
+				iter->y2 += 0.005;
+			}
+
+			else if (iter->state == 6)
+			{
+				iter->x1 += 0.0005;
+				iter->y1 += 0.0005;
+				iter->x2 -= 0.0005;
+				iter->y2 -= 0.0005;
+
+				iter->x1 += 0.005;
+				iter->y1 += 0.005;
+				iter->x2 += 0.005;
+				iter->y2 += 0.005;
+			}
+
+			else if (iter->state == 7)
+			{
+				iter->x1 += 0.0005;
+				iter->y1 += 0.0005;
+				iter->x2 -= 0.0005;
+				iter->y2 -= 0.0005;
+
+				iter->x1 -= 0.005;
+				iter->y1 -= 0.005;
+				iter->x2 -= 0.005;
+				iter->y2 -= 0.005;
+			}
+
+			else if (iter->state == 8)
+			{
+				iter->x1 += 0.0005;
+				iter->y1 += 0.0005;
+				iter->x2 -= 0.0005;
+				iter->y2 -= 0.0005;
+
+				iter->x1 += 0.005;
+				iter->y1 -= 0.005;
+				iter->x2 += 0.005;
+				iter->y2 -= 0.005;
 			}
 
 			++iter;
