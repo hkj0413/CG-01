@@ -19,7 +19,7 @@ float halfmoon(float x, float y);
 std::random_device rd;
 std::mt19937 mt(rd());
 std::uniform_int_distribution<int> start(5, 10);
-std::uniform_int_distribution<int> chance(0, 3);
+std::uniform_int_distribution<int> chance(1, 4);
 std::uniform_real_distribution<float> dis(0, 1);
 std::uniform_real_distribution<float> fea(-1, 0.6);
 std::uniform_real_distribution<float> mut(0.2, 0.4);
@@ -127,7 +127,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 			{
 				meteor = chance(mt);
 
-				if (meteor == 0)
+				if (meteor == 1)
 				{
 					temp.x1 = iter->x1;
 					temp.y1 = halfmoon(iter->y1, iter->y2);
@@ -174,53 +174,6 @@ GLvoid Mouse(int button, int state, int x, int y)
 					alpha.push_back(temp);
 				}
 				
-				else if (meteor == 1)
-				{
-					temp.x1 = iter->x1;
-					temp.y1 = halfmoon(iter->y1, iter->y2);
-					temp.x2 = halfmoon(iter->x1, iter->x2);
-					temp.y2 = iter->y2;
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 1;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(iter->x1, iter->x2);
-					temp.y1 = halfmoon(iter->y1, iter->y2);
-					temp.x2 = iter->x2;
-					temp.y2 = iter->y2;
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 2;
-
-					alpha.push_back(temp);
-
-					temp.x1 = iter->x1;
-					temp.y1 = iter->y1;
-					temp.x2 = halfmoon(iter->x1, iter->x2);
-					temp.y2 = halfmoon(iter->y1, iter->y2);
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 3;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(iter->x1, iter->x2);
-					temp.y1 = iter->y1;
-					temp.x2 = iter->x2;
-					temp.y2 = halfmoon(iter->y1, iter->y2);
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 4;
-
-					alpha.push_back(temp);
-				}
-
 				else if (meteor == 2)
 				{
 					temp.x1 = iter->x1;
@@ -269,6 +222,55 @@ GLvoid Mouse(int button, int state, int x, int y)
 				}
 
 				else if (meteor == 3)
+				{
+					meteor = chance(mt);
+
+					temp.x1 = iter->x1;
+					temp.y1 = halfmoon(iter->y1, iter->y2);
+					temp.x2 = halfmoon(iter->x1, iter->x2);
+					temp.y2 = iter->y2;
+					temp.R = iter->R;
+					temp.G = iter->G;
+					temp.B = iter->B;
+					temp.state = meteor;
+
+					alpha.push_back(temp);
+
+					temp.x1 = halfmoon(iter->x1, iter->x2);
+					temp.y1 = halfmoon(iter->y1, iter->y2);
+					temp.x2 = iter->x2;
+					temp.y2 = iter->y2;
+					temp.R = iter->R;
+					temp.G = iter->G;
+					temp.B = iter->B;
+					temp.state = meteor;
+
+					alpha.push_back(temp);
+
+					temp.x1 = iter->x1;
+					temp.y1 = iter->y1;
+					temp.x2 = halfmoon(iter->x1, iter->x2);
+					temp.y2 = halfmoon(iter->y1, iter->y2);
+					temp.R = iter->R;
+					temp.G = iter->G;
+					temp.B = iter->B;
+					temp.state = meteor;
+
+					alpha.push_back(temp);
+
+					temp.x1 = halfmoon(iter->x1, iter->x2);
+					temp.y1 = iter->y1;
+					temp.x2 = iter->x2;
+					temp.y2 = halfmoon(iter->y1, iter->y2);
+					temp.R = iter->R;
+					temp.G = iter->G;
+					temp.B = iter->B;
+					temp.state = meteor;
+
+					alpha.push_back(temp);
+				}
+
+				else if (meteor == 4)
 				{
 					temp.x1 = iter->x1;
 					temp.y1 = halfmoon(iter->y1, iter->y2);
@@ -332,7 +334,7 @@ GLvoid TimerFunction(int value)
 {
 	for (auto iter = alpha.begin(); iter != alpha.end();)
 	{
-		if ((MAX(abs(iter->x1), abs(iter->x2))) - abs(halfmoon(iter->x1, iter->x2)) < 0.025)
+		if ((MAX(abs(iter->x1), abs(iter->x2))) - abs(halfmoon(iter->x1, iter->x2)) < 0.01)
 		{
 			iter = alpha.erase(iter);
 		}
