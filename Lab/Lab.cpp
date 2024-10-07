@@ -1,78 +1,39 @@
+#define _CRT_SECURE_NO_WARNINGS 
+#include <stdlib.h>
+#include <stdio.h>
 #include <iostream>
 #include <gl/glew.h>
 #include <gl/freeglut.h>
 #include <gl/freeglut_ext.h>
-#include <random>
-#include <vector>
-#include <algorithm>
-#include <cmath>
 
-#define MAX(a, b) (((a) > (b)) ? (a) : (b))
-
+void InitBuffer();
+void make_vertexShaders();
+void make_fragmentShaders();
+GLuint make_shaderProgram();
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
-GLvoid Mouse(int button, int state, int x, int y);
-GLvoid TimerFunction(int value);
 
-float halfmoon(float x, float y);
+GLint width, height;
+GLuint shaderProgramID;
+GLuint vertexShader;
+GLuint fragmentShader;
 
-std::random_device rd;
-std::mt19937 mt(rd());
-std::uniform_int_distribution<int> start(5, 10);
-std::uniform_int_distribution<int> chance(1, 4);
-std::uniform_real_distribution<float> dis(0, 1);
-std::uniform_real_distribution<float> fea(-1, 0.6);
-std::uniform_real_distribution<float> mut(0.2, 0.4);
+char* filetobuf(const char* file);
 
-float R = 1.0, G = 1.0, B = 1.0;
-
-float ox = 0.0, oy = 0.0, fire = 0.0, meteor = 0.0;
-
-struct Rect
-{
-	float x1;
-	float y1;
-	float x2;
-	float y2;
-	float R;
-	float G;
-	float B;
-	int state;
-
-}typedef Rect;
-
-Rect temp = {};
-
-std::vector<Rect> rect, alpha;
-
-int ran = 0;
+const GLfloat vPositionList[5][3] = { { -0.5, 0.5, 0.0 }, { -0.5, -0.5, 0.0 }, { 0.5, -0.5, 0.0 }, { 0.5, 0.5, 0.0 }, { 1.0, -0.5, 0.0 } };
+const GLint index[3][3] = { { 0, 1, 3 }, { 1, 2, 3} ,{ 2, 3, 4 } };
+const GLfloat colors[3][3] = { {  1.0,  0.0,  0.0  }, {  0.0,  1.0,  0.0  }, {  0.0,  0.0,  1.0  } };
+GLuint VAO, VBO_pos[2], EBO;
 
 int main(int argc, char** argv)
 {
+	width = 800;
+	height = 800;
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowPosition(0, 0);
-	glutInitWindowSize(800, 800);
+	glutInitWindowSize(width, height);
 	glutCreateWindow("Example");
-
-	ran = start(mt);
-
-	for (int i = 0; i < ran; i++)
-	{
-		fire = mut(mt);
-
-		temp.x1 = fea(mt);
-		temp.y1 = fea(mt);
-		temp.x2 = temp.x1 + fire;
-		temp.y2 = temp.y1 + fire;
-		temp.R = dis(mt);
-		temp.G = dis(mt);
-		temp.B = dis(mt);
-
-		rect.push_back(temp);
-	}
-
-	glutTimerFunc(10, TimerFunction, 1);
 
 	glewExperimental = GL_TRUE;
 
@@ -83,28 +44,27 @@ int main(int argc, char** argv)
 	}
 	else
 		std::cout << "GLEW Initialized\n";
+
+	InitBuffer();
+	make_vertexShaders();
+	make_fragmentShaders();
+	shaderProgramID = make_shaderProgram();
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
-	glutMouseFunc(Mouse);
 	glutMainLoop();
 }
 
 GLvoid drawScene()
 {
-	glClearColor(R, G, B, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	GLfloat rColor, gColor, bColor;
 
-	for (auto& list : rect)
-	{
-		glColor3f(list.R, list.G, list.B);
-		glRectf(list.x1, list.y1, list.x2, list.y2);
-	}
+	rColor = bColor = gColor = 1.0;
+	glClearColor(rColor, gColor, bColor, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(shaderProgramID);
+	glBindVertexArray(VAO);
 
-	for (auto& list : alpha)
-	{
-		glColor3f(list.R, list.G, list.B);
-		glRectf(list.x1, list.y1, list.x2, list.y2);
-	}
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * 0));
 
 	glutSwapBuffers();
 }
@@ -114,416 +74,98 @@ GLvoid Reshape(int w, int h)
 	glViewport(0, 0, w, h);
 }
 
-GLvoid Mouse(int button, int state, int x, int y)
+void InitBuffer()
 {
-	ox = (float)(x - 400.0) / 400.0;
-	oy = -(float)(y - 400.0) / 400.0;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	glGenBuffers(2, VBO_pos);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_pos[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vPositionList), vPositionList, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glGenBuffers(1, &EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(index), index, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_pos[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(1);
+}
 
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+void make_vertexShaders()
+{
+	GLchar* vertexSource;
+	vertexSource = filetobuf("vertex.glsl");
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexSource, NULL);
+	glCompileShader(vertexShader);
+	GLint result;
+	GLchar errorLog[512];
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &result);
+	if (!result)
 	{
-		for (auto iter = rect.begin(); iter != rect.end();)
-		{
-			if (ox > iter->x1 && oy > iter->y1 && ox < iter->x2 && oy < iter->y2)
-			{
-				meteor = chance(mt);
-
-				if (meteor == 1)
-				{
-					temp.x1 = iter->x1;
-					temp.y1 = halfmoon(iter->y1, iter->y2);
-					temp.x2 = halfmoon(iter->x1, iter->x2);
-					temp.y2 = iter->y2;
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 1;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(iter->x1, iter->x2);
-					temp.y1 = halfmoon(iter->y1, iter->y2);
-					temp.x2 = iter->x2;
-					temp.y2 = iter->y2;
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 2;
-
-					alpha.push_back(temp);
-
-					temp.x1 = iter->x1;
-					temp.y1 = iter->y1;
-					temp.x2 = halfmoon(iter->x1, iter->x2);
-					temp.y2 = halfmoon(iter->y1, iter->y2);
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 3;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(iter->x1, iter->x2);
-					temp.y1 = iter->y1;
-					temp.x2 = iter->x2;
-					temp.y2 = halfmoon(iter->y1, iter->y2);
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 4;
-
-					alpha.push_back(temp);
-				}
-				
-				else if (meteor == 2)
-				{
-					temp.x1 = iter->x1;
-					temp.y1 = halfmoon(iter->y1, iter->y2);
-					temp.x2 = halfmoon(iter->x1, iter->x2);
-					temp.y2 = iter->y2;
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 5;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(iter->x1, iter->x2);
-					temp.y1 = halfmoon(iter->y1, iter->y2);
-					temp.x2 = iter->x2;
-					temp.y2 = iter->y2;
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 6;
-
-					alpha.push_back(temp);
-
-					temp.x1 = iter->x1;
-					temp.y1 = iter->y1;
-					temp.x2 = halfmoon(iter->x1, iter->x2);
-					temp.y2 = halfmoon(iter->y1, iter->y2);
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 7;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(iter->x1, iter->x2);
-					temp.y1 = iter->y1;
-					temp.x2 = iter->x2;
-					temp.y2 = halfmoon(iter->y1, iter->y2);
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 8;
-
-					alpha.push_back(temp);
-				}
-
-				else if (meteor == 3)
-				{
-					meteor = chance(mt);
-
-					temp.x1 = iter->x1;
-					temp.y1 = halfmoon(iter->y1, iter->y2);
-					temp.x2 = halfmoon(iter->x1, iter->x2);
-					temp.y2 = iter->y2;
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = meteor;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(iter->x1, iter->x2);
-					temp.y1 = halfmoon(iter->y1, iter->y2);
-					temp.x2 = iter->x2;
-					temp.y2 = iter->y2;
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = meteor;
-
-					alpha.push_back(temp);
-
-					temp.x1 = iter->x1;
-					temp.y1 = iter->y1;
-					temp.x2 = halfmoon(iter->x1, iter->x2);
-					temp.y2 = halfmoon(iter->y1, iter->y2);
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = meteor;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(iter->x1, iter->x2);
-					temp.y1 = iter->y1;
-					temp.x2 = iter->x2;
-					temp.y2 = halfmoon(iter->y1, iter->y2);
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = meteor;
-
-					alpha.push_back(temp);
-				}
-
-				else if (meteor == 4)
-				{
-					temp.x1 = iter->x1;
-					temp.y1 = halfmoon(iter->y1, iter->y2);
-					temp.x2 = halfmoon(iter->x1, halfmoon(iter->x1, iter->x2));
-					temp.y2 = iter->y2;
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 1;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(iter->x1, halfmoon(iter->x1, iter->x2));
-					temp.y1 = halfmoon(iter->y1, iter->y2);
-					temp.x2 = halfmoon(iter->x1, iter->x2);
-					temp.y2 = iter->y2;
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 5;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(iter->x1, iter->x2);
-					temp.y1 = halfmoon(iter->y1, iter->y2);
-					temp.x2 = halfmoon(halfmoon(iter->x1, iter->x2), iter->x2);
-					temp.y2 = iter->y2;
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 2;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(halfmoon(iter->x1, iter->x2), iter->x2);
-					temp.y1 = halfmoon(iter->y1, iter->y2);
-					temp.x2 = iter->x2;
-					temp.y2 = iter->y2;
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 6;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(iter->x1, halfmoon(iter->x1, iter->x2));
-					temp.y1 = iter->y1;
-					temp.x2 = halfmoon(iter->x1, iter->x2);
-					temp.y2 = halfmoon(iter->y1, iter->y2);
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 3;
-
-					alpha.push_back(temp);
-
-					temp.x1 = iter->x1;
-					temp.y1 = iter->y1;
-					temp.x2 = halfmoon(iter->x1, halfmoon(iter->x1, iter->x2));
-					temp.y2 = halfmoon(iter->y1, iter->y2);
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 7;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(halfmoon(iter->x1, iter->x2), iter->x2);
-					temp.y1 = iter->y1;
-					temp.x2 = iter->x2;
-					temp.y2 = halfmoon(iter->y1, iter->y2);
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 4;
-
-					alpha.push_back(temp);
-
-					temp.x1 = halfmoon(iter->x1, iter->x2);
-					temp.y1 = iter->y1;
-					temp.x2 = halfmoon(halfmoon(iter->x1, iter->x2), iter->x2);
-					temp.y2 = halfmoon(iter->y1, iter->y2);
-					temp.R = iter->R;
-					temp.G = iter->G;
-					temp.B = iter->B;
-					temp.state = 8;
-
-					alpha.push_back(temp);
-				}
-
-				iter = rect.erase(iter);
-
-				break;
-			}
-
-			else
-			{
-				++iter;
-			}
-		}
+		glGetShaderInfoLog(vertexShader, 512, NULL, errorLog);
+		std::cerr << "ERROR: vertex shader error\n" << errorLog << std::endl;
+		return;
 	}
 }
 
-GLvoid TimerFunction(int value)
+void make_fragmentShaders()
 {
-	for (auto iter = alpha.begin(); iter != alpha.end();)
+	GLchar* fragmentSource;
+	fragmentSource = filetobuf("fragment.glsl");
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
+	glCompileShader(fragmentShader);
+	GLint result;
+	GLchar errorLog[512];
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &result);
+	if (!result)
 	{
-		if ((MAX(abs(iter->x1), abs(iter->x2))) - abs(halfmoon(iter->x1, iter->x2)) < 0.01)
-		{
-			iter = alpha.erase(iter);
-		}
-
-		else
-		{
-			if (iter->state == 1)
-			{
-				iter->x1 += 0.0005;
-				iter->y1 += 0.0005;
-				iter->x2 -= 0.0005;
-				iter->y2 -= 0.0005;
-
-				iter->x1 -= 0.005;
-				iter->x2 -= 0.005;
-			}
-
-			else if (iter->state == 2)
-			{
-				iter->x1 += 0.0005;
-				iter->y1 += 0.0005;
-				iter->x2 -= 0.0005;
-				iter->y2 -= 0.0005;
-
-				iter->y1 += 0.005;
-				iter->y2 += 0.005;
-			}
-
-			else if (iter->state == 3)
-			{
-				iter->x1 += 0.0005;
-				iter->y1 += 0.0005;
-				iter->x2 -= 0.0005;
-				iter->y2 -= 0.0005;
-
-				iter->y1 -= 0.005;
-				iter->y2 -= 0.005;
-			}
-
-			else if (iter->state == 4)
-			{
-				iter->x1 += 0.0005;
-				iter->y1 += 0.0005;
-				iter->x2 -= 0.0005;
-				iter->y2 -= 0.0005;
-
-				iter->x1 += 0.005;
-				iter->x2 += 0.005;
-			}
-
-			else if (iter->state == 5)
-			{
-				iter->x1 += 0.0005;
-				iter->y1 += 0.0005;
-				iter->x2 -= 0.0005;
-				iter->y2 -= 0.0005;
-
-				iter->x1 -= 0.0025;
-				iter->y1 += 0.0025;
-				iter->x2 -= 0.0025;
-				iter->y2 += 0.0025;
-			}
-
-			else if (iter->state == 6)
-			{
-				iter->x1 += 0.0005;
-				iter->y1 += 0.0005;
-				iter->x2 -= 0.0005;
-				iter->y2 -= 0.0005;
-
-				iter->x1 += 0.0025;
-				iter->y1 += 0.0025;
-				iter->x2 += 0.0025;
-				iter->y2 += 0.0025;
-			}
-
-			else if (iter->state == 7)
-			{
-				iter->x1 += 0.0005;
-				iter->y1 += 0.0005;
-				iter->x2 -= 0.0005;
-				iter->y2 -= 0.0005;
-
-				iter->x1 -= 0.0025;
-				iter->y1 -= 0.0025;
-				iter->x2 -= 0.0025;
-				iter->y2 -= 0.0025;
-			}
-
-			else if (iter->state == 8)
-			{
-				iter->x1 += 0.0005;
-				iter->y1 += 0.0005;
-				iter->x2 -= 0.0005;
-				iter->y2 -= 0.0005;
-
-				iter->x1 += 0.0025;
-				iter->y1 -= 0.0025;
-				iter->x2 += 0.0025;
-				iter->y2 -= 0.0025;
-			}
-
-			++iter;
-		}
+		glGetShaderInfoLog(fragmentShader, 512, NULL, errorLog);
+		std::cerr << "ERROR: fragment shader error\n" << errorLog << std::endl;
+		return;
 	}
-
-	glutPostRedisplay();
-
-	glutTimerFunc(10, TimerFunction, 1);
 }
 
-float halfmoon(float x, float y)
+GLuint make_shaderProgram()
 {
-	if (x > 0 && y > 0)
-	{
-		return (x + y) / 2;
+	GLuint shaderID;
+	make_vertexShaders();
+	make_fragmentShaders();
+	shaderID = glCreateProgram();
+	glAttachShader(shaderID, vertexShader);
+	glAttachShader(shaderID, fragmentShader);
+	glLinkProgram(shaderID);
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+	GLint result;
+	GLchar errorLog[512];
+	glGetProgramiv(shaderID, GL_LINK_STATUS, &result);
+	if (!result) {
+		glGetProgramInfoLog(shaderID, 512, NULL, errorLog);
+		std::cerr << "ERROR: shader program error\n" << errorLog << std::endl;
+		return false;
 	}
+	glUseProgram(shaderID);
 
-	else if (x < 0 && y < 0)
-	{
-		return (abs(x) + abs(y)) / -2;
-	}
+	return shaderID;
+}
 
-	else if (x < 0 && y > 0 && x + y == 0)
-	{
-		return 0.0;
-	}
-
-	else if (x < 0 && y > 0 && x + y > 0)
-	{
-		return y - ((abs(x) + abs(y)) / 2);
-	}
-
-	else if (x < 0 && y > 0 && x + y < 0)
-	{
-		return x + ((abs(x) + abs(y)) / 2);
-	}
-
-	else if (x == 0 && y != 0)
-	{
-		return y / 2;
-	}
-
-	else if (x != 0 && y == 0)
-	{
-		return x / 2;
-	}
+char* filetobuf(const char* file)
+{
+	FILE* fptr;
+	long length;
+	char* buf;
+	fptr = fopen(file, "rb");
+	if (!fptr)
+		return NULL;
+	fseek(fptr, 0, SEEK_END);
+	length = ftell(fptr);
+	buf = (char*)malloc(length + 1);
+	fseek(fptr, 0, SEEK_SET);
+	fread(buf, length, 1, fptr);
+	fclose(fptr);
+	buf[length] = 0;
+	return buf;
 }
