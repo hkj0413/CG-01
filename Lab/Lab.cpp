@@ -12,6 +12,9 @@ void make_fragmentShaders();
 GLuint make_shaderProgram();
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
+GLvoid Keyboard(unsigned char key, int x, int y);
+GLvoid Mouse(int button, int state, int x, int y);
+GLvoid TimerFunction(int value);
 
 GLint width, height;
 GLuint shaderProgramID;
@@ -24,6 +27,8 @@ const GLfloat vPositionList[5][3] = { { -0.5, 0.5, 0.0 }, { -0.5, -0.5, 0.0 }, {
 const GLint index[3][3] = { { 0, 1, 3 }, { 1, 2, 3} ,{ 2, 3, 4 } };
 const GLfloat colors[3][3] = { {  1.0,  0.0,  0.0  }, {  0.0,  1.0,  0.0  }, {  0.0,  0.0,  1.0  } };
 GLuint VAO, VBO_pos[2], EBO;
+
+float ox = 0.0, oy = 0.0;
 
 int main(int argc, char** argv)
 {
@@ -51,6 +56,8 @@ int main(int argc, char** argv)
 	shaderProgramID = make_shaderProgram();
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
+	glutKeyboardFunc(Keyboard);
+	glutMouseFunc(Mouse);
 	glutMainLoop();
 }
 
@@ -72,6 +79,58 @@ GLvoid drawScene()
 GLvoid Reshape(int w, int h)
 {
 	glViewport(0, 0, w, h);
+}
+
+GLvoid Keyboard(unsigned char key, int x, int y)
+{
+	switch (key)
+	{
+	case 'p':
+		
+		break;
+	case 'l':
+		
+		break;
+	case 't':
+		
+		break;
+	case 'r':
+		
+		break;
+	case 'w':
+		
+		break;
+	case 'a':
+		
+		break;
+	case 's':
+		
+		break;
+	case 'd':
+		
+		break;
+	case 'c':
+
+		break;
+	case 'q':
+		glutLeaveMainLoop();
+		break;
+	}
+
+	glutPostRedisplay();
+}
+
+GLvoid Mouse(int button, int state, int x, int y)
+{
+	ox = (float)(x - 400.0) / 400.0;
+	oy = -(float)(y - 400.0) / 400.0;
+}
+
+GLvoid TimerFunction(int value)
+{
+	glutPostRedisplay();
+
+	glutTimerFunc(100, TimerFunction, 1);
 }
 
 void InitBuffer()
