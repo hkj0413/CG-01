@@ -28,9 +28,11 @@ GLfloat colors[10][12] = {};
 GLint index[10][6] = {};
 GLuint VAO, VBO_pos[2], EBO;
 
+void drawing(GLfloat vPositionList[10][12], GLfloat colors[10][12], GLint index[10][6], float ox, float oy, int ultimate, int check);
+
 float ox = 0.0, oy = 0.0;
 
-int ulimate = 0, check[10] = {};
+int ultimate = 0, check[10] = {};
 
 bool execute = false;
 
@@ -84,7 +86,7 @@ GLvoid drawScene()
 	glBindBuffer(GL_ARRAY_BUFFER, EBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(index), index);
 
-	for (int i = 0; i < ulimate; i++)
+	for (int i = 0; i < ultimate; i++)
 	{
 		if (check[i] == 1)
 		{
@@ -121,38 +123,24 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 	case 'p':
-		vPositionList[0][0] = -0.5;
-		vPositionList[0][1] = 0.5;
-		vPositionList[0][3] = -0.5;
-		vPositionList[0][4] = -0.5;
-		vPositionList[0][6] = 0.5;
-		vPositionList[0][7] = -0.5;
-		vPositionList[0][9] = 0.5;
-		vPositionList[0][10] = 0.5;
+		check[ultimate] = 1;
 
-		colors[0][0] = 1.0;
-		colors[0][3] = 1.0;
-		colors[0][6] = 1.0;
-		colors[0][9] = 1.0;
-
-		index[0][0] = 0;
-		index[0][1] = 1;
-		index[0][2] = 2;
-		index[0][3] = 0;
-		index[0][4] = 2;
-		index[0][5] = 3;
-
-		check[ulimate] = 3;
-		ulimate++;
+		execute = true;
 		break;
 	case 'l':
-		colors[0][0] = 0.5;
+		check[ultimate] = 2;
+
+		execute = true;
 		break;
 	case 't':
-		
+		check[ultimate] = 3;
+
+		execute = true;
 		break;
 	case 'r':
-		
+		check[ultimate] = 4;
+
+		execute = true;
 		break;
 	case 'w':
 		
@@ -174,6 +162,8 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 				index[i][j] = 0;
 			}
 		}
+
+		ultimate = 0;
 		break;
 	case 'q':
 		glutLeaveMainLoop();
@@ -187,6 +177,15 @@ GLvoid Mouse(int button, int state, int x, int y)
 {
 	ox = (float)(x - 400.0) / 400.0;
 	oy = -(float)(y - 400.0) / 400.0;
+
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && execute)
+	{
+		drawing(vPositionList, colors, index, ox, oy, ultimate, check[ultimate]);
+
+		ultimate++;
+
+		execute = false;
+	}
 }
 
 GLvoid TimerFunction(int value)
@@ -194,6 +193,77 @@ GLvoid TimerFunction(int value)
 	glutPostRedisplay();
 
 	glutTimerFunc(100, TimerFunction, 1);
+}
+
+void drawing(GLfloat vPositionList[10][12], GLfloat colors[10][12], GLint index[10][6], float ox, float oy, int ultimate, int check)
+{
+	if (check == 1)
+	{
+		vPositionList[ultimate][0] = ox;
+		vPositionList[ultimate][1] = oy;
+
+		colors[ultimate][2] = 1.0;
+
+		index[ultimate][0] = ultimate * 4;
+	}
+
+	else if (check == 2)
+	{
+		vPositionList[ultimate][0] = ox - 0.1;
+		vPositionList[ultimate][1] = oy;
+		vPositionList[ultimate][3] = ox + 0.1;
+		vPositionList[ultimate][4] = oy;
+
+		colors[ultimate][1] = 1.0;
+		colors[ultimate][4] = 1.0;
+
+		index[ultimate][0] = ultimate * 4;
+		index[ultimate][1] = ultimate * 4 + 1;
+	}
+
+	else if (check == 3)
+	{
+		vPositionList[ultimate][0] = ox;
+		vPositionList[ultimate][1] = oy + 0.1;
+		vPositionList[ultimate][3] = ox - 0.1;
+		vPositionList[ultimate][4] = oy - 0.14;
+		vPositionList[ultimate][6] = ox + 0.1;
+		vPositionList[ultimate][7] = oy - 0.14;
+
+		colors[ultimate][0] = 1.0;
+		colors[ultimate][3] = 1.0;
+		colors[ultimate][6] = 1.0;
+
+		index[ultimate][0] = ultimate * 4;
+		index[ultimate][1] = ultimate * 4 + 1;
+		index[ultimate][2] = ultimate * 4 + 2;
+	}
+
+	else if (check == 4)
+	{
+		vPositionList[ultimate][0] = ox - 0.1;
+		vPositionList[ultimate][1] = oy + 0.1;
+		vPositionList[ultimate][3] = ox - 0.1;
+		vPositionList[ultimate][4] = oy - 0.1;
+		vPositionList[ultimate][6] = ox + 0.1;
+		vPositionList[ultimate][7] = oy - 0.1;
+		vPositionList[ultimate][9] = ox + 0.1;
+		vPositionList[ultimate][10] = oy + 0.1;
+
+		colors[ultimate][0] = 1.0;
+		colors[ultimate][4] = 1.0;
+		colors[ultimate][8] = 1.0;
+		colors[ultimate][9] = 1.0;
+		colors[ultimate][10] = 1.0;
+		colors[ultimate][11] = 1.0;
+
+		index[ultimate][0] = ultimate * 4;
+		index[ultimate][1] = ultimate * 4 + 1;
+		index[ultimate][2] = ultimate * 4 + 2;
+		index[ultimate][3] = ultimate * 4;
+		index[ultimate][4] = ultimate * 4 + 2;
+		index[ultimate][5] = ultimate * 4 + 3;
+	}
 }
 
 void InitBuffer()
