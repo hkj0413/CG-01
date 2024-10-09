@@ -23,12 +23,16 @@ GLuint fragmentShader;
 
 char* filetobuf(const char* file);
 
-const GLfloat vPositionList[5][3] = { { -0.5, 0.5, 0.0 }, { -0.5, -0.5, 0.0 }, { 0.5, -0.5, 0.0 }, { 0.5, 0.5, 0.0 }, { 1.0, -0.5, 0.0 } };
-const GLint index[3][3] = { { 0, 1, 3 }, { 1, 2, 3} ,{ 2, 3, 4 } };
-const GLfloat colors[3][3] = { {  1.0,  0.0,  0.0  }, {  0.0,  1.0,  0.0  }, {  0.0,  0.0,  1.0  } };
+GLfloat vPositionList[10][12] = {};
+GLfloat colors[10][12] = {};
+GLint index[10][6] = {};
 GLuint VAO, VBO_pos[2], EBO;
 
 float ox = 0.0, oy = 0.0;
+
+int ulimate = 0, check[10] = {};
+
+bool execute = false;
 
 int main(int argc, char** argv)
 {
@@ -71,7 +75,38 @@ GLvoid drawScene()
 	glUseProgram(shaderProgramID);
 	glBindVertexArray(VAO);
 
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * 0));
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_pos[0]);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vPositionList), vPositionList);
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_pos[1]);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(colors), colors);
+
+	glBindBuffer(GL_ARRAY_BUFFER, EBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(index), index);
+
+	for (int i = 0; i < ulimate; i++)
+	{
+		if (check[i] == 1)
+		{
+			glPointSize(10.0);
+			glDrawElements(GL_POINTS, 1, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 6));
+		}
+
+		else if (check[i] == 2)
+		{
+			glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 6));
+		}
+		
+		else if (check[i] == 3)
+		{
+			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 6));
+		}
+
+		else if (check[i] == 4)
+		{
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 6));
+		}
+	}
 
 	glutSwapBuffers();
 }
@@ -86,10 +121,36 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 	case 'p':
-		
+		vPositionList[0][0] = -0.5;
+		vPositionList[0][1] = 0.5;
+		vPositionList[0][2] = 0.0;
+		vPositionList[0][3] = -0.5;
+		vPositionList[0][4] = -0.5;
+		vPositionList[0][5] = 0.0;
+		vPositionList[0][6] = 0.5;
+		vPositionList[0][7] = -0.5;
+		vPositionList[0][8] = 0.0;
+		vPositionList[0][9] = 0.5;
+		vPositionList[0][10] = 0.5;
+		vPositionList[0][11] = 0.0;
+
+		colors[0][0] = 1.0;
+		colors[0][3] = 1.0;
+		colors[0][6] = 1.0;
+		colors[0][9] = 1.0;
+
+		index[0][0] = 0;
+		index[0][1] = 1;
+		index[0][2] = 2;
+		index[0][3] = 0;
+		index[0][4] = 2;
+		index[0][5] = 3;
+
+		check[ulimate] = 3;
+		ulimate++;
 		break;
 	case 'l':
-		
+		colors[0][0] = 0.5;
 		break;
 	case 't':
 		
