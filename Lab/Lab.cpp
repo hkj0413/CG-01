@@ -123,16 +123,12 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	case 'p':
 		vPositionList[0][0] = -0.5;
 		vPositionList[0][1] = 0.5;
-		vPositionList[0][2] = 0.0;
 		vPositionList[0][3] = -0.5;
 		vPositionList[0][4] = -0.5;
-		vPositionList[0][5] = 0.0;
 		vPositionList[0][6] = 0.5;
 		vPositionList[0][7] = -0.5;
-		vPositionList[0][8] = 0.0;
 		vPositionList[0][9] = 0.5;
 		vPositionList[0][10] = 0.5;
-		vPositionList[0][11] = 0.0;
 
 		colors[0][0] = 1.0;
 		colors[0][3] = 1.0;
@@ -171,7 +167,13 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		
 		break;
 	case 'c':
-
+		for (int i = 0; i < 10; i++)
+		{
+			for (int j = 0; j < 6; j++)
+			{
+				index[i][j] = 0;
+			}
+		}
 		break;
 	case 'q':
 		glutLeaveMainLoop();
