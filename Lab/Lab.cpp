@@ -5,6 +5,7 @@
 #include <gl/glew.h>
 #include <gl/freeglut.h>
 #include <gl/freeglut_ext.h>
+#include <random>
 
 void InitBuffer();
 void make_vertexShaders();
@@ -13,6 +14,7 @@ GLuint make_shaderProgram();
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
+GLvoid KeyboardUp(unsigned char key, int x, int y);
 GLvoid Mouse(int button, int state, int x, int y);
 GLvoid TimerFunction(int value);
 
@@ -30,11 +32,14 @@ GLuint VAO, VBO_pos[2], EBO;
 
 void drawing(GLfloat vPositionList[10][12], GLfloat colors[10][12], GLint index[10][6], float ox, float oy, int ultimate, int check);
 
+std::random_device rd;
+std::mt19937 mt(rd());
+
 float ox = 0.0, oy = 0.0;
 
-int ultimate = 0, check[10] = {};
+int ultimate = 0, check[10] = {}, shadow = 0, superior = 0;
 
-bool execute = false;
+bool execute = false, nightmare = false;
 
 int main(int argc, char** argv)
 {
@@ -63,6 +68,7 @@ int main(int argc, char** argv)
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(Keyboard);
+	glutKeyboardUpFunc(KeyboardUp);
 	glutMouseFunc(Mouse);
 	glutMainLoop();
 }
@@ -143,16 +149,52 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		execute = true;
 		break;
 	case 'w':
-		
+		if (!nightmare)
+		{
+			std::uniform_int_distribution<int> chance(0, superior);
+
+			shadow = chance(mt);
+
+			glutTimerFunc(10, TimerFunction, 1);
+
+			nightmare = true;
+		}
 		break;
 	case 'a':
-		
+		if (!nightmare)
+		{
+			std::uniform_int_distribution<int> chance(0, superior);
+
+			shadow = chance(mt);
+
+			glutTimerFunc(10, TimerFunction, 2);
+
+			nightmare = true;
+		}
 		break;
 	case 's':
-		
+		if (!nightmare)
+		{
+			std::uniform_int_distribution<int> chance(0, superior);
+
+			shadow = chance(mt);
+
+			glutTimerFunc(10, TimerFunction, 3);
+
+			nightmare = true;
+		}
 		break;
 	case 'd':
-		
+		if (!nightmare)
+		{
+			std::uniform_int_distribution<int> chance(0, superior);
+
+			shadow = chance(mt);
+
+			glutTimerFunc(10, TimerFunction, 4);
+
+			nightmare = true;
+		}
 		break;
 	case 'c':
 		for (int i = 0; i < 10; i++)
@@ -173,6 +215,41 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	glutPostRedisplay();
 }
 
+GLvoid KeyboardUp(unsigned char key, int x, int y)
+{
+	switch (key)
+	{
+	case 'w':
+		if (nightmare)
+		{
+
+			nightmare = false;
+		}
+		break;
+	case 'a':
+		if (nightmare)
+		{
+
+			nightmare = false;
+		}
+		break;
+	case 's':
+		if (nightmare)
+		{
+
+			nightmare = false;
+		}
+		break;
+	case 'd':
+		if (nightmare)
+		{
+
+			nightmare = false;
+		}
+		break;
+	}
+}
+
 GLvoid Mouse(int button, int state, int x, int y)
 {
 	ox = (float)(x - 400.0) / 400.0;
@@ -184,6 +261,8 @@ GLvoid Mouse(int button, int state, int x, int y)
 
 		ultimate++;
 
+		superior = ultimate - 1;
+
 		execute = false;
 	}
 }
@@ -192,7 +271,129 @@ GLvoid TimerFunction(int value)
 {
 	glutPostRedisplay();
 
-	glutTimerFunc(100, TimerFunction, 1);
+	if (value == 1 && nightmare)
+	{
+		if (check[shadow] == 1)
+		{
+			vPositionList[shadow][1] += 0.01;
+		}
+
+		else if (check[shadow] == 2)
+		{
+			vPositionList[shadow][1] += 0.01;
+			vPositionList[shadow][4] += 0.01;
+		}
+
+		else if (check[shadow] == 3)
+		{
+			vPositionList[shadow][1] += 0.01;
+			vPositionList[shadow][4] += 0.01;
+			vPositionList[shadow][7] += 0.01;
+		}
+
+		else if (check[shadow] == 4)
+		{
+			vPositionList[shadow][1] += 0.01;
+			vPositionList[shadow][4] += 0.01;
+			vPositionList[shadow][7] += 0.01;
+			vPositionList[shadow][10] += 0.01;
+		}
+
+		glutTimerFunc(10, TimerFunction, 1);
+	}
+
+	else if (value == 2 && nightmare)
+	{
+		if (check[shadow] == 1)
+		{
+			vPositionList[shadow][0] -= 0.01;
+		}
+
+		else if (check[shadow] == 2)
+		{
+			vPositionList[shadow][0] -= 0.01;
+			vPositionList[shadow][3] -= 0.01;
+		}
+
+		else if (check[shadow] == 3)
+		{
+			vPositionList[shadow][0] -= 0.01;
+			vPositionList[shadow][3] -= 0.01;
+			vPositionList[shadow][6] -= 0.01;
+		}
+
+		else if (check[shadow] == 4)
+		{
+			vPositionList[shadow][0] -= 0.01;
+			vPositionList[shadow][3] -= 0.01;
+			vPositionList[shadow][6] -= 0.01;
+			vPositionList[shadow][9] -= 0.01;
+		}
+
+		glutTimerFunc(10, TimerFunction, 2);
+	}
+
+	else if (value == 3 && nightmare)
+	{
+		if (check[shadow] == 1)
+		{
+			vPositionList[shadow][1] -= 0.01;
+		}
+
+		else if (check[shadow] == 2)
+		{
+			vPositionList[shadow][1] -= 0.01;
+			vPositionList[shadow][4] -= 0.01;
+		}
+
+		else if (check[shadow] == 3)
+		{
+			vPositionList[shadow][1] -= 0.01;
+			vPositionList[shadow][4] -= 0.01;
+			vPositionList[shadow][7] -= 0.01;
+		}
+
+		else if (check[shadow] == 4)
+		{
+			vPositionList[shadow][1] -= 0.01;
+			vPositionList[shadow][4] -= 0.01;
+			vPositionList[shadow][7] -= 0.01;
+			vPositionList[shadow][10] -= 0.01;
+		}
+
+		glutTimerFunc(10, TimerFunction, 3);
+	}
+
+	else if (value == 4 && nightmare)
+	{
+		if (check[shadow] == 1)
+		{
+			vPositionList[shadow][0] += 0.01;
+		}
+
+		else if (check[shadow] == 2)
+		{
+			vPositionList[shadow][0] += 0.01;
+			vPositionList[shadow][3] += 0.01;
+		}
+
+		else if (check[shadow] == 3)
+		{
+			vPositionList[shadow][0] += 0.01;
+			vPositionList[shadow][3] += 0.01;
+			vPositionList[shadow][6] += 0.01;
+		}
+
+		else if (check[shadow] == 4)
+		{
+			vPositionList[shadow][0] += 0.01;
+			vPositionList[shadow][3] += 0.01;
+			vPositionList[shadow][6] += 0.01;
+			vPositionList[shadow][9] += 0.01;
+		}
+
+		glutTimerFunc(10, TimerFunction, 4);
+	}
 }
 
 void drawing(GLfloat vPositionList[10][12], GLfloat colors[10][12], GLint index[10][6], float ox, float oy, int ultimate, int check)
