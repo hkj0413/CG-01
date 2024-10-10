@@ -14,9 +14,7 @@ GLuint make_shaderProgram();
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
-GLvoid KeyboardUp(unsigned char key, int x, int y);
 GLvoid Mouse(int button, int state, int x, int y);
-GLvoid TimerFunction(int value);
 
 GLint width, height;
 GLuint shaderProgramID;
@@ -25,21 +23,24 @@ GLuint fragmentShader;
 
 char* filetobuf(const char* file);
 
-GLfloat vPositionList[10][12] = {};
-GLfloat colors[10][12] = {};
-GLint index[10][6] = {};
+GLfloat vPositionList[12][9] = {};
+GLfloat colors[12][9] = {};
+GLint index[12][3] = {};
 GLuint VAO, VBO_pos[2], EBO;
 
-void drawing(GLfloat vPositionList[10][12], GLfloat colors[10][12], GLint index[10][6], float ox, float oy, int ultimate, int check);
+void drawingLeft(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint index[12][3], float ox, float oy, int ultimate[4], int check[4][3]);
+void drawingRight(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint index[12][3], float ox, float oy, int ultimate[4], int check[4][3]);
+
 
 std::random_device rd;
 std::mt19937 mt(rd());
+std::uniform_real_distribution<float> dis(0, 1);
 
 float ox = 0.0, oy = 0.0;
 
-int ultimate = 0, check[10] = {}, shadow = 0, superior = 0;
+int ultimate[4] = {}, check[4][3] = {}, shadow = 0;
 
-bool execute = false, nightmare = false;
+bool execute = true, nightmare = false;
 
 int main(int argc, char** argv)
 {
@@ -68,7 +69,6 @@ int main(int argc, char** argv)
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(Keyboard);
-	glutKeyboardUpFunc(KeyboardUp);
 	glutMouseFunc(Mouse);
 	glutMainLoop();
 }
@@ -92,28 +92,12 @@ GLvoid drawScene()
 	glBindBuffer(GL_ARRAY_BUFFER, EBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(index), index);
 
-	for (int i = 0; i < ultimate; i++)
+	glRectf(-1.0, -0.005, 1.0, 0.005);
+	glRectf(-0.005, -1.0, 0.005, 1.0);
+
+	for (int i = 0; i < 12; i++)
 	{
-		if (check[i] == 1)
-		{
-			glPointSize(10.0);
-			glDrawElements(GL_POINTS, 1, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 6));
-		}
-
-		else if (check[i] == 2)
-		{
-			glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 6));
-		}
-		
-		else if (check[i] == 3)
-		{
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 6));
-		}
-
-		else if (check[i] == 4)
-		{
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 6));
-		}
+		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 3));
 	}
 
 	glutSwapBuffers();
@@ -128,84 +112,11 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-	case 'p':
-		check[ultimate] = 1;
-
-		execute = true;
-		break;
-	case 'l':
-		check[ultimate] = 2;
-
-		execute = true;
-		break;
-	case 't':
-		check[ultimate] = 3;
-
-		execute = true;
-		break;
-	case 'r':
-		check[ultimate] = 4;
-
-		execute = true;
-		break;
-	case 'w':
-		if (!nightmare)
-		{
-			std::uniform_int_distribution<int> chance(0, superior);
-
-			shadow = chance(mt);
-
-			glutTimerFunc(10, TimerFunction, 1);
-
-			nightmare = true;
-		}
-		break;
 	case 'a':
-		if (!nightmare)
-		{
-			std::uniform_int_distribution<int> chance(0, superior);
-
-			shadow = chance(mt);
-
-			glutTimerFunc(10, TimerFunction, 2);
-
-			nightmare = true;
-		}
+		execute = true;
 		break;
-	case 's':
-		if (!nightmare)
-		{
-			std::uniform_int_distribution<int> chance(0, superior);
-
-			shadow = chance(mt);
-
-			glutTimerFunc(10, TimerFunction, 3);
-
-			nightmare = true;
-		}
-		break;
-	case 'd':
-		if (!nightmare)
-		{
-			std::uniform_int_distribution<int> chance(0, superior);
-
-			shadow = chance(mt);
-
-			glutTimerFunc(10, TimerFunction, 4);
-
-			nightmare = true;
-		}
-		break;
-	case 'c':
-		for (int i = 0; i < 10; i++)
-		{
-			for (int j = 0; j < 6; j++)
-			{
-				index[i][j] = 0;
-			}
-		}
-
-		ultimate = 0;
+	case 'b':
+		execute = false;
 		break;
 	case 'q':
 		glutLeaveMainLoop();
@@ -215,256 +126,124 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	glutPostRedisplay();
 }
 
-GLvoid KeyboardUp(unsigned char key, int x, int y)
-{
-	switch (key)
-	{
-	case 'w':
-		if (nightmare)
-		{
-
-			nightmare = false;
-		}
-		break;
-	case 'a':
-		if (nightmare)
-		{
-
-			nightmare = false;
-		}
-		break;
-	case 's':
-		if (nightmare)
-		{
-
-			nightmare = false;
-		}
-		break;
-	case 'd':
-		if (nightmare)
-		{
-
-			nightmare = false;
-		}
-		break;
-	}
-}
-
 GLvoid Mouse(int button, int state, int x, int y)
 {
 	ox = (float)(x - 400.0) / 400.0;
 	oy = -(float)(y - 400.0) / 400.0;
 
-	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN && execute)
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
 	{
-		drawing(vPositionList, colors, index, ox, oy, ultimate, check[ultimate]);
+		drawingLeft(vPositionList, colors, index, ox, oy, ultimate, check);
+	}
 
-		ultimate++;
-
-		superior = ultimate - 1;
-
-		execute = false;
+	else if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+	{
+		drawingRight(vPositionList, colors, index, ox, oy, ultimate, check);
 	}
 }
 
-GLvoid TimerFunction(int value)
+void drawingLeft(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint index[12][3], float ox, float oy, int ultimate[4], int check[4][3])
 {
-	glutPostRedisplay();
-
-	if (value == 1 && nightmare)
+	if (ox >= 0 && oy >= 0)
 	{
-		if (check[shadow] == 1)
+		if (ultimate[0] == 0)
 		{
-			vPositionList[shadow][1] += 0.01;
-		}
+			vPositionList[0][0] = ox;
+			vPositionList[0][1] = oy + 0.1;
+			vPositionList[0][3] = ox - 0.075;
+			vPositionList[0][4] = oy - 0.1;
+			vPositionList[0][6] = ox + 0.075;
+			vPositionList[0][7] = oy - 0.1;
 
-		else if (check[shadow] == 2)
-		{
-			vPositionList[shadow][1] += 0.01;
-			vPositionList[shadow][4] += 0.01;
-		}
+			for (int i = 0; i < 3; i++)
+			{
+				colors[0][i] = dis(mt);
+				colors[0][i + 3] = colors[0][i];
+				colors[0][i + 6] = colors[0][i];
+			}
 
-		else if (check[shadow] == 3)
-		{
-			vPositionList[shadow][1] += 0.01;
-			vPositionList[shadow][4] += 0.01;
-			vPositionList[shadow][7] += 0.01;
+			index[0][0] = 0;
+			index[0][1] = 1;
+			index[0][2] = 2;
 		}
-
-		else if (check[shadow] == 4)
-		{
-			vPositionList[shadow][1] += 0.01;
-			vPositionList[shadow][4] += 0.01;
-			vPositionList[shadow][7] += 0.01;
-			vPositionList[shadow][10] += 0.01;
-		}
-
-		glutTimerFunc(10, TimerFunction, 1);
 	}
 
-	else if (value == 2 && nightmare)
+	else if (ox < 0 && oy >= 0)
 	{
-		if (check[shadow] == 1)
+		if (ultimate[1] == 0)
 		{
-			vPositionList[shadow][0] -= 0.01;
-		}
+			vPositionList[3][0] = ox;
+			vPositionList[3][1] = oy + 0.1;
+			vPositionList[3][3] = ox - 0.075;
+			vPositionList[3][4] = oy - 0.1;
+			vPositionList[3][6] = ox + 0.075;
+			vPositionList[3][7] = oy - 0.1;
 
-		else if (check[shadow] == 2)
-		{
-			vPositionList[shadow][0] -= 0.01;
-			vPositionList[shadow][3] -= 0.01;
-		}
+			for (int i = 0; i < 3; i++)
+			{
+				colors[3][i] = dis(mt);
+				colors[3][i + 3] = colors[3][i];
+				colors[3][i + 6] = colors[3][i];
+			}
 
-		else if (check[shadow] == 3)
-		{
-			vPositionList[shadow][0] -= 0.01;
-			vPositionList[shadow][3] -= 0.01;
-			vPositionList[shadow][6] -= 0.01;
+			index[3][0] = 9;
+			index[3][1] = 10;
+			index[3][2] = 11;
 		}
-
-		else if (check[shadow] == 4)
-		{
-			vPositionList[shadow][0] -= 0.01;
-			vPositionList[shadow][3] -= 0.01;
-			vPositionList[shadow][6] -= 0.01;
-			vPositionList[shadow][9] -= 0.01;
-		}
-
-		glutTimerFunc(10, TimerFunction, 2);
 	}
 
-	else if (value == 3 && nightmare)
+	else if (ox < 0 && oy < 0)
 	{
-		if (check[shadow] == 1)
+		if (ultimate[2] == 0)
 		{
-			vPositionList[shadow][1] -= 0.01;
-		}
+			vPositionList[6][0] = ox;
+			vPositionList[6][1] = oy + 0.1;
+			vPositionList[6][3] = ox - 0.075;
+			vPositionList[6][4] = oy - 0.1;
+			vPositionList[6][6] = ox + 0.075;
+			vPositionList[6][7] = oy - 0.1;
 
-		else if (check[shadow] == 2)
-		{
-			vPositionList[shadow][1] -= 0.01;
-			vPositionList[shadow][4] -= 0.01;
-		}
+			for (int i = 0; i < 3; i++)
+			{
+				colors[6][i] = dis(mt);
+				colors[6][i + 3] = colors[6][i];
+				colors[6][i + 6] = colors[6][i];
+			}
 
-		else if (check[shadow] == 3)
-		{
-			vPositionList[shadow][1] -= 0.01;
-			vPositionList[shadow][4] -= 0.01;
-			vPositionList[shadow][7] -= 0.01;
+			index[6][0] = 18;
+			index[6][1] = 19;
+			index[6][2] = 20;
 		}
-
-		else if (check[shadow] == 4)
-		{
-			vPositionList[shadow][1] -= 0.01;
-			vPositionList[shadow][4] -= 0.01;
-			vPositionList[shadow][7] -= 0.01;
-			vPositionList[shadow][10] -= 0.01;
-		}
-
-		glutTimerFunc(10, TimerFunction, 3);
 	}
 
-	else if (value == 4 && nightmare)
+	else if (ox >= 0 && oy < 0)
 	{
-		if (check[shadow] == 1)
+		if (ultimate[3] == 0)
 		{
-			vPositionList[shadow][0] += 0.01;
-		}
+			vPositionList[9][0] = ox;
+			vPositionList[9][1] = oy + 0.1;
+			vPositionList[9][3] = ox - 0.075;
+			vPositionList[9][4] = oy - 0.1;
+			vPositionList[9][6] = ox + 0.075;
+			vPositionList[9][7] = oy - 0.1;
 
-		else if (check[shadow] == 2)
-		{
-			vPositionList[shadow][0] += 0.01;
-			vPositionList[shadow][3] += 0.01;
-		}
+			for (int i = 0; i < 3; i++)
+			{
+				colors[9][i] = dis(mt);
+				colors[9][i + 3] = colors[9][i];
+				colors[9][i + 6] = colors[9][i];
+			}
 
-		else if (check[shadow] == 3)
-		{
-			vPositionList[shadow][0] += 0.01;
-			vPositionList[shadow][3] += 0.01;
-			vPositionList[shadow][6] += 0.01;
+			index[9][0] = 27;
+			index[9][1] = 28;
+			index[9][2] = 29;
 		}
-
-		else if (check[shadow] == 4)
-		{
-			vPositionList[shadow][0] += 0.01;
-			vPositionList[shadow][3] += 0.01;
-			vPositionList[shadow][6] += 0.01;
-			vPositionList[shadow][9] += 0.01;
-		}
-
-		glutTimerFunc(10, TimerFunction, 4);
 	}
 }
 
-void drawing(GLfloat vPositionList[10][12], GLfloat colors[10][12], GLint index[10][6], float ox, float oy, int ultimate, int check)
+void drawingRight(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint index[12][3], float ox, float oy, int ultimate[4], int check[4][3])
 {
-	if (check == 1)
-	{
-		vPositionList[ultimate][0] = ox;
-		vPositionList[ultimate][1] = oy;
 
-		colors[ultimate][2] = 1.0;
-
-		index[ultimate][0] = ultimate * 4;
-	}
-
-	else if (check == 2)
-	{
-		vPositionList[ultimate][0] = ox - 0.1;
-		vPositionList[ultimate][1] = oy;
-		vPositionList[ultimate][3] = ox + 0.1;
-		vPositionList[ultimate][4] = oy;
-
-		colors[ultimate][1] = 1.0;
-		colors[ultimate][4] = 1.0;
-
-		index[ultimate][0] = ultimate * 4;
-		index[ultimate][1] = ultimate * 4 + 1;
-	}
-
-	else if (check == 3)
-	{
-		vPositionList[ultimate][0] = ox;
-		vPositionList[ultimate][1] = oy + 0.1;
-		vPositionList[ultimate][3] = ox - 0.1;
-		vPositionList[ultimate][4] = oy - 0.14;
-		vPositionList[ultimate][6] = ox + 0.1;
-		vPositionList[ultimate][7] = oy - 0.14;
-
-		colors[ultimate][0] = 1.0;
-		colors[ultimate][3] = 1.0;
-		colors[ultimate][6] = 1.0;
-
-		index[ultimate][0] = ultimate * 4;
-		index[ultimate][1] = ultimate * 4 + 1;
-		index[ultimate][2] = ultimate * 4 + 2;
-	}
-
-	else if (check == 4)
-	{
-		vPositionList[ultimate][0] = ox - 0.1;
-		vPositionList[ultimate][1] = oy + 0.1;
-		vPositionList[ultimate][3] = ox - 0.1;
-		vPositionList[ultimate][4] = oy - 0.1;
-		vPositionList[ultimate][6] = ox + 0.1;
-		vPositionList[ultimate][7] = oy - 0.1;
-		vPositionList[ultimate][9] = ox + 0.1;
-		vPositionList[ultimate][10] = oy + 0.1;
-
-		colors[ultimate][0] = 1.0;
-		colors[ultimate][4] = 1.0;
-		colors[ultimate][8] = 1.0;
-		colors[ultimate][9] = 1.0;
-		colors[ultimate][10] = 1.0;
-		colors[ultimate][11] = 1.0;
-
-		index[ultimate][0] = ultimate * 4;
-		index[ultimate][1] = ultimate * 4 + 1;
-		index[ultimate][2] = ultimate * 4 + 2;
-		index[ultimate][3] = ultimate * 4;
-		index[ultimate][4] = ultimate * 4 + 2;
-		index[ultimate][5] = ultimate * 4 + 3;
-	}
 }
 
 void InitBuffer()
