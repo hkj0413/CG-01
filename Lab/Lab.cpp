@@ -211,13 +211,15 @@ void drawingLeft(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint inde
 {
 	if (ox >= 0 && oy >= 0)
 	{
-		if (ultimate[0] == 0)
+		if (ultimate[0] == 1)
 		{
+			shadow = fea(mt);
+
 			vPositionList[0][0] = ox;
-			vPositionList[0][1] = oy + 0.1;
-			vPositionList[0][3] = ox - 0.075;
+			vPositionList[0][1] = oy + 0.1 + fea(mt);
+			vPositionList[0][3] = ox - 0.075 + shadow;
 			vPositionList[0][4] = oy - 0.1;
-			vPositionList[0][6] = ox + 0.075;
+			vPositionList[0][6] = ox + 0.075 + shadow;
 			vPositionList[0][7] = oy - 0.1;
 
 			for (int i = 0; i < 3; i++)
@@ -241,107 +243,227 @@ void drawingLeft(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint inde
 				check[0] = 1;
 			}
 		}
-	}
 
-	else if (ox < 0 && oy >= 0)
-	{
-		if (ultimate[1] == 0)
+		else if (ultimate[0] == 2)
 		{
-			vPositionList[3][0] = ox;
-			vPositionList[3][1] = oy + 0.1;
-			vPositionList[3][3] = ox - 0.075;
-			vPositionList[3][4] = oy - 0.1;
-			vPositionList[3][6] = ox + 0.075;
-			vPositionList[3][7] = oy - 0.1;
+			shadow = fea(mt);
+
+			vPositionList[1][0] = vPositionList[0][0];
+			vPositionList[1][1] = vPositionList[0][1];
+			vPositionList[1][3] = vPositionList[0][3];
+			vPositionList[1][4] = vPositionList[0][4];
+			vPositionList[1][6] = vPositionList[0][6];
+			vPositionList[1][7] = vPositionList[0][7];
+
+			vPositionList[0][0] = ox;
+			vPositionList[0][1] = oy + 0.1 + fea(mt);
+			vPositionList[0][3] = ox - 0.075 + shadow;
+			vPositionList[0][4] = oy - 0.1;
+			vPositionList[0][6] = ox + 0.075 + shadow;
+			vPositionList[0][7] = oy - 0.1;
+
+			for (int i = 0; i < 9; i++)
+			{
+				colors[1][i] = colors[0][i];
+			}
 
 			for (int i = 0; i < 3; i++)
 			{
-				colors[3][i] = dis(mt);
-				colors[3][i + 3] = colors[3][i];
-				colors[3][i + 6] = colors[3][i];
+				colors[0][i] = dis(mt);
+				colors[0][i + 3] = colors[0][i];
+				colors[0][i + 6] = colors[0][i];
 			}
 
-			index[3][0] = 9;
-			index[3][1] = 10;
-			index[3][2] = 11;
+			for (int i = 0; i < 2; i++)
+			{
+				index[i][0] = i * 3;
+				index[i][1] = i * 3 + 1;
+				index[i][2] = i * 3 + 2;
+			}
+
+			check[1] = check[0];
 
 			if (execute)
 			{
-				check[3] = 0;
+				check[0] = 0;
 			}
 
 			else if (!execute)
 			{
-				check[3] = 1;
+				check[0] = 1;
 			}
+		}
+
+		else if (ultimate[0] == 3)
+		{
+			shadow = fea(mt);
+
+			vPositionList[2][0] = vPositionList[1][0];
+			vPositionList[2][1] = vPositionList[1][1];
+			vPositionList[2][3] = vPositionList[1][3];
+			vPositionList[2][4] = vPositionList[1][4];
+			vPositionList[2][6] = vPositionList[1][6];
+			vPositionList[2][7] = vPositionList[1][7];
+
+			vPositionList[1][0] = vPositionList[0][0];
+			vPositionList[1][1] = vPositionList[0][1];
+			vPositionList[1][3] = vPositionList[0][3];
+			vPositionList[1][4] = vPositionList[0][4];
+			vPositionList[1][6] = vPositionList[0][6];
+			vPositionList[1][7] = vPositionList[0][7];
+
+			vPositionList[0][0] = ox;
+			vPositionList[0][1] = oy + 0.1 + fea(mt);
+			vPositionList[0][3] = ox - 0.075 + shadow;
+			vPositionList[0][4] = oy - 0.1;
+			vPositionList[0][6] = ox + 0.075 + shadow;
+			vPositionList[0][7] = oy - 0.1;
+
+			for (int i = 0; i < 9; i++)
+			{
+				colors[2][i] = colors[1][i];
+
+				colors[1][i] = colors[0][i];
+			}
+
+			for (int i = 0; i < 3; i++)
+			{
+				colors[0][i] = dis(mt);
+				colors[0][i + 3] = colors[0][i];
+				colors[0][i + 6] = colors[0][i];
+
+				index[i][0] = i * 3;
+				index[i][1] = i * 3 + 1;
+				index[i][2] = i * 3 + 2;
+			}
+
+			check[2] = check[1];
+
+			check[1] = check[0];
+
+			if (execute)
+			{
+				check[0] = 0;
+			}
+
+			else if (!execute)
+			{
+				check[0] = 1;
+			}
+		}
+	}
+
+	else if (ox < 0 && oy >= 0)
+	{
+		if (ultimate[1] < 3)
+		{
+			shadow = fea(mt);
+
+			vPositionList[ultimate[1] + 3][0] = ox;
+			vPositionList[ultimate[1] + 3][1] = oy + 0.1 + fea(mt);
+			vPositionList[ultimate[1] + 3][3] = ox - 0.075 + shadow;
+			vPositionList[ultimate[1] + 3][4] = oy - 0.1;
+			vPositionList[ultimate[1] + 3][6] = ox + 0.075 + shadow;
+			vPositionList[ultimate[1] + 3][7] = oy - 0.1;
+
+			for (int i = 0; i < 3; i++)
+			{
+				colors[ultimate[1] + 3][i] = dis(mt);
+				colors[ultimate[1] + 3][i + 3] = colors[ultimate[1] + 3][i];
+				colors[ultimate[1] + 3][i + 6] = colors[ultimate[1] + 3][i];
+			}
+
+			index[ultimate[1] + 3][0] = ultimate[1] * 3 + 9;
+			index[ultimate[1] + 3][1] = ultimate[1] * 3 + 10;
+			index[ultimate[1] + 3][2] = ultimate[1] * 3 + 11;
+
+			if (execute)
+			{
+				check[ultimate[1] + 3] = 0;
+			}
+
+			else if (!execute)
+			{
+				check[ultimate[1] + 3] = 1;
+			}
+
+			ultimate[1]++;
 		}
 	}
 
 	else if (ox < 0 && oy < 0)
 	{
-		if (ultimate[2] == 0)
+		if (ultimate[2] < 3)
 		{
-			vPositionList[6][0] = ox;
-			vPositionList[6][1] = oy + 0.1;
-			vPositionList[6][3] = ox - 0.075;
-			vPositionList[6][4] = oy - 0.1;
-			vPositionList[6][6] = ox + 0.075;
-			vPositionList[6][7] = oy - 0.1;
+			shadow = fea(mt);
+
+			vPositionList[ultimate[2] + 6][0] = ox;
+			vPositionList[ultimate[2] + 6][1] = oy + 0.1 + fea(mt);
+			vPositionList[ultimate[2] + 6][3] = ox - 0.075 + shadow;
+			vPositionList[ultimate[2] + 6][4] = oy - 0.1;
+			vPositionList[ultimate[2] + 6][6] = ox + 0.075 + shadow;
+			vPositionList[ultimate[2] + 6][7] = oy - 0.1;
 
 			for (int i = 0; i < 3; i++)
 			{
-				colors[6][i] = dis(mt);
-				colors[6][i + 3] = colors[6][i];
-				colors[6][i + 6] = colors[6][i];
+				colors[ultimate[2] + 6][i] = dis(mt);
+				colors[ultimate[2] + 6][i + 3] = colors[ultimate[2] + 6][i];
+				colors[ultimate[2] + 6][i + 6] = colors[ultimate[2] + 6][i];
 			}
 
-			index[6][0] = 18;
-			index[6][1] = 19;
-			index[6][2] = 20;
+			index[ultimate[2] + 6][0] = ultimate[2] * 3 + 18;
+			index[ultimate[2] + 6][1] = ultimate[2] * 3 + 19;
+			index[ultimate[2] + 6][2] = ultimate[2] * 3 + 20;
 
 			if (execute)
 			{
-				check[6] = 0;
+				check[ultimate[2] + 6] = 0;
 			}
 
 			else if (!execute)
 			{
-				check[6] = 1;
+				check[ultimate[2] + 6] = 1;
 			}
+
+			ultimate[2]++;
 		}
 	}
 
 	else if (ox >= 0 && oy < 0)
 	{
-		if (ultimate[3] == 0)
+		if (ultimate[3] < 3)
 		{
-			vPositionList[9][0] = ox;
-			vPositionList[9][1] = oy + 0.1;
-			vPositionList[9][3] = ox - 0.075;
-			vPositionList[9][4] = oy - 0.1;
-			vPositionList[9][6] = ox + 0.075;
-			vPositionList[9][7] = oy - 0.1;
+			shadow = fea(mt);
+
+			vPositionList[ultimate[3] + 9][0] = ox;
+			vPositionList[ultimate[3] + 9][1] = oy + 0.1 + fea(mt);
+			vPositionList[ultimate[3] + 9][3] = ox - 0.075 + shadow;
+			vPositionList[ultimate[3] + 9][4] = oy - 0.1;
+			vPositionList[ultimate[3] + 9][6] = ox + 0.075 + shadow;
+			vPositionList[ultimate[3] + 9][7] = oy - 0.1;
 
 			for (int i = 0; i < 3; i++)
 			{
-				colors[9][i] = dis(mt);
-				colors[9][i + 3] = colors[9][i];
-				colors[9][i + 6] = colors[9][i];
+				colors[ultimate[3] + 9][i] = dis(mt);
+				colors[ultimate[3] + 9][i + 3] = colors[ultimate[3] + 9][i];
+				colors[ultimate[3] + 9][i + 6] = colors[ultimate[3] + 9][i];
 			}
 
-			index[9][0] = 27;
-			index[9][1] = 28;
-			index[9][2] = 29;
+			index[ultimate[3] + 9][0] = ultimate[3] * 3 + 27;
+			index[ultimate[3] + 9][1] = ultimate[3] * 3 + 28;
+			index[ultimate[3] + 9][2] = ultimate[3] * 3 + 29;
 
 			if (execute)
 			{
-				check[9] = 0;
+				check[ultimate[3] + 9] = 0;
 			}
 
 			else if (!execute)
 			{
-				check[9] = 1;
+				check[ultimate[3] + 9] = 1;
 			}
+
+			ultimate[3]++;
 		}
 	}
 }
