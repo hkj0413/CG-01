@@ -28,8 +28,8 @@ GLfloat colors[12][9] = {};
 GLint index[12][3] = {};
 GLuint VAO, VBO_pos[2], EBO;
 
-void drawingLeft(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint index[12][3], float ox, float oy, int ultimate[4], int check[4][3]);
-void drawingRight(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint index[12][3], float ox, float oy, int ultimate[4], int check[4][3]);
+void drawingLeft(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint index[12][3], float ox, float oy, int ultimate[4], int check[12]);
+void drawingRight(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint index[12][3], float ox, float oy, int ultimate[4], int check[12]);
 
 
 std::random_device rd;
@@ -38,7 +38,7 @@ std::uniform_real_distribution<float> dis(0, 1);
 
 float ox = 0.0, oy = 0.0;
 
-int ultimate[4] = {}, check[4][3] = {}, shadow = 0;
+int ultimate[4] = {}, check[12] = {}, shadow = 0;
 
 bool execute = true, nightmare = false;
 
@@ -97,7 +97,15 @@ GLvoid drawScene()
 
 	for (int i = 0; i < 12; i++)
 	{
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 3));
+		if (check[i] == 0)
+		{
+			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 3));
+		}
+
+		else if (check[i] == 1)
+		{
+			glDrawElements(GL_LINE_LOOP, 3, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 3));
+		}
 	}
 
 	glutSwapBuffers();
@@ -142,7 +150,7 @@ GLvoid Mouse(int button, int state, int x, int y)
 	}
 }
 
-void drawingLeft(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint index[12][3], float ox, float oy, int ultimate[4], int check[4][3])
+void drawingLeft(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint index[12][3], float ox, float oy, int ultimate[4], int check[12])
 {
 	if (ox >= 0 && oy >= 0)
 	{
@@ -165,6 +173,16 @@ void drawingLeft(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint inde
 			index[0][0] = 0;
 			index[0][1] = 1;
 			index[0][2] = 2;
+		}
+
+		if (execute)
+		{
+			check[0] = 0;
+		}
+
+		else if (!execute)
+		{
+			check[0] = 1;
 		}
 	}
 
@@ -190,6 +208,16 @@ void drawingLeft(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint inde
 			index[3][1] = 10;
 			index[3][2] = 11;
 		}
+
+		if (execute)
+		{
+			check[3] = 0;
+		}
+
+		else if (!execute)
+		{
+			check[3] = 1;
+		}
 	}
 
 	else if (ox < 0 && oy < 0)
@@ -213,6 +241,16 @@ void drawingLeft(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint inde
 			index[6][0] = 18;
 			index[6][1] = 19;
 			index[6][2] = 20;
+		}
+
+		if (execute)
+		{
+			check[6] = 0;
+		}
+
+		else if (!execute)
+		{
+			check[6] = 1;
 		}
 	}
 
@@ -238,10 +276,20 @@ void drawingLeft(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint inde
 			index[9][1] = 28;
 			index[9][2] = 29;
 		}
+
+		if (execute)
+		{
+			check[9] = 0;
+		}
+
+		else if (!execute)
+		{
+			check[9] = 1;
+		}
 	}
 }
 
-void drawingRight(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint index[12][3], float ox, float oy, int ultimate[4], int check[4][3])
+void drawingRight(GLfloat vPositionList[12][9], GLfloat colors[12][9], GLint index[12][3], float ox, float oy, int ultimate[4], int check[12])
 {
 
 }
