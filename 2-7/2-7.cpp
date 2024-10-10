@@ -129,24 +129,36 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	switch (key)
 	{
 	case 'p':
-		check[ultimate] = 1;
+		if (ultimate < 10)
+		{
+			check[ultimate] = 1;
 
-		execute = true;
+			execute = true;
+		}
 		break;
 	case 'l':
-		check[ultimate] = 2;
+		if (ultimate < 10)
+		{
+			check[ultimate] = 2;
 
-		execute = true;
+			execute = true;
+		}
 		break;
 	case 't':
-		check[ultimate] = 3;
+		if (ultimate < 10)
+		{
+			check[ultimate] = 3;
 
-		execute = true;
+			execute = true;
+		}
 		break;
 	case 'r':
-		check[ultimate] = 4;
+		if (ultimate < 10)
+		{
+			check[ultimate] = 4;
 
-		execute = true;
+			execute = true;
+		}
 		break;
 	case 'w':
 		if (!nightmare)
@@ -222,28 +234,24 @@ GLvoid KeyboardUp(unsigned char key, int x, int y)
 	case 'w':
 		if (nightmare)
 		{
-
 			nightmare = false;
 		}
 		break;
 	case 'a':
 		if (nightmare)
 		{
-
 			nightmare = false;
 		}
 		break;
 	case 's':
 		if (nightmare)
 		{
-
 			nightmare = false;
 		}
 		break;
 	case 'd':
 		if (nightmare)
 		{
-
 			nightmare = false;
 		}
 		break;
