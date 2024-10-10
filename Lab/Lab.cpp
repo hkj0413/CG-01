@@ -36,8 +36,10 @@ std::random_device rd;
 std::mt19937 mt(rd());
 std::uniform_real_distribution<float> dis(0, 1);
 std::uniform_real_distribution<float> fea(-0.1, 0.1);
+std::uniform_real_distribution<float> plus(0.1, 0.9);
+std::uniform_real_distribution<float> minus(-0.9, -0.1);
 
-float ox = 0.0, oy = 0.0;
+float ox = 0.0, oy = 0.0, nx = 0.0, ny = 0.0;
 
 int ultimate[4] = {}, check[12] = {}, shadow = 0;
 
@@ -62,6 +64,60 @@ int main(int argc, char** argv)
 	}
 	else
 		std::cout << "GLEW Initialized\n";
+
+	nx = plus(mt), ny = plus(mt);
+
+	vPositionList[0][0] = nx;
+	vPositionList[0][1] = ny + 0.1;
+	vPositionList[0][3] = nx - 0.075;
+	vPositionList[0][4] = ny - 0.1;
+	vPositionList[0][6] = nx + 0.075;
+	vPositionList[0][7] = ny - 0.1;
+
+	nx = minus(mt), ny = plus(mt);
+
+	vPositionList[3][0] = nx;
+	vPositionList[3][1] = ny + 0.1;
+	vPositionList[3][3] = nx - 0.075;
+	vPositionList[3][4] = ny - 0.1;
+	vPositionList[3][6] = nx + 0.075;
+	vPositionList[3][7] = ny - 0.1;
+
+	nx = minus(mt), ny = minus(mt);
+
+	vPositionList[6][0] = nx;
+	vPositionList[6][1] = ny + 0.1;
+	vPositionList[6][3] = nx - 0.075;
+	vPositionList[6][4] = ny - 0.1;
+	vPositionList[6][6] = nx + 0.075;
+	vPositionList[6][7] = ny - 0.1;
+
+	nx = plus(mt), ny = minus(mt);
+
+	vPositionList[9][0] = nx;
+	vPositionList[9][1] = ny + 0.1;
+	vPositionList[9][3] = nx - 0.075;
+	vPositionList[9][4] = ny - 0.1;
+	vPositionList[9][6] = nx + 0.075;
+	vPositionList[9][7] = ny - 0.1;
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			colors[i * 3][j] = dis(mt);
+			colors[i * 3][j + 3] = colors[i * 3][j];
+			colors[i * 3][j + 6] = colors[i * 3][j];
+		}
+
+		index[i * 3][0] = 9 * i;
+		index[i * 3][1] = 9 * i + 1;
+		index[i * 3][2] = 9 * i + 2;
+
+		check[i] = 0;
+
+		ultimate[i]++;
+	}
 
 	InitBuffer();
 	make_vertexShaders();
