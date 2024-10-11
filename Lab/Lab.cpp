@@ -183,39 +183,39 @@ GLvoid TimerFunction(int value)
 		{
 			if (direct[i] == 0)
 			{
-				vPositionList[i][0] += 0.01;
-				vPositionList[i][1] += 0.01;
-				vPositionList[i][3] += 0.01;
-				vPositionList[i][4] += 0.01;
-				vPositionList[i][6] += 0.01;
-				vPositionList[i][7] += 0.01;
+				vPositionList[i][0] += 0.01 + 0.00333 * i;
+				vPositionList[i][1] += 0.01 + 0.00333 * i;
+				vPositionList[i][3] += 0.01 + 0.00333 * i;
+				vPositionList[i][4] += 0.01 + 0.00333 * i;
+				vPositionList[i][6] += 0.01 + 0.00333 * i;
+				vPositionList[i][7] += 0.01 + 0.00333 * i;
 
 				if (vPositionList[i][6] > 1 && vPositionList[i][1] > 1)
 				{
-					vPositionList[i][0] -= 0.01;
-					vPositionList[i][1] -= 0.01;
-					vPositionList[i][3] -= 0.01;
-					vPositionList[i][4] -= 0.01;
-					vPositionList[i][6] -= 0.01;
-					vPositionList[i][7] -= 0.01;
+					vPositionList[i][0] -= 0.01 + 0.00333 * i;
+					vPositionList[i][1] -= 0.01 + 0.00333 * i;
+					vPositionList[i][3] -= 0.01 + 0.00333 * i;
+					vPositionList[i][4] -= 0.01 + 0.00333 * i;
+					vPositionList[i][6] -= 0.01 + 0.00333 * i;
+					vPositionList[i][7] -= 0.01 + 0.00333 * i;
 
 					direct[i] = 2;
 				}
 
 				else if (vPositionList[i][6] > 1)
 				{
-					vPositionList[i][0] -= 0.01;
-					vPositionList[i][3] -= 0.01;
-					vPositionList[i][6] -= 0.01;
+					vPositionList[i][0] -= 0.01 + 0.00333 * i;
+					vPositionList[i][3] -= 0.01 + 0.00333 * i;
+					vPositionList[i][6] -= 0.01 + 0.00333 * i;
 
 					direct[i] = 1;
 				}
 
 				else if (vPositionList[i][1] > 1)
 				{
-					vPositionList[i][1] -= 0.01;
-					vPositionList[i][4] -= 0.01;
-					vPositionList[i][7] -= 0.01;
+					vPositionList[i][1] -= 0.01 + 0.00333 * i;
+					vPositionList[i][4] -= 0.01 + 0.00333 * i;
+					vPositionList[i][7] -= 0.01 + 0.00333 * i;
 
 					direct[i] = 3;
 				}
@@ -223,39 +223,39 @@ GLvoid TimerFunction(int value)
 
 			else if (direct[i] == 1)
 			{
-				vPositionList[i][0] -= 0.01;
-				vPositionList[i][1] += 0.01;
-				vPositionList[i][3] -= 0.01;
-				vPositionList[i][4] += 0.01;
-				vPositionList[i][6] -= 0.01;
-				vPositionList[i][7] += 0.01;
+				vPositionList[i][0] -= 0.01 + 0.00333 * i;
+				vPositionList[i][1] += 0.01 + 0.00333 * i;
+				vPositionList[i][3] -= 0.01 + 0.00333 * i;
+				vPositionList[i][4] += 0.01 + 0.00333 * i;
+				vPositionList[i][6] -= 0.01 + 0.00333 * i;
+				vPositionList[i][7] += 0.01 + 0.00333 * i;
 
 				if (vPositionList[i][3] < -1 && vPositionList[i][1] > 1)
 				{
-					vPositionList[i][0] += 0.01;
-					vPositionList[i][1] -= 0.01;
-					vPositionList[i][3] += 0.01;
-					vPositionList[i][4] -= 0.01;
-					vPositionList[i][6] += 0.01;
-					vPositionList[i][7] -= 0.01;
+					vPositionList[i][0] += 0.01 + 0.00333 * i;
+					vPositionList[i][1] -= 0.01 + 0.00333 * i;
+					vPositionList[i][3] += 0.01 + 0.00333 * i;
+					vPositionList[i][4] -= 0.01 + 0.00333 * i;
+					vPositionList[i][6] += 0.01 + 0.00333 * i;
+					vPositionList[i][7] -= 0.01 + 0.00333 * i;
 
 					direct[i] = 3;
 				}
 
 				else if (vPositionList[i][3] < -1)
 				{
-					vPositionList[i][0] += 0.01;
-					vPositionList[i][3] += 0.01;
-					vPositionList[i][6] += 0.01;
+					vPositionList[i][0] += 0.01 + 0.00333 * i;
+					vPositionList[i][3] += 0.01 + 0.00333 * i;
+					vPositionList[i][6] += 0.01 + 0.00333 * i;
 
 					direct[i] = 0;
 				}
 
 				else if (vPositionList[i][1] > 1)
 				{
-					vPositionList[i][1] -= 0.01;
-					vPositionList[i][4] -= 0.01;
-					vPositionList[i][7] -= 0.01;
+					vPositionList[i][1] -= 0.01 + 0.00333 * i;
+					vPositionList[i][4] -= 0.01 + 0.00333 * i;
+					vPositionList[i][7] -= 0.01 + 0.00333 * i;
 
 					direct[i] = 2;
 				}
@@ -263,39 +263,39 @@ GLvoid TimerFunction(int value)
 
 			else if (direct[i] == 2)
 			{
-				vPositionList[i][0] -= 0.01;
-				vPositionList[i][1] -= 0.01;
-				vPositionList[i][3] -= 0.01;
-				vPositionList[i][4] -= 0.01;
-				vPositionList[i][6] -= 0.01;
-				vPositionList[i][7] -= 0.01;
+				vPositionList[i][0] -= 0.01 + 0.00333 * i;
+				vPositionList[i][1] -= 0.01 + 0.00333 * i;
+				vPositionList[i][3] -= 0.01 + 0.00333 * i;
+				vPositionList[i][4] -= 0.01 + 0.00333 * i;
+				vPositionList[i][6] -= 0.01 + 0.00333 * i;
+				vPositionList[i][7] -= 0.01 + 0.00333 * i;
 
 				if (vPositionList[i][3] < - 1 && vPositionList[i][4] < -1)
 				{
-					vPositionList[i][0] += 0.01;
-					vPositionList[i][1] += 0.01;
-					vPositionList[i][3] += 0.01;
-					vPositionList[i][4] += 0.01;
-					vPositionList[i][6] += 0.01;
-					vPositionList[i][7] += 0.01;
+					vPositionList[i][0] += 0.01 + 0.00333 * i;
+					vPositionList[i][1] += 0.01 + 0.00333 * i;
+					vPositionList[i][3] += 0.01 + 0.00333 * i;
+					vPositionList[i][4] += 0.01 + 0.00333 * i;
+					vPositionList[i][6] += 0.01 + 0.00333 * i;
+					vPositionList[i][7] += 0.01 + 0.00333 * i;
 
 					direct[i] = 0;
 				}
 
 				else if (vPositionList[i][3] < -1)
 				{
-					vPositionList[i][0] += 0.01;
-					vPositionList[i][3] += 0.01;
-					vPositionList[i][6] += 0.01;
+					vPositionList[i][0] += 0.01 + 0.00333 * i;
+					vPositionList[i][3] += 0.01 + 0.00333 * i;
+					vPositionList[i][6] += 0.01 + 0.00333 * i;
 
 					direct[i] = 3;
 				}
 
 				else if (vPositionList[i][4] < -1)
 				{
-					vPositionList[i][1] += 0.01;
-					vPositionList[i][4] += 0.01;
-					vPositionList[i][7] += 0.01;
+					vPositionList[i][1] += 0.01 + 0.00333 * i;
+					vPositionList[i][4] += 0.01 + 0.00333 * i;
+					vPositionList[i][7] += 0.01 + 0.00333 * i;
 
 					direct[i] = 1;
 				}
@@ -303,45 +303,50 @@ GLvoid TimerFunction(int value)
 
 			else if (direct[i] == 3)
 			{
-				vPositionList[i][0] += 0.01;
-				vPositionList[i][1] -= 0.01;
-				vPositionList[i][3] += 0.01;
-				vPositionList[i][4] -= 0.01;
-				vPositionList[i][6] += 0.01;
-				vPositionList[i][7] -= 0.01;
+				vPositionList[i][0] += 0.01 + 0.00333 * i;
+				vPositionList[i][1] -= 0.01 + 0.00333 * i;
+				vPositionList[i][3] += 0.01 + 0.00333 * i;
+				vPositionList[i][4] -= 0.01 + 0.00333 * i;
+				vPositionList[i][6] += 0.01 + 0.00333 * i;
+				vPositionList[i][7] -= 0.01 + 0.00333 * i;
 
 				if (vPositionList[i][6] > 1 && vPositionList[i][4] < -1)
 				{
-					vPositionList[i][0] -= 0.01;
-					vPositionList[i][1] += 0.01;
-					vPositionList[i][3] -= 0.01;
-					vPositionList[i][4] += 0.01;
-					vPositionList[i][6] -= 0.01;
-					vPositionList[i][7] += 0.01;
+					vPositionList[i][0] -= 0.01 + 0.00333 * i;
+					vPositionList[i][1] += 0.01 + 0.00333 * i;
+					vPositionList[i][3] -= 0.01 + 0.00333 * i;
+					vPositionList[i][4] += 0.01 + 0.00333 * i;
+					vPositionList[i][6] -= 0.01 + 0.00333 * i;
+					vPositionList[i][7] += 0.01 + 0.00333 * i;
 
 					direct[i] = 1;
 				}
 
 				else if (vPositionList[i][6] > 1)
 				{
-					vPositionList[i][0] -= 0.01;
-					vPositionList[i][3] -= 0.01;
-					vPositionList[i][6] -= 0.01;
+					vPositionList[i][0] -= 0.01 + 0.00333 * i;
+					vPositionList[i][3] -= 0.01 + 0.00333 * i;
+					vPositionList[i][6] -= 0.01 + 0.00333 * i;
 
 					direct[i] = 2;
 				}
 
 				else if (vPositionList[i][4] < - 1)
 				{
-					vPositionList[i][1] += 0.01;
-					vPositionList[i][4] += 0.01;
-					vPositionList[i][7] += 0.01;
+					vPositionList[i][1] += 0.01 + 0.00333 * i;
+					vPositionList[i][4] += 0.01 + 0.00333 * i;
+					vPositionList[i][7] += 0.01 + 0.00333 * i;
 
 					direct[i] = 0;
 				}
 			}
 		}
 		glutTimerFunc(10, TimerFunction, 1);
+	}
+
+	else if (value == 2)
+	{
+
 	}
 
 	glutPostRedisplay();
