@@ -6,6 +6,7 @@
 #include <gl/freeglut.h>
 #include <gl/freeglut_ext.h>
 #include <random>
+#include <cmath>
 
 void InitBuffer();
 void make_vertexShaders();
@@ -35,9 +36,9 @@ std::uniform_real_distribution<float> fea(-0.1, 0.1);
 std::uniform_real_distribution<float> plus(0.1, 0.9);
 std::uniform_real_distribution<float> minus(-0.9, -0.1);
 
-float ox = 0.0, oy = 0.0, nx = 0.0, ny = 0.0;
+float ox = 0.0, oy = 0.0, nx = 0.0, ny = 0.0, weak[4] = { 1.0, 1.0, 1.0, 1.0 };
 
-int direct[4] = { 0, 1, 2, 3 }, superior = 0;
+int direct[4] = { 0, 1, 2, 3 }, updown[4] = { 0, 0, 0, 0 }, superior = 0, power = 0;
 
 int main(int argc, char** argv)
 {
@@ -163,11 +164,26 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		superior = 2;
 		glutTimerFunc(10, TimerFunction, 2);
 		break;
-	case '3':	
+	case '3':
+		superior = 3;
+		for (int i = 0; i < 4; i++)
+		{
+			direct[i] = 0;
+
+			updown[i] = 0;
+
+			weak[i] = 1;
+		}
 		glutTimerFunc(10, TimerFunction, 3);
 		break;
 	case '4':
-		glutTimerFunc(10, TimerFunction, 4);
+		superior = 4;
+		for (int i = 0; i < 4; i++)
+		{
+			direct[i] = i;
+		}
+		power = 0;
+		glutTimerFunc(100, TimerFunction, 4);
 		break;
 	case 'q':
 		glutLeaveMainLoop();
@@ -272,7 +288,7 @@ GLvoid TimerFunction(int value)
 				vPositionList[i][6] -= 0.01 + 0.00333 * i;
 				vPositionList[i][7] -= 0.01 + 0.00333 * i;
 
-				if (vPositionList[i][3] < - 1 && vPositionList[i][4] < -1)
+				if (vPositionList[i][3] < -1 && vPositionList[i][4] < -1)
 				{
 					vPositionList[i][0] += 0.01 + 0.00333 * i;
 					vPositionList[i][1] += 0.01 + 0.00333 * i;
@@ -333,7 +349,7 @@ GLvoid TimerFunction(int value)
 					direct[i] = 2;
 				}
 
-				else if (vPositionList[i][4] < - 1)
+				else if (vPositionList[i][4] < -1)
 				{
 					vPositionList[i][1] += 0.01 + 0.00333 * i;
 					vPositionList[i][4] += 0.01 + 0.00333 * i;
@@ -475,6 +491,143 @@ GLvoid TimerFunction(int value)
 			}
 		}
 		glutTimerFunc(10, TimerFunction, 2);
+	}
+
+	else if (value == 3 && superior == 3)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			if (direct[i] == 0)
+			{
+				vPositionList[i][0] += 0.01 + 0.00333 * i;
+				vPositionList[i][3] += 0.01 + 0.00333 * i;
+				vPositionList[i][6] += 0.01 + 0.00333 * i;
+
+				if (vPositionList[i][6] > weak[i])
+				{
+					vPositionList[i][0] -= 0.01 + 0.00333 * i;
+					vPositionList[i][3] -= 0.01 + 0.00333 * i;
+					vPositionList[i][6] -= 0.01 + 0.00333 * i;
+
+					direct[i] = 1;
+
+					updown[i]++;
+
+					if (updown[i] % 4 == 0)
+					{
+						weak[i] -= 0.2;
+					}
+				}
+			}
+
+			else if (direct[i] == 1)
+			{
+				vPositionList[i][1] -= 0.01 + 0.00333 * i;
+				vPositionList[i][4] -= 0.01 + 0.00333 * i;
+				vPositionList[i][7] -= 0.01 + 0.00333 * i;
+
+				if (vPositionList[i][4] < weak[i] * -1.0)
+				{
+					vPositionList[i][1] += 0.01 + 0.00333 * i;
+					vPositionList[i][4] += 0.01 + 0.00333 * i;
+					vPositionList[i][7] += 0.01 + 0.00333 * i;
+
+
+					direct[i] = 2;
+
+					updown[i]++;
+
+					if (updown[i] % 4 == 0)
+					{
+						weak[i] -= 0.2;
+					}
+				}
+			}
+
+			else if (direct[i] == 2)
+			{
+				vPositionList[i][0] -= 0.01 + 0.00333 * i;
+				vPositionList[i][3] -= 0.01 + 0.00333 * i;
+				vPositionList[i][6] -= 0.01 + 0.00333 * i;
+
+				if (vPositionList[i][3] < weak[i] * -1.0)
+				{
+					vPositionList[i][0] += 0.01 + 0.00333 * i;
+					vPositionList[i][3] += 0.01 + 0.00333 * i;
+					vPositionList[i][6] += 0.01 + 0.00333 * i;
+
+					direct[i] = 3;
+
+					updown[i]++;
+
+					if (updown[i] % 4 == 0)
+					{
+						weak[i] -= 0.2;
+					}
+				}
+			}
+
+			else if (direct[i] == 3)
+			{
+				vPositionList[i][1] += 0.01 + 0.00333 * i;
+				vPositionList[i][4] += 0.01 + 0.00333 * i;
+				vPositionList[i][7] += 0.01 + 0.00333 * i;
+
+				if (vPositionList[i][1] > weak[i])
+				{
+					vPositionList[i][1] -= 0.01 + 0.00333 * i;
+					vPositionList[i][4] -= 0.01 + 0.00333 * i;
+					vPositionList[i][7] -= 0.01 + 0.00333 * i;
+
+
+					direct[i] = 0;
+
+					updown[i]++;
+
+					if (updown[i] % 4 == 0)
+					{
+						weak[i] -= 0.2;
+					}
+				}
+			}
+		}
+
+		glutTimerFunc(10, TimerFunction, 3);
+	}
+
+	else if (value == 4 && superior == 4)
+	{
+		vPositionList[0][0] += cos(power) / 360 * power;
+		vPositionList[0][1] += sin(power) / 360 * power;
+		vPositionList[0][3] += cos(power) / 360 * power;
+		vPositionList[0][4] += sin(power) / 360 * power;
+		vPositionList[0][6] += cos(power) / 360 * power;
+		vPositionList[0][7] += sin(power) / 360 * power;
+
+		vPositionList[1][0] -= cos(power) / 270 * power;
+		vPositionList[1][1] += sin(power) / 270 * power;
+		vPositionList[1][3] -= cos(power) / 270 * power;
+		vPositionList[1][4] += sin(power) / 270 * power;
+		vPositionList[1][6] -= cos(power) / 270 * power;
+		vPositionList[1][7] += sin(power) / 270 * power;
+
+		vPositionList[2][0] += cos(power) / 180 * power;
+		vPositionList[2][1] -= sin(power) / 180 * power;
+		vPositionList[2][3] += cos(power) / 180 * power;
+		vPositionList[2][4] -= sin(power) / 180 * power;
+		vPositionList[2][6] += cos(power) / 180 * power;
+		vPositionList[2][7] -= sin(power) / 180 * power;
+
+		vPositionList[3][0] -= cos(power) / 90 * power;
+		vPositionList[3][1] -= sin(power) / 90 * power;
+		vPositionList[3][3] -= cos(power) / 90 * power;
+		vPositionList[3][4] -= sin(power) / 90 * power;
+		vPositionList[3][6] -= cos(power) / 90 * power;
+		vPositionList[3][7] -= sin(power) / 90 * power;
+
+		power++;
+
+		glutTimerFunc(100, TimerFunction, 4);
 	}
 
 	glutPostRedisplay();
