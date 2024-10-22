@@ -201,6 +201,17 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		glutTimerFunc(10, TimerFunction, 1);
 		break;
 	case 't':
+		for (int i = 0; i < 4; i++)
+		{
+			if (direct[i] == 1)
+			{
+				direct[i] = 2;
+
+				a[i] = 2;
+
+				vPositionList[i][10] -= 0.49;
+			}
+		}
 		glutTimerFunc(10, TimerFunction, 2);
 		break;
 	case 'r':
@@ -242,6 +253,38 @@ GLvoid TimerFunction(int value)
 			glutPostRedisplay();
 
 			glutTimerFunc(10, TimerFunction, 1);
+		}
+
+		else
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				a[i] = 0;
+			}
+
+			x = 0;
+
+			glutPostRedisplay();
+		}
+	}
+
+	else if (value == 2)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			if (a[i] == 2)
+			{
+				vPositionList[i][10] += 0.01;
+			}
+		}
+
+		x++;
+
+		if (x < 49)
+		{
+			glutPostRedisplay();
+
+			glutTimerFunc(10, TimerFunction, 2);
 		}
 
 		else
