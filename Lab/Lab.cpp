@@ -5,6 +5,7 @@
 #include <gl/glew.h>
 #include <gl/freeglut.h>
 #include <gl/freeglut_ext.h>
+#include <random>
 
 void InitBuffer();
 void make_vertexShaders();
@@ -12,7 +13,6 @@ void make_fragmentShaders();
 GLuint make_shaderProgram();
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
-GLvoid Keyboard(unsigned char key, int x, int y);
 GLvoid TimerFunction(int value);
 
 GLint width, height;
@@ -22,12 +22,20 @@ GLuint fragmentShader;
 
 char* filetobuf(const char* file);
 
-GLfloat vPositionList[4][15] = {};
-GLfloat colors[4][15] = {};
-GLint index[4][9] = {};
+GLfloat vPositionList[15][18] = {};
+GLfloat colors[15][18] = {};
+GLint index[15][12] = {};
 GLuint VAO, VBO_pos[2], EBO;
 
-int direct[4] = { 0, 1, 2, 3 }, a[4] = {}, x = 0;
+std::random_device rd;
+std::mt19937 mt(rd());
+std::uniform_real_distribution<float> dis(0, 1);
+std::uniform_real_distribution<float> rx(-0.9, 0.9);
+std::uniform_real_distribution<float> ry(-0.85, 0.85);
+
+float ox = 0.0, oy = 0.0, nx = 0.0, ny = 0.0;
+
+int object[15] = {}, direct[15] = {}, a[4] = {}, x = 0;
 
 int main(int argc, char** argv)
 {
@@ -49,75 +57,54 @@ int main(int argc, char** argv)
 	else
 		std::cout << "GLEW Initialized\n";
 
-	vPositionList[0][0] = -0.25;
-	vPositionList[0][1] = 0.75;
-	vPositionList[0][3] = -0.75;
-	vPositionList[0][4] = 0.25;
-	vPositionList[0][6] = -0.25;
-	vPositionList[0][7] = 0.25;
-	vPositionList[0][9] = -0.75;
-	vPositionList[0][10] = 0.75;
-	vPositionList[0][12] = -0.5;
-	vPositionList[0][13] = 1.0;
-
-	vPositionList[1][0] = 0.75;
-	vPositionList[1][1] = 0.75;
-	vPositionList[1][3] = 0.25;
-	vPositionList[1][4] = 0.25;
-	vPositionList[1][6] = 0.75;
-	vPositionList[1][7] = 0.25;
-	vPositionList[1][9] = 0.25;
-	vPositionList[1][10] = 0.75;
-	vPositionList[1][12] = 0.5;
-	vPositionList[1][13] = 1.0;
-
-
-	vPositionList[2][0] = -0.25;
-	vPositionList[2][1] = -0.25;
-	vPositionList[2][3] = -0.75;
-	vPositionList[2][4] = -0.75;
-	vPositionList[2][6] = -0.25;
-	vPositionList[2][7] = -0.75;
-	vPositionList[2][9] = -0.75;
-	vPositionList[2][10] = -0.25;
-	vPositionList[2][12] = -0.5;
-	vPositionList[2][13] = 0.0;
-
-	vPositionList[3][0] = 0.75;
-	vPositionList[3][1] = -0.25;
-	vPositionList[3][3] = 0.25;
-	vPositionList[3][4] = -0.75;
-	vPositionList[3][6] = 0.75;
-	vPositionList[3][7] = -0.75;
-	vPositionList[3][9] = 0.25;
-	vPositionList[3][10] = -0.25;
-	vPositionList[3][12] = 0.5;
-	vPositionList[3][13] = 0.0;
-
 	for (int i = 0; i < 5; i++)
 	{
-		colors[0][i * 3 + 2] = 1.0;
-
-		colors[1][i * 3] = 1.0;
-		colors[1][i * 3 + 1] = 1.0;
-
-		colors[2][i * 3 + 1] = 1.0;
-
-		colors[3][i * 3] = 1.0;
+		object[i * 3] = i;
+		object[i * 3 + 1] = i;
+		object[i * 3 + 2] = i;
 	}
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 15; i++)
 	{
-		index[i][0] = 5 * i;
-		index[i][1] = 5 * i + 1;
-		index[i][2] = 5 * i + 2;
-		index[i][3] = 5 * i;
-		index[i][4] = 5 * i + 1;
-		index[i][5] = 5 * i + 3;
-		index[i][6] = 5 * i;
-		index[i][7] = 5 * i + 3;
-		index[i][8] = 5 * i + 4;
+		nx = rx(mt), ny = ry(mt);
+
+		vPositionList[i][0] = nx;
+		vPositionList[i][1] = ny;
+		vPositionList[i][3] = nx - 0.1;
+		vPositionList[i][4] = ny - 0.1;
+		vPositionList[i][6] = nx;
+		vPositionList[i][7] = ny - 0.1;
+		vPositionList[i][9] = nx - 0.1;
+		vPositionList[i][10] = ny;
+		vPositionList[i][12] = nx -0.05;
+		vPositionList[i][13] = ny + 0.05;
+		vPositionList[i][15] = nx - 0.05;
+		vPositionList[i][16] = ny - 0.15;
+
+		for (int j = 0; j < 3; j++)
+		{
+			colors[i][j] = dis(mt);
+			colors[i][j + 3] = colors[i][j];
+			colors[i][j + 6] = colors[i][j];
+			colors[i][j + 9] = colors[i][j];
+			colors[i][j + 12] = colors[i][j];
+		}
+
+		index[i][0] = 6 * i;
+		index[i][1] = 6 * i + 1;
+		index[i][2] = 6 * i + 2;
+		index[i][3] = 6 * i;
+		index[i][4] = 6 * i + 1;
+		index[i][5] = 6 * i + 3;
+		index[i][6] = 6 * i;
+		index[i][7] = 6 * i + 3;
+		index[i][8] = 6 * i + 4;
+		index[i][9] = 6 * i + 1;
+		index[i][10] = 6 * i + 2;
+		index[i][11] = 6 * i + 5;
 	}
+
+	glutTimerFunc(10, TimerFunction, 1);
 
 	InitBuffer();
 	make_vertexShaders();
@@ -125,7 +112,6 @@ int main(int argc, char** argv)
 	shaderProgramID = make_shaderProgram();
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
-	glutKeyboardFunc(Keyboard);
 	glutMainLoop();
 }
 
@@ -148,29 +134,36 @@ GLvoid drawScene()
 	glBindBuffer(GL_ARRAY_BUFFER, EBO);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(index), index);
 
-	glRectf(-1.0, -0.005, 1.0, 0.005);
-	glRectf(-0.005, -1.0, 0.005, 1.0);
-
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 15; i++)
 	{
-		if (direct[i] == 0)
+		if (object[i] == 0)
 		{
-			glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 9));
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 12));
 		}
 
-		else if(direct[i] == 1)
+		else if (object[i] == 1)
 		{
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 9));
+			glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 12));
 		}
 
-		else if (direct[i] == 2)
+		else if (object[i] == 2)
 		{
-			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 9));
+			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 12));
 		}
 
-		else if (direct[i] == 3)
+		else if (object[i] == 3)
 		{
-			glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 9));
+			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 12));
+		}
+
+		else if (object[i] == 4)
+		{
+			glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 12));
+		}
+
+		else if (object[i] == 5)
+		{
+			glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 12));
 		}
 	}
 
@@ -182,218 +175,297 @@ GLvoid Reshape(int w, int h)
 	glViewport(0, 0, w, h);
 }
 
-GLvoid Keyboard(unsigned char key, int x, int y)
-{
-	switch (key)
-	{
-	case 'l':
-		for (int i = 0; i < 4; i++)
-		{
-			if (direct[i] == 0)
-			{
-				direct[i] = 1;
-
-				a[i] = 1;
-
-				vPositionList[i][7] += 0.49;
-			}
-		}
-		glutTimerFunc(10, TimerFunction, 1);
-		break;
-	case 't':
-		for (int i = 0; i < 4; i++)
-		{
-			if (direct[i] == 1)
-			{
-				direct[i] = 2;
-
-				a[i] = 2;
-
-				vPositionList[i][10] -= 0.49;
-			}
-		}
-		glutTimerFunc(10, TimerFunction, 2);
-		break;
-	case 'r':
-		for (int i = 0; i < 4; i++)
-		{
-			if (direct[i] == 2)
-			{
-				direct[i] = 3;
-
-				a[i] = 3;
-
-				vPositionList[i][13] -= 0.245;
-			}
-		}
-		glutTimerFunc(10, TimerFunction, 3);
-		break;
-	case 'p':
-		for (int i = 0; i < 4; i++)
-		{
-			if (direct[i] == 3)
-			{
-				a[i] = 4;
-			}
-		}
-		glutTimerFunc(10, TimerFunction, 4);
-		break;
-	case 'a':
-		for (int i = 0; i < 4; i++)
-		{
-			direct[i] = i;
-		}
-		break;
-	case 'q':
-		glutLeaveMainLoop();
-		break;
-	}
-
-	glutPostRedisplay();
-}
-
 GLvoid TimerFunction(int value)
 {
-	if (value == 1)
+	for (int i = 0; i < 15; i++)
 	{
-		for (int i = 0; i < 4; i++)
+		if (direct[i] == 1)
 		{
-			if (a[i] == 1)
+			vPositionList[i][0] += 0.01 + 0.00333 * i;
+			vPositionList[i][1] += 0.01 + 0.00333 * i;
+			vPositionList[i][3] += 0.01 + 0.00333 * i;
+			vPositionList[i][4] += 0.01 + 0.00333 * i;
+			vPositionList[i][6] += 0.01 + 0.00333 * i;
+			vPositionList[i][7] += 0.01 + 0.00333 * i;
+
+			if (vPositionList[i][6] > 1 && vPositionList[i][1] > 1)
 			{
-				vPositionList[i][7] -= 0.01;
-			}
-		}
-		
-		x++;
+				vPositionList[i][0] -= 0.01 + 0.00333 * i;
+				vPositionList[i][1] -= 0.01 + 0.00333 * i;
+				vPositionList[i][3] -= 0.01 + 0.00333 * i;
+				vPositionList[i][4] -= 0.01 + 0.00333 * i;
+				vPositionList[i][6] -= 0.01 + 0.00333 * i;
+				vPositionList[i][7] -= 0.01 + 0.00333 * i;
 
-		if (x < 49)
-		{
-			glutPostRedisplay();
-
-			glutTimerFunc(10, TimerFunction, 1);
-		}
-
-		else
-		{
-			for (int i = 0; i < 4; i++)
-			{
-				a[i] = 0;
+				direct[i] = 2;
 			}
 
-			x = 0;
-
-			glutPostRedisplay();
-		}
-	}
-
-	else if (value == 2)
-	{
-		for (int i = 0; i < 4; i++)
-		{
-			if (a[i] == 2)
+			else if (vPositionList[i][6] > 1)
 			{
-				vPositionList[i][10] += 0.01;
-			}
-		}
+				vPositionList[i][0] -= 0.01 + 0.00333 * i;
+				vPositionList[i][3] -= 0.01 + 0.00333 * i;
+				vPositionList[i][6] -= 0.01 + 0.00333 * i;
 
-		x++;
-
-		if (x < 49)
-		{
-			glutPostRedisplay();
-
-			glutTimerFunc(10, TimerFunction, 2);
-		}
-
-		else
-		{
-			for (int i = 0; i < 4; i++)
-			{
-				a[i] = 0;
+				direct[i] = 1;
 			}
 
-			x = 0;
-
-			glutPostRedisplay();
-		}
-	}
-
-	else if (value == 3)
-	{
-		for (int i = 0; i < 4; i++)
-		{
-			if (a[i] == 3)
+			else if (vPositionList[i][1] > 1)
 			{
-				vPositionList[i][13] += 0.005;
+				vPositionList[i][1] -= 0.01 + 0.00333 * i;
+				vPositionList[i][4] -= 0.01 + 0.00333 * i;
+				vPositionList[i][7] -= 0.01 + 0.00333 * i;
+
+				direct[i] = 3;
 			}
 		}
 
-		x++;
-
-		if (x < 49)
+		else if (direct[i] == 2)
 		{
-			glutPostRedisplay();
+			vPositionList[i][0] -= 0.01 + 0.00333 * i;
+			vPositionList[i][1] += 0.01 + 0.00333 * i;
+			vPositionList[i][3] -= 0.01 + 0.00333 * i;
+			vPositionList[i][4] += 0.01 + 0.00333 * i;
+			vPositionList[i][6] -= 0.01 + 0.00333 * i;
+			vPositionList[i][7] += 0.01 + 0.00333 * i;
 
-			glutTimerFunc(10, TimerFunction, 3);
-		}
-
-		else
-		{
-			for (int i = 0; i < 4; i++)
+			if (vPositionList[i][3] < -1 && vPositionList[i][1] > 1)
 			{
-				a[i] = 0;
+				vPositionList[i][0] += 0.01 + 0.00333 * i;
+				vPositionList[i][1] -= 0.01 + 0.00333 * i;
+				vPositionList[i][3] += 0.01 + 0.00333 * i;
+				vPositionList[i][4] -= 0.01 + 0.00333 * i;
+				vPositionList[i][6] += 0.01 + 0.00333 * i;
+				vPositionList[i][7] -= 0.01 + 0.00333 * i;
+
+				direct[i] = 3;
 			}
 
-			x = 0;
-
-			glutPostRedisplay();
-		}
-	}
-
-	else if (value == 4)
-	{
-		for (int i = 0; i < 4; i++)
-		{
-			if (a[i] == 4)
+			else if (vPositionList[i][3] < -1)
 			{
-				vPositionList[i][6] -= 0.01;
-				vPositionList[i][10] -= 0.01;
-				vPositionList[i][12] += 0.005;
-				vPositionList[i][13] -= 0.005;
+				vPositionList[i][0] += 0.01 + 0.00333 * i;
+				vPositionList[i][3] += 0.01 + 0.00333 * i;
+				vPositionList[i][6] += 0.01 + 0.00333 * i;
+
+				direct[i] = 0;
+			}
+
+			else if (vPositionList[i][1] > 1)
+			{
+				vPositionList[i][1] -= 0.01 + 0.00333 * i;
+				vPositionList[i][4] -= 0.01 + 0.00333 * i;
+				vPositionList[i][7] -= 0.01 + 0.00333 * i;
+
+				direct[i] = 2;
 			}
 		}
 
-		x++;
-
-		if (x < 49)
+		else if (direct[i] == 3)
 		{
-			glutPostRedisplay();
+			vPositionList[i][0] -= 0.01 + 0.00333 * i;
+			vPositionList[i][1] -= 0.01 + 0.00333 * i;
+			vPositionList[i][3] -= 0.01 + 0.00333 * i;
+			vPositionList[i][4] -= 0.01 + 0.00333 * i;
+			vPositionList[i][6] -= 0.01 + 0.00333 * i;
+			vPositionList[i][7] -= 0.01 + 0.00333 * i;
 
-			glutTimerFunc(10, TimerFunction, 4);
+			if (vPositionList[i][3] < -1 && vPositionList[i][4] < -1)
+			{
+				vPositionList[i][0] += 0.01 + 0.00333 * i;
+				vPositionList[i][1] += 0.01 + 0.00333 * i;
+				vPositionList[i][3] += 0.01 + 0.00333 * i;
+				vPositionList[i][4] += 0.01 + 0.00333 * i;
+				vPositionList[i][6] += 0.01 + 0.00333 * i;
+				vPositionList[i][7] += 0.01 + 0.00333 * i;
+
+				direct[i] = 0;
+			}
+
+			else if (vPositionList[i][3] < -1)
+			{
+				vPositionList[i][0] += 0.01 + 0.00333 * i;
+				vPositionList[i][3] += 0.01 + 0.00333 * i;
+				vPositionList[i][6] += 0.01 + 0.00333 * i;
+
+				direct[i] = 3;
+			}
+
+			else if (vPositionList[i][4] < -1)
+			{
+				vPositionList[i][1] += 0.01 + 0.00333 * i;
+				vPositionList[i][4] += 0.01 + 0.00333 * i;
+				vPositionList[i][7] += 0.01 + 0.00333 * i;
+
+				direct[i] = 1;
+			}
 		}
 
-		else
+		else if (direct[i] == 4)
 		{
-			for (int i = 0; i < 4; i++)
+			vPositionList[i][0] += 0.01 + 0.00333 * i;
+			vPositionList[i][1] -= 0.01 + 0.00333 * i;
+			vPositionList[i][3] += 0.01 + 0.00333 * i;
+			vPositionList[i][4] -= 0.01 + 0.00333 * i;
+			vPositionList[i][6] += 0.01 + 0.00333 * i;
+			vPositionList[i][7] -= 0.01 + 0.00333 * i;
+
+			if (vPositionList[i][6] > 1 && vPositionList[i][4] < -1)
 			{
-				if (a[i] == 4)
+				vPositionList[i][0] -= 0.01 + 0.00333 * i;
+				vPositionList[i][1] += 0.01 + 0.00333 * i;
+				vPositionList[i][3] -= 0.01 + 0.00333 * i;
+				vPositionList[i][4] += 0.01 + 0.00333 * i;
+				vPositionList[i][6] -= 0.01 + 0.00333 * i;
+				vPositionList[i][7] += 0.01 + 0.00333 * i;
+
+				direct[i] = 1;
+			}
+
+			else if (vPositionList[i][6] > 1)
+			{
+				vPositionList[i][0] -= 0.01 + 0.00333 * i;
+				vPositionList[i][3] -= 0.01 + 0.00333 * i;
+				vPositionList[i][6] -= 0.01 + 0.00333 * i;
+
+				direct[i] = 2;
+			}
+
+			else if (vPositionList[i][4] < -1)
+			{
+				vPositionList[i][1] += 0.01 + 0.00333 * i;
+				vPositionList[i][4] += 0.01 + 0.00333 * i;
+				vPositionList[i][7] += 0.01 + 0.00333 * i;
+
+				direct[i] = 0;
+			}
+
+		}
+
+		else if (direct[i] == 5)
+		{
+			vPositionList[i][0] += 0.01 + 0.00333 * i;
+			vPositionList[i][3] += 0.01 + 0.00333 * i;
+			vPositionList[i][6] += 0.01 + 0.00333 * i;
+
+			if (vPositionList[i][6] > 1)
+			{
+				vPositionList[i][0] -= 0.01 + 0.00333 * i;
+				vPositionList[i][1] += 0.2;
+				vPositionList[i][3] -= 0.01 + 0.00333 * i;
+				vPositionList[i][4] += 0.2;
+				vPositionList[i][6] -= 0.01 + 0.00333 * i;
+				vPositionList[i][7] += 0.2;
+
+				if (vPositionList[i][1] > 1)
 				{
-					vPositionList[i][6] += 0.49;
-					vPositionList[i][10] += 0.49;
-					vPositionList[i][12] -= 0.245;
-					vPositionList[i][13] += 0.245;
+					vPositionList[i][1] = 1;
+					vPositionList[i][4] = 0.8;
+					vPositionList[i][7] = 0.8;
+
+					direct[i] = 2;
+				}
+
+				else
+				{
+					direct[i] = 1;
+				}
+			}
+		}
+
+		else if (direct[i] == 6)
+		{
+			vPositionList[i][0] -= 0.01 + 0.00333 * i;
+			vPositionList[i][3] -= 0.01 + 0.00333 * i;
+			vPositionList[i][6] -= 0.01 + 0.00333 * i;
+
+			if (vPositionList[i][3] < -1)
+			{
+				vPositionList[i][0] += 0.01 + 0.00333 * i;
+				vPositionList[i][1] += 0.2;
+				vPositionList[i][3] += 0.01 + 0.00333 * i;
+				vPositionList[i][4] += 0.2;
+				vPositionList[i][6] += 0.01 + 0.00333 * i;
+				vPositionList[i][7] += 0.2;
+
+				if (vPositionList[i][1] > 1)
+				{
+					vPositionList[i][1] = 1;
+					vPositionList[i][4] = 0.8;
+					vPositionList[i][7] = 0.8;
+
+					direct[i] = 3;
+				}
+
+				else
+				{
+					direct[i] = 0;
+				}
+			}
+		}
+
+		else if (direct[i] == 7)
+		{
+			vPositionList[i][0] -= 0.01 + 0.00333 * i;
+			vPositionList[i][3] -= 0.01 + 0.00333 * i;
+			vPositionList[i][6] -= 0.01 + 0.00333 * i;
+
+			if (vPositionList[i][3] < -1)
+			{
+				vPositionList[i][0] += 0.01 + 0.00333 * i;
+				vPositionList[i][1] -= 0.2;
+				vPositionList[i][3] += 0.01 + 0.00333 * i;
+				vPositionList[i][4] -= 0.2;
+				vPositionList[i][6] += 0.01 + 0.00333 * i;
+				vPositionList[i][7] -= 0.2;
+
+				if (vPositionList[i][4] < -1)
+				{
+					vPositionList[i][1] = -0.8;
+					vPositionList[i][4] = -1;
+					vPositionList[i][7] = -1;
 
 					direct[i] = 0;
 				}
 
-				a[i] = 0;
+				else
+				{
+					direct[i] = 3;
+				}
 			}
+		}
 
-			x = 0;
+		else if (direct[i] == 8)
+		{
+			vPositionList[i][0] += 0.01 + 0.00333 * i;
+			vPositionList[i][3] += 0.01 + 0.00333 * i;
+			vPositionList[i][6] += 0.01 + 0.00333 * i;
 
-			glutPostRedisplay();
+			if (vPositionList[i][6] > 1)
+			{
+				vPositionList[i][0] -= 0.01 + 0.00333 * i;
+				vPositionList[i][1] -= 0.2;
+				vPositionList[i][3] -= 0.01 + 0.00333 * i;
+				vPositionList[i][4] -= 0.2;
+				vPositionList[i][6] -= 0.01 + 0.00333 * i;
+				vPositionList[i][7] -= 0.2;
+
+				if (vPositionList[i][4] < -1)
+				{
+					vPositionList[i][1] = -0.8;
+					vPositionList[i][4] = -1;
+					vPositionList[i][7] = -1;
+
+					direct[i] = 1;
+				}
+
+				else
+				{
+					direct[i] = 2;
+				}
+			}
 		}
 	}
+
+	glutTimerFunc(10, TimerFunction, 1);
 }
 
 void InitBuffer()
