@@ -13,6 +13,8 @@ void make_fragmentShaders();
 GLuint make_shaderProgram();
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
+GLvoid Mouse(int button, int state, int x, int y);
+GLvoid Motion(int x, int y);
 GLvoid TimerFunction(int value);
 
 GLint width, height;
@@ -30,12 +32,13 @@ GLuint VAO, VBO_pos[2], EBO;
 std::random_device rd;
 std::mt19937 mt(rd());
 std::uniform_real_distribution<float> dis(0, 1);
-std::uniform_real_distribution<float> rx(-0.9, 0.9);
-std::uniform_real_distribution<float> ry(-0.85, 0.85);
+std::uniform_int_distribution<int>fea(1, 8);
+std::uniform_real_distribution<float> rx(-0.8, 1);
+std::uniform_real_distribution<float> ry(-0.7, 0.9);
 
 float ox = 0.0, oy = 0.0, nx = 0.0, ny = 0.0;
 
-int object[15] = {}, direct[15] = {}, a[4] = {}, x = 0;
+int object[15] = {}, direct[15] = {}, state[15] = {}, ceasar = 0;
 
 int main(int argc, char** argv)
 {
@@ -57,6 +60,13 @@ int main(int argc, char** argv)
 	else
 		std::cout << "GLEW Initialized\n";
 
+	for (int i = 0; i < 15; i++)
+	{
+		ceasar = fea(mt);
+
+		direct[i] = ceasar;
+	}
+
 	for (int i = 0; i < 5; i++)
 	{
 		object[i * 3] = i;
@@ -68,18 +78,37 @@ int main(int argc, char** argv)
 	{
 		nx = rx(mt), ny = ry(mt);
 
-		vPositionList[i][0] = nx;
-		vPositionList[i][1] = ny;
-		vPositionList[i][3] = nx - 0.1;
-		vPositionList[i][4] = ny - 0.1;
-		vPositionList[i][6] = nx;
-		vPositionList[i][7] = ny - 0.1;
-		vPositionList[i][9] = nx - 0.1;
-		vPositionList[i][10] = ny;
-		vPositionList[i][12] = nx -0.05;
-		vPositionList[i][13] = ny + 0.05;
-		vPositionList[i][15] = nx - 0.05;
-		vPositionList[i][16] = ny - 0.15;
+		if (object[i] == 0)
+		{
+			vPositionList[i][0] = nx;
+			vPositionList[i][1] = ny;
+			vPositionList[i][3] = nx - 0.05;
+			vPositionList[i][4] = ny - 0.05;
+			vPositionList[i][6] = nx;
+			vPositionList[i][7] = ny - 0.05;
+			vPositionList[i][9] = nx - 0.05;
+			vPositionList[i][10] = ny;
+			vPositionList[i][12] = nx - 0.1;
+			vPositionList[i][13] = ny + 0.1;
+			vPositionList[i][15] = nx - 0.1;
+			vPositionList[i][16] = ny - 0.3;
+		}
+
+		else
+		{
+			vPositionList[i][0] = nx;
+			vPositionList[i][1] = ny;
+			vPositionList[i][3] = nx - 0.2;
+			vPositionList[i][4] = ny - 0.2;
+			vPositionList[i][6] = nx;
+			vPositionList[i][7] = ny - 0.2;
+			vPositionList[i][9] = nx - 0.2;
+			vPositionList[i][10] = ny;
+			vPositionList[i][12] = nx - 0.1;
+			vPositionList[i][13] = ny + 0.1;
+			vPositionList[i][15] = nx - 0.1;
+			vPositionList[i][16] = ny - 0.3;
+		}
 
 		for (int j = 0; j < 3; j++)
 		{
@@ -102,6 +131,8 @@ int main(int argc, char** argv)
 		index[i][9] = 6 * i + 1;
 		index[i][10] = 6 * i + 2;
 		index[i][11] = 6 * i + 5;
+
+		state[i] = 1;
 	}
 
 	glutTimerFunc(10, TimerFunction, 1);
@@ -112,6 +143,8 @@ int main(int argc, char** argv)
 	shaderProgramID = make_shaderProgram();
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
+	glutMouseFunc(Mouse);
+	glutMotionFunc(Motion);
 	glutMainLoop();
 }
 
@@ -175,295 +208,483 @@ GLvoid Reshape(int w, int h)
 	glViewport(0, 0, w, h);
 }
 
+GLvoid Mouse(int button, int state, int x, int y)
+{
+	ox = (float)(x - 400.0) / 400.0;
+	oy = -(float)(y - 400.0) / 400.0;
+}
+
+GLvoid Motion(int x, int y)
+{
+	ox = (float)(x - 400.0) / 400.0;
+	oy = -(float)(y - 400.0) / 400.0;
+
+	glutPostRedisplay();
+}
+
 GLvoid TimerFunction(int value)
 {
 	for (int i = 0; i < 15; i++)
 	{
-		if (direct[i] == 1)
+		if (direct[i] == 1 && state[i] == 1)
 		{
-			vPositionList[i][0] += 0.01 + 0.00333 * i;
-			vPositionList[i][1] += 0.01 + 0.00333 * i;
-			vPositionList[i][3] += 0.01 + 0.00333 * i;
-			vPositionList[i][4] += 0.01 + 0.00333 * i;
-			vPositionList[i][6] += 0.01 + 0.00333 * i;
-			vPositionList[i][7] += 0.01 + 0.00333 * i;
+			vPositionList[i][0] += 0.01;
+			vPositionList[i][1] += 0.01;
+			vPositionList[i][3] += 0.01;
+			vPositionList[i][4] += 0.01;
+			vPositionList[i][6] += 0.01;
+			vPositionList[i][7] += 0.01;
+			vPositionList[i][9] += 0.01;
+			vPositionList[i][10] += 0.01;
+			vPositionList[i][12] += 0.01;
+			vPositionList[i][13] += 0.01;
+			vPositionList[i][15] += 0.01;
+			vPositionList[i][16] += 0.01;
 
-			if (vPositionList[i][6] > 1 && vPositionList[i][1] > 1)
+			if (vPositionList[i][0] > 1 && vPositionList[i][13] > 1)
 			{
-				vPositionList[i][0] -= 0.01 + 0.00333 * i;
-				vPositionList[i][1] -= 0.01 + 0.00333 * i;
-				vPositionList[i][3] -= 0.01 + 0.00333 * i;
-				vPositionList[i][4] -= 0.01 + 0.00333 * i;
-				vPositionList[i][6] -= 0.01 + 0.00333 * i;
-				vPositionList[i][7] -= 0.01 + 0.00333 * i;
+				vPositionList[i][0] -= 0.01;
+				vPositionList[i][1] -= 0.01;
+				vPositionList[i][3] -= 0.01;
+				vPositionList[i][4] -= 0.01;
+				vPositionList[i][6] -= 0.01;
+				vPositionList[i][7] -= 0.01;
+				vPositionList[i][9] -= 0.01;
+				vPositionList[i][10] -= 0.01;
+				vPositionList[i][12] -= 0.01;
+				vPositionList[i][13] -= 0.01;
+				vPositionList[i][15] -= 0.01;
+				vPositionList[i][16] -= 0.01;
+
+				direct[i] = 3;
+			}
+
+			else if (vPositionList[i][0] > 1)
+			{
+				vPositionList[i][0] -= 0.01;				
+				vPositionList[i][3] -= 0.01;				
+				vPositionList[i][6] -= 0.01;				
+				vPositionList[i][9] -= 0.01;				
+				vPositionList[i][12] -= 0.01;				
+				vPositionList[i][15] -= 0.01;				
 
 				direct[i] = 2;
 			}
 
-			else if (vPositionList[i][6] > 1)
+			else if (vPositionList[i][13] > 1)
 			{
-				vPositionList[i][0] -= 0.01 + 0.00333 * i;
-				vPositionList[i][3] -= 0.01 + 0.00333 * i;
-				vPositionList[i][6] -= 0.01 + 0.00333 * i;
+				vPositionList[i][1] -= 0.01;
+				vPositionList[i][4] -= 0.01;
+				vPositionList[i][7] -= 0.01;
+				vPositionList[i][10] -= 0.01;
+				vPositionList[i][13] -= 0.01;
+				vPositionList[i][16] -= 0.01;
 
-				direct[i] = 1;
-			}
-
-			else if (vPositionList[i][1] > 1)
-			{
-				vPositionList[i][1] -= 0.01 + 0.00333 * i;
-				vPositionList[i][4] -= 0.01 + 0.00333 * i;
-				vPositionList[i][7] -= 0.01 + 0.00333 * i;
-
-				direct[i] = 3;
+				direct[i] = 4;
 			}
 		}
 
-		else if (direct[i] == 2)
+		else if (direct[i] == 2 && state[i] == 1)
 		{
-			vPositionList[i][0] -= 0.01 + 0.00333 * i;
-			vPositionList[i][1] += 0.01 + 0.00333 * i;
-			vPositionList[i][3] -= 0.01 + 0.00333 * i;
-			vPositionList[i][4] += 0.01 + 0.00333 * i;
-			vPositionList[i][6] -= 0.01 + 0.00333 * i;
-			vPositionList[i][7] += 0.01 + 0.00333 * i;
+			vPositionList[i][0] -= 0.01;
+			vPositionList[i][1] += 0.01;
+			vPositionList[i][3] -= 0.01;
+			vPositionList[i][4] += 0.01;
+			vPositionList[i][6] -= 0.01;
+			vPositionList[i][7] += 0.01;
+			vPositionList[i][9] -= 0.01;
+			vPositionList[i][10] += 0.01;
+			vPositionList[i][12] -= 0.01;
+			vPositionList[i][13] += 0.01;
+			vPositionList[i][15] -= 0.01;
+			vPositionList[i][16] += 0.01;
 
-			if (vPositionList[i][3] < -1 && vPositionList[i][1] > 1)
+			if (vPositionList[i][3] < -1 && vPositionList[i][13] > 1)
 			{
-				vPositionList[i][0] += 0.01 + 0.00333 * i;
-				vPositionList[i][1] -= 0.01 + 0.00333 * i;
-				vPositionList[i][3] += 0.01 + 0.00333 * i;
-				vPositionList[i][4] -= 0.01 + 0.00333 * i;
-				vPositionList[i][6] += 0.01 + 0.00333 * i;
-				vPositionList[i][7] -= 0.01 + 0.00333 * i;
+				vPositionList[i][0] += 0.01;
+				vPositionList[i][1] -= 0.01;
+				vPositionList[i][3] += 0.01;
+				vPositionList[i][4] -= 0.01;
+				vPositionList[i][6] += 0.01;
+				vPositionList[i][7] -= 0.01;
+				vPositionList[i][9] += 0.01;
+				vPositionList[i][10] -= 0.01;
+				vPositionList[i][12] += 0.01;
+				vPositionList[i][13] -= 0.01;
+				vPositionList[i][15] += 0.01;
+				vPositionList[i][16] -= 0.01;
 
-				direct[i] = 3;
+				direct[i] = 4;
 			}
 
 			else if (vPositionList[i][3] < -1)
 			{
-				vPositionList[i][0] += 0.01 + 0.00333 * i;
-				vPositionList[i][3] += 0.01 + 0.00333 * i;
-				vPositionList[i][6] += 0.01 + 0.00333 * i;
+				vPositionList[i][0] += 0.01;
+				vPositionList[i][3] += 0.01;
+				vPositionList[i][6] += 0.01;
+				vPositionList[i][9] += 0.01;
+				vPositionList[i][12] += 0.01;
+				vPositionList[i][15] += 0.01;
 
-				direct[i] = 0;
+				direct[i] = 1;
 			}
 
-			else if (vPositionList[i][1] > 1)
+			else if (vPositionList[i][13] > 1)
 			{
-				vPositionList[i][1] -= 0.01 + 0.00333 * i;
-				vPositionList[i][4] -= 0.01 + 0.00333 * i;
-				vPositionList[i][7] -= 0.01 + 0.00333 * i;
+				vPositionList[i][1] -= 0.01;
+				vPositionList[i][4] -= 0.01;
+				vPositionList[i][7] -= 0.01;
+				vPositionList[i][10] -= 0.01;
+				vPositionList[i][13] -= 0.01;
+				vPositionList[i][16] -= 0.01;
 
-				direct[i] = 2;
+				direct[i] = 3;
 			}
 		}
 
-		else if (direct[i] == 3)
+		else if (direct[i] == 3 && state[i] == 1)
 		{
-			vPositionList[i][0] -= 0.01 + 0.00333 * i;
-			vPositionList[i][1] -= 0.01 + 0.00333 * i;
-			vPositionList[i][3] -= 0.01 + 0.00333 * i;
-			vPositionList[i][4] -= 0.01 + 0.00333 * i;
-			vPositionList[i][6] -= 0.01 + 0.00333 * i;
-			vPositionList[i][7] -= 0.01 + 0.00333 * i;
+			vPositionList[i][0] -= 0.01;
+			vPositionList[i][1] -= 0.01;
+			vPositionList[i][3] -= 0.01;
+			vPositionList[i][4] -= 0.01;
+			vPositionList[i][6] -= 0.01;
+			vPositionList[i][7] -= 0.01;
+			vPositionList[i][9] -= 0.01;
+			vPositionList[i][10] -= 0.01;
+			vPositionList[i][12] -= 0.01;
+			vPositionList[i][13] -= 0.01;
+			vPositionList[i][15] -= 0.01;
+			vPositionList[i][16] -= 0.01;
 
-			if (vPositionList[i][3] < -1 && vPositionList[i][4] < -1)
+			if (vPositionList[i][3] < -1 && vPositionList[i][16] < -1)
 			{
-				vPositionList[i][0] += 0.01 + 0.00333 * i;
-				vPositionList[i][1] += 0.01 + 0.00333 * i;
-				vPositionList[i][3] += 0.01 + 0.00333 * i;
-				vPositionList[i][4] += 0.01 + 0.00333 * i;
-				vPositionList[i][6] += 0.01 + 0.00333 * i;
-				vPositionList[i][7] += 0.01 + 0.00333 * i;
+				vPositionList[i][0] += 0.01;
+				vPositionList[i][1] += 0.01;
+				vPositionList[i][3] += 0.01;
+				vPositionList[i][4] += 0.01;
+				vPositionList[i][6] += 0.01;
+				vPositionList[i][7] += 0.01;
+				vPositionList[i][9] += 0.01;
+				vPositionList[i][10] += 0.01;
+				vPositionList[i][12] += 0.01;
+				vPositionList[i][13] += 0.01;
+				vPositionList[i][15] += 0.01;
+				vPositionList[i][16] += 0.01;
 
-				direct[i] = 0;
+				direct[i] = 1;
 			}
 
 			else if (vPositionList[i][3] < -1)
 			{
-				vPositionList[i][0] += 0.01 + 0.00333 * i;
-				vPositionList[i][3] += 0.01 + 0.00333 * i;
-				vPositionList[i][6] += 0.01 + 0.00333 * i;
+				vPositionList[i][0] += 0.01;
+				vPositionList[i][3] += 0.01;
+				vPositionList[i][6] += 0.01;
+				vPositionList[i][9] += 0.01;
+				vPositionList[i][12] += 0.01;
+				vPositionList[i][15] += 0.01;
 
-				direct[i] = 3;
+				direct[i] = 4;
 			}
 
-			else if (vPositionList[i][4] < -1)
+			else if (vPositionList[i][16] < -1)
 			{
-				vPositionList[i][1] += 0.01 + 0.00333 * i;
-				vPositionList[i][4] += 0.01 + 0.00333 * i;
-				vPositionList[i][7] += 0.01 + 0.00333 * i;
+				vPositionList[i][1] += 0.01;
+				vPositionList[i][4] += 0.01;
+				vPositionList[i][7] += 0.01;
+				vPositionList[i][10] += 0.01;
+				vPositionList[i][13] += 0.01;
+				vPositionList[i][16] += 0.01;
 
-				direct[i] = 1;
+				direct[i] = 2;
 			}
 		}
 
-		else if (direct[i] == 4)
+		else if (direct[i] == 4 && state[i] == 1)
 		{
-			vPositionList[i][0] += 0.01 + 0.00333 * i;
-			vPositionList[i][1] -= 0.01 + 0.00333 * i;
-			vPositionList[i][3] += 0.01 + 0.00333 * i;
-			vPositionList[i][4] -= 0.01 + 0.00333 * i;
-			vPositionList[i][6] += 0.01 + 0.00333 * i;
-			vPositionList[i][7] -= 0.01 + 0.00333 * i;
+			vPositionList[i][0] += 0.01;
+			vPositionList[i][1] -= 0.01;
+			vPositionList[i][3] += 0.01;
+			vPositionList[i][4] -= 0.01;
+			vPositionList[i][6] += 0.01;
+			vPositionList[i][7] -= 0.01;
+			vPositionList[i][9] += 0.01;
+			vPositionList[i][10] -= 0.01;
+			vPositionList[i][12] += 0.01;
+			vPositionList[i][13] -= 0.01;
+			vPositionList[i][15] += 0.01;
+			vPositionList[i][16] -= 0.01;
 
-			if (vPositionList[i][6] > 1 && vPositionList[i][4] < -1)
+			if (vPositionList[i][0] > 1 && vPositionList[i][16] < -1)
 			{
-				vPositionList[i][0] -= 0.01 + 0.00333 * i;
-				vPositionList[i][1] += 0.01 + 0.00333 * i;
-				vPositionList[i][3] -= 0.01 + 0.00333 * i;
-				vPositionList[i][4] += 0.01 + 0.00333 * i;
-				vPositionList[i][6] -= 0.01 + 0.00333 * i;
-				vPositionList[i][7] += 0.01 + 0.00333 * i;
-
-				direct[i] = 1;
-			}
-
-			else if (vPositionList[i][6] > 1)
-			{
-				vPositionList[i][0] -= 0.01 + 0.00333 * i;
-				vPositionList[i][3] -= 0.01 + 0.00333 * i;
-				vPositionList[i][6] -= 0.01 + 0.00333 * i;
+				vPositionList[i][0] -= 0.01;
+				vPositionList[i][1] += 0.01;
+				vPositionList[i][3] -= 0.01;
+				vPositionList[i][4] += 0.01;
+				vPositionList[i][6] -= 0.01;
+				vPositionList[i][7] += 0.01;
+				vPositionList[i][9] -= 0.01;
+				vPositionList[i][10] += 0.01;
+				vPositionList[i][12] -= 0.01;
+				vPositionList[i][13] += 0.01;
+				vPositionList[i][15] -= 0.01;
+				vPositionList[i][16] += 0.01;
 
 				direct[i] = 2;
 			}
 
-			else if (vPositionList[i][4] < -1)
+			else if (vPositionList[i][0] > 1)
 			{
-				vPositionList[i][1] += 0.01 + 0.00333 * i;
-				vPositionList[i][4] += 0.01 + 0.00333 * i;
-				vPositionList[i][7] += 0.01 + 0.00333 * i;
+				vPositionList[i][0] -= 0.01;
+				vPositionList[i][3] -= 0.01;
+				vPositionList[i][6] -= 0.01;
+				vPositionList[i][9] -= 0.01;
+				vPositionList[i][12] -= 0.01;
+				vPositionList[i][15] -= 0.01;
 
-				direct[i] = 0;
+				direct[i] = 3;
+			}
+
+			else if (vPositionList[i][16] < -1)
+			{
+				vPositionList[i][1] += 0.01;
+				vPositionList[i][4] += 0.01;
+				vPositionList[i][7] += 0.01;
+				vPositionList[i][10] += 0.01;
+				vPositionList[i][13] += 0.01;
+				vPositionList[i][16] += 0.01;
+
+				direct[i] = 1;
 			}
 
 		}
 
-		else if (direct[i] == 5)
+		else if (direct[i] == 5 && state[i] == 1)
 		{
-			vPositionList[i][0] += 0.01 + 0.00333 * i;
-			vPositionList[i][3] += 0.01 + 0.00333 * i;
-			vPositionList[i][6] += 0.01 + 0.00333 * i;
+			vPositionList[i][0] += 0.01;
+			vPositionList[i][3] += 0.01;
+			vPositionList[i][6] += 0.01;
+			vPositionList[i][9] += 0.01;
+			vPositionList[i][12] += 0.01;
+			vPositionList[i][15] += 0.01;
 
-			if (vPositionList[i][6] > 1)
+			if (vPositionList[i][0] > 1)
 			{
-				vPositionList[i][0] -= 0.01 + 0.00333 * i;
+				vPositionList[i][0] -= 0.01;
 				vPositionList[i][1] += 0.2;
-				vPositionList[i][3] -= 0.01 + 0.00333 * i;
+				vPositionList[i][3] -= 0.01;
 				vPositionList[i][4] += 0.2;
-				vPositionList[i][6] -= 0.01 + 0.00333 * i;
+				vPositionList[i][6] -= 0.01;
 				vPositionList[i][7] += 0.2;
+				vPositionList[i][9] -= 0.01;
+				vPositionList[i][10] += 0.2;
+				vPositionList[i][12] -= 0.01;
+				vPositionList[i][13] += 0.2;
+				vPositionList[i][15] -= 0.01;
+				vPositionList[i][16] += 0.2;
 
-				if (vPositionList[i][1] > 1)
+				if (vPositionList[i][13] > 1)
 				{
-					vPositionList[i][1] = 1;
-					vPositionList[i][4] = 0.8;
-					vPositionList[i][7] = 0.8;
+					if (object[i] == 0)
+					{
+						vPositionList[i][1] = 0.9;
+						vPositionList[i][4] = 0.85;
+						vPositionList[i][7] = 0.85;
+						vPositionList[i][10] = 0.9;
+						vPositionList[i][13] = 1;
+						vPositionList[i][16] = 0.6;
+					}
 
-					direct[i] = 2;
+					else
+					{
+						vPositionList[i][1] = 0.9;
+						vPositionList[i][4] = 0.7;
+						vPositionList[i][7] = 0.7;
+						vPositionList[i][10] = 0.9;
+						vPositionList[i][13] = 1;
+						vPositionList[i][16] = 0.6;
+					}
+
+					direct[i] = 7;
 				}
 
 				else
 				{
-					direct[i] = 1;
+					direct[i] = 6;
 				}
 			}
 		}
 
-		else if (direct[i] == 6)
+		else if (direct[i] == 6 && state[i] == 1)
 		{
-			vPositionList[i][0] -= 0.01 + 0.00333 * i;
-			vPositionList[i][3] -= 0.01 + 0.00333 * i;
-			vPositionList[i][6] -= 0.01 + 0.00333 * i;
+			vPositionList[i][0] -= 0.01;
+			vPositionList[i][3] -= 0.01;
+			vPositionList[i][6] -= 0.01;
+			vPositionList[i][9] -= 0.01;
+			vPositionList[i][12] -= 0.01;
+			vPositionList[i][15] -= 0.01;
 
 			if (vPositionList[i][3] < -1)
 			{
-				vPositionList[i][0] += 0.01 + 0.00333 * i;
+				vPositionList[i][0] += 0.01;
 				vPositionList[i][1] += 0.2;
-				vPositionList[i][3] += 0.01 + 0.00333 * i;
+				vPositionList[i][3] += 0.01;
 				vPositionList[i][4] += 0.2;
-				vPositionList[i][6] += 0.01 + 0.00333 * i;
+				vPositionList[i][6] += 0.01;
 				vPositionList[i][7] += 0.2;
+				vPositionList[i][9] += 0.01;
+				vPositionList[i][10] += 0.2;
+				vPositionList[i][12] += 0.01;
+				vPositionList[i][13] += 0.2;
+				vPositionList[i][15] += 0.01;
+				vPositionList[i][16] += 0.2;
 
-				if (vPositionList[i][1] > 1)
+				if (vPositionList[i][13] > 1)
 				{
-					vPositionList[i][1] = 1;
-					vPositionList[i][4] = 0.8;
-					vPositionList[i][7] = 0.8;
+					if (object[i] == 0)
+					{
+						vPositionList[i][1] = 0.9;
+						vPositionList[i][4] = 0.85;
+						vPositionList[i][7] = 0.85;
+						vPositionList[i][10] = 0.9;
+						vPositionList[i][13] = 1;
+						vPositionList[i][16] = 0.6;
+					}
 
-					direct[i] = 3;
+					else
+					{
+						vPositionList[i][1] = 0.9;
+						vPositionList[i][4] = 0.7;
+						vPositionList[i][7] = 0.7;
+						vPositionList[i][10] = 0.9;
+						vPositionList[i][13] = 1;
+						vPositionList[i][16] = 0.6;
+					}
+
+					direct[i] = 8;
 				}
 
 				else
 				{
-					direct[i] = 0;
+					direct[i] = 5;
 				}
 			}
 		}
 
-		else if (direct[i] == 7)
+		else if (direct[i] == 7 && state[i] == 1)
 		{
-			vPositionList[i][0] -= 0.01 + 0.00333 * i;
-			vPositionList[i][3] -= 0.01 + 0.00333 * i;
-			vPositionList[i][6] -= 0.01 + 0.00333 * i;
+			vPositionList[i][0] -= 0.01;
+			vPositionList[i][3] -= 0.01;
+			vPositionList[i][6] -= 0.01;
+			vPositionList[i][9] -= 0.01;
+			vPositionList[i][12] -= 0.01;
+			vPositionList[i][15] -= 0.01;
 
 			if (vPositionList[i][3] < -1)
 			{
-				vPositionList[i][0] += 0.01 + 0.00333 * i;
+				vPositionList[i][0] += 0.01;
 				vPositionList[i][1] -= 0.2;
-				vPositionList[i][3] += 0.01 + 0.00333 * i;
+				vPositionList[i][3] += 0.01;
 				vPositionList[i][4] -= 0.2;
-				vPositionList[i][6] += 0.01 + 0.00333 * i;
+				vPositionList[i][6] += 0.01;
 				vPositionList[i][7] -= 0.2;
+				vPositionList[i][9] += 0.01;
+				vPositionList[i][10] -= 0.2;
+				vPositionList[i][12] += 0.01;
+				vPositionList[i][13] -= 0.2;
+				vPositionList[i][15] += 0.01;
+				vPositionList[i][16] -= 0.2;
 
-				if (vPositionList[i][4] < -1)
+				if (vPositionList[i][16] < -1)
 				{
-					vPositionList[i][1] = -0.8;
-					vPositionList[i][4] = -1;
-					vPositionList[i][7] = -1;
+					if (object[i] == 0)
+					{
+						vPositionList[i][1] = -0.7;
+						vPositionList[i][4] = -0.75;
+						vPositionList[i][7] = -0.75;
+						vPositionList[i][10] = -0.7;
+						vPositionList[i][13] = -0.6;
+						vPositionList[i][16] = -1;
+					}
 
-					direct[i] = 0;
+					else
+					{
+						vPositionList[i][1] = -0.7;
+						vPositionList[i][4] = -0.9;
+						vPositionList[i][7] = -0.9;
+						vPositionList[i][10] = -0.7;
+						vPositionList[i][13] = -0.6;
+						vPositionList[i][16] = -1;
+					}
+
+					direct[i] = 5;
 				}
 
 				else
 				{
-					direct[i] = 3;
+					direct[i] = 8;
 				}
 			}
 		}
 
-		else if (direct[i] == 8)
+		else if (direct[i] == 8 && state[i] == 1)
 		{
-			vPositionList[i][0] += 0.01 + 0.00333 * i;
-			vPositionList[i][3] += 0.01 + 0.00333 * i;
-			vPositionList[i][6] += 0.01 + 0.00333 * i;
+			vPositionList[i][0] += 0.01;
+			vPositionList[i][3] += 0.01;
+			vPositionList[i][6] += 0.01;
+			vPositionList[i][9] += 0.01;
+			vPositionList[i][12] += 0.01;
+			vPositionList[i][15] += 0.01;
 
-			if (vPositionList[i][6] > 1)
+			if (vPositionList[i][0] > 1)
 			{
-				vPositionList[i][0] -= 0.01 + 0.00333 * i;
+				vPositionList[i][0] -= 0.01;
 				vPositionList[i][1] -= 0.2;
-				vPositionList[i][3] -= 0.01 + 0.00333 * i;
+				vPositionList[i][3] -= 0.01;
 				vPositionList[i][4] -= 0.2;
-				vPositionList[i][6] -= 0.01 + 0.00333 * i;
+				vPositionList[i][6] -= 0.01;
 				vPositionList[i][7] -= 0.2;
+				vPositionList[i][9] -= 0.01;
+				vPositionList[i][10] -= 0.2;
+				vPositionList[i][12] -= 0.01;
+				vPositionList[i][13] -= 0.2;
+				vPositionList[i][15] -= 0.01;
+				vPositionList[i][16] -= 0.2;
 
-				if (vPositionList[i][4] < -1)
+				if (vPositionList[i][16] < -1)
 				{
-					vPositionList[i][1] = -0.8;
-					vPositionList[i][4] = -1;
-					vPositionList[i][7] = -1;
+					if (object[i] == 0)
+					{
+						vPositionList[i][1] = -0.7;
+						vPositionList[i][4] = -0.75;
+						vPositionList[i][7] = -0.75;
+						vPositionList[i][10] = -0.7;
+						vPositionList[i][13] = -0.6;
+						vPositionList[i][16] = -1;
+					}
 
-					direct[i] = 1;
+					else
+					{
+						vPositionList[i][1] = -0.7;
+						vPositionList[i][4] = -0.9;
+						vPositionList[i][7] = -0.9;
+						vPositionList[i][10] = -0.7;
+						vPositionList[i][13] = -0.6;
+						vPositionList[i][16] = -1;
+					}
+
+					direct[i] = 6;
 				}
 
 				else
 				{
-					direct[i] = 2;
+					direct[i] = 7;
 				}
 			}
 		}
 	}
+
+	glutPostRedisplay();
 
 	glutTimerFunc(10, TimerFunction, 1);
 }
