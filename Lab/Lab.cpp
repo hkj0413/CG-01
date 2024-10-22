@@ -27,7 +27,7 @@ GLfloat colors[4][15] = {};
 GLint index[4][9] = {};
 GLuint VAO, VBO_pos[2], EBO;
 
-int direct[4] = { 0, 1, 2, 3 };
+int direct[4] = { 0, 1, 2, 3 }, a[4] = {}, x = 0;
 
 int main(int argc, char** argv)
 {
@@ -186,19 +186,34 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-	case '1':
+	case 'l':
+		for (int i = 0; i < 4; i++)
+		{
+			if (direct[i] == 0)
+			{
+				direct[i] = 1;
+
+				a[i] = 1;
+
+				vPositionList[i][7] += 0.49;
+			}
+		}
 		glutTimerFunc(10, TimerFunction, 1);
 		break;
-	case '2':
+	case 't':
 		glutTimerFunc(10, TimerFunction, 2);
 		break;
-	case '3':
-	
+	case 'r':
 		glutTimerFunc(10, TimerFunction, 3);
 		break;
-	case '4':
-
+	case 'p':
 		glutTimerFunc(10, TimerFunction, 4);
+		break;
+	case 'a':
+		for (int i = 0; i < 4; i++)
+		{
+			direct[i] = i;
+		}
 		break;
 	case 'q':
 		glutLeaveMainLoop();
@@ -210,9 +225,37 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 
 GLvoid TimerFunction(int value)
 {
-	
+	if (value == 1)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			if (a[i] == 1)
+			{
+				vPositionList[i][7] -= 0.01;
+			}
+		}
+		
+		x++;
 
-	glutPostRedisplay();
+		if (x < 49)
+		{
+			glutPostRedisplay();
+
+			glutTimerFunc(10, TimerFunction, 1);
+		}
+
+		else
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				a[i] = 0;
+			}
+
+			x = 0;
+
+			glutPostRedisplay();
+		}
+	}
 }
 
 void InitBuffer()
