@@ -36,9 +36,9 @@ std::uniform_int_distribution<int>fea(1, 8);
 std::uniform_real_distribution<float> rx(-0.8, 1);
 std::uniform_real_distribution<float> ry(-0.7, 0.9);
 
-float ox = 0.0, oy = 0.0, nx = 0.0, ny = 0.0;
+float ox = 0.0, oy = 0.0, nx = 0.0, ny = 0.0, qx = 0.0, qy = 0.0;
 
-int object[15] = {}, direct[15] = {}, state[15] = {}, ceasar = 0;
+int object[15] = {}, direct[15] = {}, station[15] = {}, ceasar = 0, kaisar = 0;
 
 int main(int argc, char** argv)
 {
@@ -59,13 +59,6 @@ int main(int argc, char** argv)
 	}
 	else
 		std::cout << "GLEW Initialized\n";
-
-	for (int i = 0; i < 15; i++)
-	{
-		ceasar = fea(mt);
-
-		direct[i] = ceasar;
-	}
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -117,6 +110,7 @@ int main(int argc, char** argv)
 			colors[i][j + 6] = colors[i][j];
 			colors[i][j + 9] = colors[i][j];
 			colors[i][j + 12] = colors[i][j];
+			colors[i][j + 15] = colors[i][j];
 		}
 
 		index[i][0] = 6 * i;
@@ -132,7 +126,7 @@ int main(int argc, char** argv)
 		index[i][10] = 6 * i + 2;
 		index[i][11] = 6 * i + 5;
 
-		state[i] = 1;
+		station[i] = 1;
 	}
 
 	glutTimerFunc(10, TimerFunction, 1);
@@ -169,32 +163,32 @@ GLvoid drawScene()
 
 	for (int i = 0; i < 15; i++)
 	{
-		if (object[i] == 0)
+		if (object[i] == 0 && station[i] == 1)
 		{
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 12));
 		}
 
-		else if (object[i] == 1)
+		else if (object[i] == 1 && station[i] == 1)
 		{
 			glDrawElements(GL_LINES, 2, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 12));
 		}
 
-		else if (object[i] == 2)
+		else if (object[i] == 2 && station[i] == 1)
 		{
 			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 12));
 		}
 
-		else if (object[i] == 3)
+		else if (object[i] == 3 && station[i] == 1)
 		{
 			glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 12));
 		}
 
-		else if (object[i] == 4)
+		else if (object[i] == 4 && station[i] == 1)
 		{
 			glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 12));
 		}
 
-		else if (object[i] == 5)
+		else if (object[i] == 5 && station[i] == 1)
 		{
 			glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, (void*)(sizeof(GLuint) * i * 12));
 		}
@@ -212,12 +206,266 @@ GLvoid Mouse(int button, int state, int x, int y)
 {
 	ox = (float)(x - 400.0) / 400.0;
 	oy = -(float)(y - 400.0) / 400.0;
+
+	if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+	{
+		qx = 0, qy = 0;
+
+		for (int i = 0; i < 15; i++)
+		{
+			if (vPositionList[kaisar][0] > vPositionList[i][3] && vPositionList[kaisar][1] > vPositionList[i][4] && vPositionList[kaisar][3] < vPositionList[i][0] && vPositionList[kaisar][4] < vPositionList[i][1] && station[i] == 1 && kaisar != i)
+			{
+				station[kaisar] = 0;
+
+				if (object[kaisar] == 0)
+				{
+					if (object[i] == 0)
+					{
+						object[i]++;
+
+						vPositionList[i][3] -= 0.15;
+						vPositionList[i][4] -= 0.15;
+						vPositionList[i][7] -= 0.15;
+						vPositionList[i][9] -= 0.15;
+					}
+
+					else if (object[i] == 5)
+					{
+						object[i] = 0;
+
+						vPositionList[i][3] += 0.15;
+						vPositionList[i][4] += 0.15;
+						vPositionList[i][7] += 0.15;
+						vPositionList[i][9] += 0.15;
+					}
+
+					else
+					{
+						object[i]++;
+					}
+
+					ceasar = fea(mt);
+
+					direct[i] = ceasar;
+				}
+
+				else if (object[kaisar] == 1)
+				{
+					if (object[i] == 0)
+					{
+						object[i] += 2;
+
+						vPositionList[i][3] -= 0.15;
+						vPositionList[i][4] -= 0.15;
+						vPositionList[i][7] -= 0.15;
+						vPositionList[i][9] -= 0.15;
+					}
+
+					else if (object[i] == 4)
+					{
+						object[i] = 0;
+
+						vPositionList[i][3] += 0.15;
+						vPositionList[i][4] += 0.15;
+						vPositionList[i][7] += 0.15;
+						vPositionList[i][9] += 0.15;
+					}
+
+					else if (object[i] == 5)
+					{
+						object[i] = 1;
+					}
+
+					else
+					{
+						object[i] += 2;
+					}
+
+					ceasar = fea(mt);
+
+					direct[i] = ceasar;
+				}
+
+				else if (object[kaisar] == 2)
+				{
+					if (object[i] == 0)
+					{
+						object[i] += 3;
+
+						vPositionList[i][3] -= 0.15;
+						vPositionList[i][4] -= 0.15;
+						vPositionList[i][7] -= 0.15;
+						vPositionList[i][9] -= 0.15;
+					}
+
+					else if (object[i] == 3)
+					{
+						object[i] = 0;
+
+						vPositionList[i][3] += 0.15;
+						vPositionList[i][4] += 0.15;
+						vPositionList[i][7] += 0.15;
+						vPositionList[i][9] += 0.15;
+					}
+
+					else if (object[i] == 4)
+					{
+						object[i] = 1;
+					}
+
+					else if (object[i] == 5)
+					{
+						object[i] = 2;
+					}
+
+					else
+					{
+						object[i] += 3;
+					}
+
+					ceasar = fea(mt);
+
+					direct[i] = ceasar;
+				}
+
+				else if (object[kaisar] == 3)
+				{
+					if (object[i] == 0)
+					{
+						object[i] += 4;
+
+						vPositionList[i][3] -= 0.15;
+						vPositionList[i][4] -= 0.15;
+						vPositionList[i][7] -= 0.15;
+						vPositionList[i][9] -= 0.15;
+					}
+
+					else if (object[i] == 2)
+					{
+						object[i] = 0;
+
+						vPositionList[i][3] += 0.15;
+						vPositionList[i][4] += 0.15;
+						vPositionList[i][7] += 0.15;
+						vPositionList[i][9] += 0.15;
+					}
+
+					else if (object[i] == 3)
+					{
+						object[i] = 1;
+					}
+
+					else if (object[i] == 4)
+					{
+						object[i] = 2;
+					}
+
+					else if (object[i] == 5)
+					{
+						object[i] = 3;
+					}
+
+					else
+					{
+						object[i] += 4;
+					}
+
+					ceasar = fea(mt);
+
+					direct[i] = ceasar;
+				}
+
+				else if (object[kaisar] == 4)
+				{
+					if (object[i] == 0)
+					{
+						object[i] += 5;
+
+						vPositionList[i][3] -= 0.15;
+						vPositionList[i][4] -= 0.15;
+						vPositionList[i][7] -= 0.15;
+						vPositionList[i][9] -= 0.15;
+					}
+
+					else if (object[i] == 1)
+					{
+						object[i] = 0;
+
+						vPositionList[i][3] += 0.15;
+						vPositionList[i][4] += 0.15;
+						vPositionList[i][7] += 0.15;
+						vPositionList[i][9] += 0.15;
+					}
+
+					else if (object[i] == 2)
+					{
+						object[i] = 1;
+					}
+
+					else if (object[i] == 3)
+					{
+						object[i] = 2;
+					}
+
+					else if (object[i] == 4)
+					{
+						object[i] = 3;
+					}
+
+					else if (object[i] == 5)
+					{
+						object[i] = 4;
+					}
+
+					ceasar = fea(mt);
+
+					direct[i] = ceasar;
+				}
+
+				else if (object[kaisar] == 5)
+				{
+					ceasar = fea(mt);
+
+					direct[i] = ceasar;
+				}
+
+				break;
+			}
+		}
+	}
 }
 
 GLvoid Motion(int x, int y)
 {
 	ox = (float)(x - 400.0) / 400.0;
 	oy = -(float)(y - 400.0) / 400.0;
+
+	for (int i = 0; i < 15; i++)
+	{
+		if (ox > vPositionList[i][3] && oy > vPositionList[i][4] && ox < vPositionList[i][0] && oy < vPositionList[i][1] && station[i] == 1 && qx != 0 && qy != 0)
+		{
+			kaisar = i;
+
+			direct[kaisar] = 0;
+
+			vPositionList[kaisar][0] += ox - qx;
+			vPositionList[kaisar][1] += oy - qy;
+			vPositionList[kaisar][3] += ox - qx;
+			vPositionList[kaisar][4] += oy - qy;
+			vPositionList[kaisar][6] += ox - qx;
+			vPositionList[kaisar][7] += oy - qy;
+			vPositionList[kaisar][9] += ox - qx;
+			vPositionList[kaisar][10] += oy - qy;
+			vPositionList[kaisar][12] += ox - qx;
+			vPositionList[kaisar][13] += oy - qy;
+			vPositionList[kaisar][15] += ox - qx;
+			vPositionList[kaisar][16] += oy - qy;
+
+			break;
+		}
+	}
+
+	qx = ox, qy = oy;
 
 	glutPostRedisplay();
 }
@@ -226,7 +474,7 @@ GLvoid TimerFunction(int value)
 {
 	for (int i = 0; i < 15; i++)
 	{
-		if (direct[i] == 1 && state[i] == 1)
+		if (direct[i] == 1 && station[i] == 1)
 		{
 			vPositionList[i][0] += 0.01;
 			vPositionList[i][1] += 0.01;
@@ -284,7 +532,7 @@ GLvoid TimerFunction(int value)
 			}
 		}
 
-		else if (direct[i] == 2 && state[i] == 1)
+		else if (direct[i] == 2 && station[i] == 1)
 		{
 			vPositionList[i][0] -= 0.01;
 			vPositionList[i][1] += 0.01;
@@ -342,7 +590,7 @@ GLvoid TimerFunction(int value)
 			}
 		}
 
-		else if (direct[i] == 3 && state[i] == 1)
+		else if (direct[i] == 3 && station[i] == 1)
 		{
 			vPositionList[i][0] -= 0.01;
 			vPositionList[i][1] -= 0.01;
@@ -400,7 +648,7 @@ GLvoid TimerFunction(int value)
 			}
 		}
 
-		else if (direct[i] == 4 && state[i] == 1)
+		else if (direct[i] == 4 && station[i] == 1)
 		{
 			vPositionList[i][0] += 0.01;
 			vPositionList[i][1] -= 0.01;
@@ -459,7 +707,7 @@ GLvoid TimerFunction(int value)
 
 		}
 
-		else if (direct[i] == 5 && state[i] == 1)
+		else if (direct[i] == 5 && station[i] == 1)
 		{
 			vPositionList[i][0] += 0.01;
 			vPositionList[i][3] += 0.01;
@@ -515,7 +763,7 @@ GLvoid TimerFunction(int value)
 			}
 		}
 
-		else if (direct[i] == 6 && state[i] == 1)
+		else if (direct[i] == 6 && station[i] == 1)
 		{
 			vPositionList[i][0] -= 0.01;
 			vPositionList[i][3] -= 0.01;
@@ -571,7 +819,7 @@ GLvoid TimerFunction(int value)
 			}
 		}
 
-		else if (direct[i] == 7 && state[i] == 1)
+		else if (direct[i] == 7 && station[i] == 1)
 		{
 			vPositionList[i][0] -= 0.01;
 			vPositionList[i][3] -= 0.01;
@@ -627,7 +875,7 @@ GLvoid TimerFunction(int value)
 			}
 		}
 
-		else if (direct[i] == 8 && state[i] == 1)
+		else if (direct[i] == 8 && station[i] == 1)
 		{
 			vPositionList[i][0] += 0.01;
 			vPositionList[i][3] += 0.01;
