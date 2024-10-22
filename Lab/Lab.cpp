@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 	vPositionList[0][9] = -0.75;
 	vPositionList[0][10] = 0.75;
 	vPositionList[0][12] = -0.5;
-	vPositionList[0][13] = 0.9;
+	vPositionList[0][13] = 1.0;
 
 	vPositionList[1][0] = 0.75;
 	vPositionList[1][1] = 0.75;
@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 	vPositionList[1][9] = 0.25;
 	vPositionList[1][10] = 0.75;
 	vPositionList[1][12] = 0.5;
-	vPositionList[1][13] = 0.9;
+	vPositionList[1][13] = 1.0;
 
 
 	vPositionList[2][0] = -0.25;
@@ -81,7 +81,7 @@ int main(int argc, char** argv)
 	vPositionList[2][9] = -0.75;
 	vPositionList[2][10] = -0.25;
 	vPositionList[2][12] = -0.5;
-	vPositionList[2][13] = -0.1;
+	vPositionList[2][13] = 0.0;
 
 	vPositionList[3][0] = 0.75;
 	vPositionList[3][1] = -0.25;
@@ -92,7 +92,7 @@ int main(int argc, char** argv)
 	vPositionList[3][9] = 0.25;
 	vPositionList[3][10] = -0.25;
 	vPositionList[3][12] = 0.5;
-	vPositionList[3][13] = -0.1;
+	vPositionList[3][13] = 0.0;
 
 	for (int i = 0; i < 5; i++)
 	{
@@ -215,9 +215,27 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		glutTimerFunc(10, TimerFunction, 2);
 		break;
 	case 'r':
+		for (int i = 0; i < 4; i++)
+		{
+			if (direct[i] == 2)
+			{
+				direct[i] = 3;
+
+				a[i] = 3;
+
+				vPositionList[i][13] -= 0.245;
+			}
+		}
 		glutTimerFunc(10, TimerFunction, 3);
 		break;
 	case 'p':
+		for (int i = 0; i < 4; i++)
+		{
+			if (direct[i] == 3)
+			{
+				a[i] = 4;
+			}
+		}
 		glutTimerFunc(10, TimerFunction, 4);
 		break;
 	case 'a':
@@ -291,6 +309,83 @@ GLvoid TimerFunction(int value)
 		{
 			for (int i = 0; i < 4; i++)
 			{
+				a[i] = 0;
+			}
+
+			x = 0;
+
+			glutPostRedisplay();
+		}
+	}
+
+	else if (value == 3)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			if (a[i] == 3)
+			{
+				vPositionList[i][13] += 0.005;
+			}
+		}
+
+		x++;
+
+		if (x < 49)
+		{
+			glutPostRedisplay();
+
+			glutTimerFunc(10, TimerFunction, 3);
+		}
+
+		else
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				a[i] = 0;
+			}
+
+			x = 0;
+
+			glutPostRedisplay();
+		}
+	}
+
+	else if (value == 4)
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			if (a[i] == 4)
+			{
+				vPositionList[i][6] -= 0.01;
+				vPositionList[i][10] -= 0.01;
+				vPositionList[i][12] += 0.005;
+				vPositionList[i][13] -= 0.005;
+			}
+		}
+
+		x++;
+
+		if (x < 49)
+		{
+			glutPostRedisplay();
+
+			glutTimerFunc(10, TimerFunction, 4);
+		}
+
+		else
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				if (a[i] == 4)
+				{
+					vPositionList[i][6] += 0.49;
+					vPositionList[i][10] += 0.49;
+					vPositionList[i][12] -= 0.245;
+					vPositionList[i][13] += 0.245;
+
+					direct[i] = 0;
+				}
+
 				a[i] = 0;
 			}
 
