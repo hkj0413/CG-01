@@ -143,27 +143,29 @@ GLvoid drawScene()
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 
-	if (check == 2 or check == 12 or check == 16 or check == 17 or check == 18 or check == 19)
+	if (check == 2 or check == 11 or check == 16 or check == 17 or check == 18 or check == 19)
 	{
 		glDrawArrays(GL_TRIANGLES, 6, 6);
 	}
 
-	switch (check)
+	if (check == 3 or check == 12 or check == 16 or check == 20 or check == 21 or check == 22)
 	{
-	case 3:
 		glDrawArrays(GL_TRIANGLES, 12, 6);
-		break;
-	case 4:
+	}
+
+	if (check == 4 or check == 13 or check == 17 or check == 20 or check == 23 or check == 24)
+	{
 		glDrawArrays(GL_TRIANGLES, 18, 6);
-		break;
-	case 5:
+	}
+
+	if (check == 5 or check == 14 or check == 18 or check == 21 or check == 23 or check == 25)
+	{
 		glDrawArrays(GL_TRIANGLES, 24, 6);
-		break;
-	case 6:
+	}
+
+	if (check == 6 or check == 15 or check == 19 or check == 22 or check == 24 or check == 25)
+	{
 		glDrawArrays(GL_TRIANGLES, 30, 6);
-		break;
-	default:
-		break;
 	}
 
 	glutSwapBuffers();
@@ -183,7 +185,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		check = 1;
 		break;
 	case '2':
-		check = 12;
+		check = 2;
 		break;
 	case '3':
 		check = 3;
@@ -210,7 +212,7 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		check = 10;
 		break;
 	case 'c':
-
+		check = fea(mt);
 		break;
 	case 't':
 
