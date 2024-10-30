@@ -52,16 +52,19 @@ std::uniform_int_distribution<int>mut(26, 31);
 char* filetobuf(const char* file);
 
 GLfloat vPositionList[] = { 
-	-0.25, -0.25, -0.25,  0.25, -0.25,-0.25,  -0.25, 0.25, -0.25,   0.25, -0.25, -0.25,  0.25, 0.25, -0.25,  -0.25, 0.25, -0.25,  
-	-0.25, 0.25, -0.25,  0.25, 0.25, -0.25,  -0.25, 0.25, 0.25,   0.25, 0.25, -0.25,  0.25, 0.25, 0.25,  -0.25, 0.25, 0.25,
-	-0.25, 0.25, 0.25,  0.25, 0.25, 0.25,  -0.25, -0.25, 0.25,   0.25, 0.25, 0.25,   0.25, -0.25, 0.25,   -0.25, -0.25, 0.25,
-	-0.25, -0.25, 0.25,  0.25, -0.25, 0.25,  -0.25, -0.25, -0.25,   0.25, -0.25, 0.25,  0.25, -0.25, -0.25,  -0.25, -0.25, -0.25,
-	-0.25, -0.25, -0.25,  -0.25, 0.25, -0.25,  -0.25, -0.25, 0.25,   -0.25, -0.25, 0.25,  -0.25, 0.25, -0.25,  -0.25, 0.25, 0.25,
-	0.25, 0.25, -0.25,  0.25, -0.25, -0.25,  0.25, 0.25, 0.25,   0.25, 0.25, 0.25,  0.25, -0.25, -0.25,  0.25, -0.25, 0.25,
-	-0.25, -0.25, 0.25,  0.25, -0.25, 0.25,  0.0, -0.25, -0.183,
-	-0.25, -0.25, 0.25,  0.25, -0.25, 0.25,  0.0, 0.25, 0.0835,
-	-0.25, -0.25, 0.25,  0.0, -0.25, -0.183,  0.0, 0.25, 0.0835,
-	0.0, -0.25, -0.183,  0.25, -0.25, 0.25,  0.0, 0.25, 0.0835
+	-0.25, -0.25, -0.5,  0.25, -0.25, -0.5,  -0.25, 0.25, -0.5,   0.25, -0.25, -0.5,  0.25, 0.25, -0.5,  -0.25, 0.25, -0.5,  
+	-0.25, 0.25, -0.5,  0.25, 0.25, -0.5,  -0.25, 0.25, 0.0,   0.25, 0.25, -0.5,  0.25, 0.25, 0.0,  -0.25, 0.25, 0.0,
+	-0.25, 0.25, 0.0,  0.25, 0.25, 0.0,  -0.25, -0.25, 0.0,   0.25, 0.25, 0.0,   0.25, -0.25, 0.0,   -0.25, -0.25, 0.0,
+	-0.25, -0.25, 0.0,  0.25, -0.25, 0.0,  -0.25, -0.25, -0.5,   0.25, -0.25, 0.0,  0.25, -0.25, -0.5,  -0.25, -0.25, -0.5,
+	-0.25, -0.25, -0.5,  -0.25, 0.25, -0.5,  -0.25, -0.25, 0.0,   -0.25, -0.25, 0.0,  -0.25, 0.25, -0.5,  -0.25, 0.25, 0.0,
+	0.25, 0.25, -0.5,  0.25, -0.25, -0.5,  0.25, 0.25, 0.0,   0.25, 0.25, 0.0,  0.25, -0.25, -0.5,  0.25, -0.25, 0.0,
+
+	-0.25, -0.25, -0.5,  0.25, -0.25, -0.5,  0.25, -0.25, 0.0,  -0.25, -0.25, -0.5,  0.25, -0.25, 0.0,  -0.25, -0.25, 0.0,
+	
+	-0.25, -0.25, -0.5,  0.25, -0.25, -0.5,  0.0, 0.25, -0.25,
+	0.25, -0.25, -0.5,  0.25, -0.25, 0.0,  0.0, 0.25, -0.25,
+	0.25, -0.25, 0.0,  -0.25, -0.25, 0.0,  0.0, 0.25, -0.25,
+	-0.25, -0.25, 0.0,  -0.25, -0.25, -0.5,  0.0, 0.25, -0.25,
 };
 
 GLfloat colors[] = { 
@@ -71,15 +74,19 @@ GLfloat colors[] = {
 	0.0, 0.0, 1.0,  1.0, 1.0, 1.0,  1.0, 0.0, 0.0,   1.0, 1.0, 1.0,  0.0, 1.0, 0.0,   1.0, 0.0, 0.0,
 	1.0, 0.0, 0.0,  0.0, 0.0, 1.0,  0.0, 0.0, 1.0,   0.0, 0.0, 1.0,  0.0, 0.0, 1.0,   1.0, 0.0, 0.0,
 	1.0, 1.0, 1.0,  0.0, 1.0, 0.0,  0.0, 1.0, 0.0,   0.0, 1.0, 0.0,  0.0, 1.0, 0.0,   1.0, 1.0, 1.0,
+
+	1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0,   1.0, 0.0, 0.0,  0.0, 0.0, 1.0,   1.0, 1.0, 1.0,
 	1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0,
-	1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  1.0, 1.0, 1.0,
-	1.0, 0.0, 0.0,  0.0, 0.0, 1.0,  1.0, 1.0, 1.0,
-	0.0, 0.0, 1.0,  0.0, 1.0, 0.0,  1.0, 1.0, 1.0
+	0.0, 1.0, 0.0,  0.0, 0.0, 1.0,  1.0, 1.0, 1.0,
+	0.0, 0.0, 1.0,  1.0, 1.0, 1.0,  1.0, 0.0, 0.0,
+	1.0, 1.0, 1.0,  1.0, 0.0, 0.0,  0.0, 1.0, 0.0
 };
 
 GLuint VAO, VBO_pos[2];
 
 int check = 0;
+
+bool hide, object;
 
 int main(int argc, char** argv)
 {
@@ -115,7 +122,7 @@ GLvoid drawScene()
 {
 	GLfloat rColor, gColor, bColor;
 
-	rColor = bColor = gColor = 1.0;
+	rColor = bColor = gColor = 0.8;
 	glClearColor(rColor, gColor, bColor, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -142,59 +149,35 @@ GLvoid drawScene()
 	glRectf(-1.0, -0.005, 1.0, 0.005);
 	glRectf(-0.005, -1.0, 0.005, 1.0);
 
-	Rx = glm::rotate(Rx, glm::radians(-10.0f), glm::vec3(1.0, 0.0, 0.0));
-	Ry = glm::rotate(Ry, glm::radians(10.0f), glm::vec3(0.0, 1.0, 0.0));
+	Rx = glm::rotate(Rx, glm::radians(-30.0f), glm::vec3(1.0, 0.0, 0.0));
+	Ry = glm::rotate(Ry, glm::radians(30.0f), glm::vec3(0.0, 1.0, 0.0));
 	TR = Rx * Ry;
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(TR));
 
-	if (check == 1 or check == 11 or check == 12 or check == 13 or check == 14 or check == 15)
+	if (check == 1)
 	{
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		if (!object)
+		{
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
+		else if (object)
+		{
+			glDrawArrays(GL_LINES, 0, 36);
+		}
 	}
 
-	if (check == 2 or check == 11 or check == 16 or check == 17 or check == 18 or check == 19)
+	else if (check == 2)
 	{
-		glDrawArrays(GL_TRIANGLES, 6, 6);
-	}
+		if (!object)
+		{
+			glDrawArrays(GL_TRIANGLES, 36, 18);
+		}
 
-	if (check == 3 or check == 12 or check == 16 or check == 20 or check == 21 or check == 22)
-	{
-		glDrawArrays(GL_TRIANGLES, 12, 6);
-	}
-
-	if (check == 4 or check == 13 or check == 17 or check == 20 or check == 23 or check == 24)
-	{
-		glDrawArrays(GL_TRIANGLES, 18, 6);
-	}
-
-	if (check == 5 or check == 14 or check == 18 or check == 21 or check == 23 or check == 25)
-	{
-		glDrawArrays(GL_TRIANGLES, 24, 6);
-	}
-
-	if (check == 6 or check == 15 or check == 19 or check == 22 or check == 24 or check == 25)
-	{
-		glDrawArrays(GL_TRIANGLES, 30, 6);
-	}
-
-	if (check == 7 or check == 26 or check == 27 or check == 28)
-	{
-		glDrawArrays(GL_TRIANGLES, 36, 3);
-	}
-
-	if (check == 8 or check == 26 or check == 29 or check == 30)
-	{
-		glDrawArrays(GL_TRIANGLES, 39, 3);
-	}
-
-	if (check == 9 or check == 27 or check == 29 or check == 31)
-	{
-		glDrawArrays(GL_TRIANGLES, 42, 3);
-	}
-
-	if (check == 10 or check == 28 or check == 30 or check == 31)
-	{
-		glDrawArrays(GL_TRIANGLES, 45, 3);
+		else if (object)
+		{
+			glDrawArrays(GL_LINES, 36, 18);
+		}
 	}
 
 	glutSwapBuffers();
@@ -210,17 +193,38 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-	case '1':
+	case 'c':
 		check = 1;
 		break;
-	case '2':
+	case 'p':
 		check = 2;
 		break;
-	case '3':
-		check = 3;
+	case 'h':
+		if (!hide)
+		{
+			glEnable(GL_DEPTH_TEST);
+
+
+			hide = true;
+		}
+		
+		else if (hide)
+		{
+			glDisable(GL_DEPTH_TEST);
+
+			hide = false;
+		}
 		break;
-	case '4':
-		check = 4;
+	case 'w':
+		if (!object)
+		{
+			object = true;
+		}
+
+		else if (object)
+		{
+			object = false;
+		}
 		break;
 	case '5':
 		check = 5;
@@ -239,12 +243,6 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		break;
 	case '0':
 		check = 10;
-		break;
-	case 'c':
-		check = fea(mt);
-		break;
-	case 't':
-		check = mut(mt);
 		break;
 	case 'q':
 		glutLeaveMainLoop();
