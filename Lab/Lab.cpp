@@ -36,6 +36,9 @@ GLuint make_shaderProgram();
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
+GLvoid SpecialKeyboard(int key, int x, int y);
+GLvoid SpecialKeyboardUp(int key, int x, int y);
+GLvoid TimerFunction(int value);
 void read_newline(char* str);
 void read_obj_file(const char* filename, Model* model);
 
@@ -86,7 +89,7 @@ GLuint VAO, VBO_pos[2];
 
 int check = 0;
 
-bool hide, object;
+bool hide, object, up, left, down, right;
 
 int main(int argc, char** argv)
 {
@@ -108,6 +111,8 @@ int main(int argc, char** argv)
 	else
 		std::cout << "GLEW Initialized\n";
 
+	glutTimerFunc(10, TimerFunction, 1);
+
 	InitBuffer();
 	make_vertexShaders();
 	make_fragmentShaders();
@@ -115,6 +120,8 @@ int main(int argc, char** argv)
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(Keyboard);
+	glutSpecialFunc(SpecialKeyboard);
+	glutSpecialUpFunc(SpecialKeyboardUp);
 	glutMainLoop();
 }
 
@@ -226,23 +233,14 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 			object = false;
 		}
 		break;
-	case '5':
-		check = 5;
+	case 'x':
+		
 		break;
-	case '6':
-		check = 6;
+	case 'y':
+		
 		break;
-	case '7':
-		check = 7;
-		break;
-	case '8':
-		check = 8;
-		break;
-	case '9':
-		check = 9;
-		break;
-	case '0':
-		check = 10;
+	case 's':
+		
 		break;
 	case 'q':
 		glutLeaveMainLoop();
@@ -250,6 +248,87 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	}
 
 	glutPostRedisplay();
+}
+
+GLvoid SpecialKeyboard(int key, int x, int y)
+{
+	switch (key)
+	{
+	case GLUT_KEY_UP:
+		up = true;
+		break;
+	case GLUT_KEY_LEFT:
+		left = true;
+		break;
+	case GLUT_KEY_DOWN:
+		down = true;
+		break;
+	case GLUT_KEY_RIGHT:
+		right = true;
+		break;
+	}
+
+	glutPostRedisplay();
+}
+
+GLvoid SpecialKeyboardUp(int key, int x, int y)
+{
+	switch (key)
+	{
+	case GLUT_KEY_UP:
+		up = false;
+		break;
+	case GLUT_KEY_LEFT:
+		left = false;
+		break;
+	case GLUT_KEY_DOWN:
+		down = false;
+		break;
+	case GLUT_KEY_RIGHT:
+		right = false;
+		break;
+	}
+
+	glutPostRedisplay();
+}
+
+GLvoid TimerFunction(int value)
+{
+	if (up)
+	{
+		for (int i = 0; i < 54; i++)
+		{
+			vPositionList[3 * i + 1] += 0.01;
+		}
+	}
+
+	if (left)
+	{
+		for (int i = 0; i < 54; i++)
+		{
+			vPositionList[3 * i] -= 0.01;
+		}
+	}
+
+	if (down)
+	{
+		for (int i = 0; i < 54; i++)
+		{
+			vPositionList[3 * i + 1] -= 0.01;
+		}
+	}
+
+	if (right)
+	{
+		for (int i = 0; i < 54; i++)
+		{
+			vPositionList[3 * i] += 0.01;
+		}
+	}
+
+	glutPostRedisplay();
+
+	glutTimerFunc(10, TimerFunction, 1);
 }
 
 void InitBuffer()
