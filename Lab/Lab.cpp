@@ -87,7 +87,9 @@ GLfloat colors[] = {
 
 GLuint VAO, VBO_pos[2];
 
-int check = 0;
+int check = 0, xRotate = 0, yRotate = 0;
+
+float a = 0.0, b = 0.0, c = 0.0, d = 0.0;
 
 bool hide, object, up, left, down, right;
 
@@ -147,7 +149,6 @@ GLvoid drawScene()
 	glm::mat4 Ty = glm::mat4(1.0f);
 	glm::mat4 Rx = glm::mat4(1.0f);
 	glm::mat4 Ry = glm::mat4(1.0f);
-	glm::mat4 Rz = glm::mat4(1.0f);
 	glm::mat4 TR = glm::mat4(1.0f);
 
 	unsigned int modelLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
@@ -156,10 +157,21 @@ GLvoid drawScene()
 	glRectf(-1.0, -0.005, 1.0, 0.005);
 	glRectf(-0.005, -1.0, 0.005, 1.0);
 
-	Rx = glm::rotate(Rx, glm::radians(-30.0f), glm::vec3(1.0, 0.0, 0.0));
-	Ry = glm::rotate(Ry, glm::radians(30.0f), glm::vec3(0.0, 1.0, 0.0));
-	TR = Rx * Ry;
+	Tx = glm::translate(Tx, glm::vec3(a, 0.0, 0.0));
+	Ty = glm::translate(Ty, glm::vec3(0.0, b, 0.0));
+	Rx = glm::rotate(Rx, glm::radians(30.0f), glm::vec3(1.0, 0.0, 0.0));
+	Ry = glm::rotate(Ry, glm::radians(-30.0f), glm::vec3(0.0, 1.0, 0.0));
+	TR = Tx * Ty * Rx * Ry;
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(TR));
+
+	glm::mat4 Nx = glm::mat4(1.0f);
+	glm::mat4 Ny = glm::mat4(1.0f);
+	glm::mat4 NR = glm::mat4(1.0f);
+
+	Nx = glm::rotate(Nx, glm::radians(c), glm::vec3(1.0, 0.0, 0.0));
+	Ny = glm::rotate(Ny, glm::radians(d), glm::vec3(0.0, 1.0, 0.0));
+	NR = Nx * Ny * TR;
+	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(NR));
 
 	if (check == 1)
 	{
@@ -223,24 +235,30 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 		}
 		break;
 	case 'w':
-		if (!object)
-		{
-			object = true;
-		}
-
-		else if (object)
-		{
-			object = false;
-		}
+		object = true;
+		break;
+	case 'W':
+		object = false;
 		break;
 	case 'x':
-		
+		xRotate = 1;
+		break;
+	case 'X':
+		xRotate = -1;
 		break;
 	case 'y':
-		
+		yRotate = 1;
+		break;
+	case 'Y':
+		yRotate = -1;
 		break;
 	case 's':
-		
+		a = 0.0;
+		b = 0.0;
+		c = 0.0;
+		d = 0.0;
+		xRotate = 0;
+		yRotate = 0;
 		break;
 	case 'q':
 		glutLeaveMainLoop();
@@ -296,34 +314,42 @@ GLvoid TimerFunction(int value)
 {
 	if (up)
 	{
-		for (int i = 0; i < 54; i++)
-		{
-			vPositionList[3 * i + 1] += 0.01;
-		}
+		b += 0.01;
 	}
 
 	if (left)
 	{
-		for (int i = 0; i < 54; i++)
-		{
-			vPositionList[3 * i] -= 0.01;
-		}
+		a -= 0.01;
 	}
 
 	if (down)
 	{
-		for (int i = 0; i < 54; i++)
-		{
-			vPositionList[3 * i + 1] -= 0.01;
-		}
+		b -= 0.01;
 	}
 
 	if (right)
 	{
-		for (int i = 0; i < 54; i++)
-		{
-			vPositionList[3 * i] += 0.01;
-		}
+		a += 0.01;
+	}
+
+	if (xRotate == 1)
+	{
+		c += 1.0;
+	}
+
+	else if (xRotate == -1)
+	{
+		c -= 1.0;
+	}
+
+	if (yRotate == 1)
+	{
+		d += 1.0;
+	}
+
+	else if (yRotate == -1)
+	{
+		d -= 1.0;
 	}
 
 	glutPostRedisplay();
