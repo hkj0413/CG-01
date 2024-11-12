@@ -9,25 +9,6 @@
 #include <gl/glm/glm.hpp>
 #include <gl/glm/ext.hpp>
 #include <gl/glm/gtc/matrix_transform.hpp>
-#include <random>
-
-typedef struct
-{
-	float x, y, z;
-} Vertex;
-
-typedef struct
-{
-	unsigned int v1, v2, v3;
-} Face;
-
-typedef struct
-{
-	Vertex* vertices;
-	size_t vertex_count;
-	Face* faces;
-	size_t face_count;
-} Model;
 
 void InitBuffer();
 void make_vertexShaders();
@@ -36,62 +17,41 @@ GLuint make_shaderProgram();
 GLvoid drawScene(GLvoid);
 GLvoid Reshape(int w, int h);
 GLvoid Keyboard(unsigned char key, int x, int y);
-GLvoid SpecialKeyboard(int key, int x, int y);
-GLvoid SpecialKeyboardUp(int key, int x, int y);
 GLvoid TimerFunction(int value);
-void read_newline(char* str);
-void read_obj_file(const char* filename, Model* model);
 
 GLint width, height;
 GLuint shaderProgramID;
 GLuint vertexShader;
 GLuint fragmentShader;
-
-std::random_device rd;
-std::mt19937 mt(rd());
-std::uniform_int_distribution<int>fea(11, 25);
-std::uniform_int_distribution<int>mut(26, 31);
+GLUquadricObj* qobj;;
 
 char* filetobuf(const char* file);
 
-GLfloat vPositionList[] = { 
+GLfloat vPositionList[] = {
+	1.0, 0.0, 0.0,   -1.0, 0.0, 0.0,   0.0, -1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 0.0, 1.0,   0.0, 0.0, -1.0,
 	-0.25, -0.25, -0.5,  0.25, -0.25, -0.5,  -0.25, 0.25, -0.5,   0.25, -0.25, -0.5,  0.25, 0.25, -0.5,  -0.25, 0.25, -0.5,  
 	-0.25, 0.25, -0.5,  0.25, 0.25, -0.5,  -0.25, 0.25, 0.0,   0.25, 0.25, -0.5,  0.25, 0.25, 0.0,  -0.25, 0.25, 0.0,
 	-0.25, 0.25, 0.0,  0.25, 0.25, 0.0,  -0.25, -0.25, 0.0,   0.25, 0.25, 0.0,   0.25, -0.25, 0.0,   -0.25, -0.25, 0.0,
 	-0.25, -0.25, 0.0,  0.25, -0.25, 0.0,  -0.25, -0.25, -0.5,   0.25, -0.25, 0.0,  0.25, -0.25, -0.5,  -0.25, -0.25, -0.5,
 	-0.25, -0.25, -0.5,  -0.25, 0.25, -0.5,  -0.25, -0.25, 0.0,   -0.25, -0.25, 0.0,  -0.25, 0.25, -0.5,  -0.25, 0.25, 0.0,
 	0.25, 0.25, -0.5,  0.25, -0.25, -0.5,  0.25, 0.25, 0.0,   0.25, 0.25, 0.0,  0.25, -0.25, -0.5,  0.25, -0.25, 0.0,
-
-	-0.25, -0.25, -0.5,  0.25, -0.25, -0.5,  0.25, -0.25, 0.0,  -0.25, -0.25, -0.5,  0.25, -0.25, 0.0,  -0.25, -0.25, 0.0,
-	
-	-0.25, -0.25, -0.5,  0.25, -0.25, -0.5,  0.0, 0.25, -0.25,
-	0.25, -0.25, -0.5,  0.25, -0.25, 0.0,  0.0, 0.25, -0.25,
-	0.25, -0.25, 0.0,  -0.25, -0.25, 0.0,  0.0, 0.25, -0.25,
-	-0.25, -0.25, 0.0,  -0.25, -0.25, -0.5,  0.0, 0.25, -0.25,
 };
 
 GLfloat colors[] = { 
+	0.0, 0.0, 0.0,  0.0, 0.0, 0.0,  0.0, 0.0, 0.0,   0.0, 0.0, 0.0,  0.0, 0.0, 0.0,   0.0, 0.0, 0.0,
 	1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0,   0.0, 1.0, 0.0,  1.0, 1.0, 1.0,   0.0, 0.0, 1.0,
 	0.0, 0.0, 1.0,  1.0, 1.0, 1.0,  1.0, 0.0, 0.0,   1.0, 1.0, 1.0,  0.0, 1.0, 0.0,   1.0, 0.0, 0.0,
 	1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0,   0.0, 1.0, 0.0,  1.0, 1.0, 1.0,   0.0, 0.0, 1.0,
 	0.0, 0.0, 1.0,  1.0, 1.0, 1.0,  1.0, 0.0, 0.0,   1.0, 1.0, 1.0,  0.0, 1.0, 0.0,   1.0, 0.0, 0.0,
 	1.0, 0.0, 0.0,  0.0, 0.0, 1.0,  0.0, 0.0, 1.0,   0.0, 0.0, 1.0,  0.0, 0.0, 1.0,   1.0, 0.0, 0.0,
 	1.0, 1.0, 1.0,  0.0, 1.0, 0.0,  0.0, 1.0, 0.0,   0.0, 1.0, 0.0,  0.0, 1.0, 0.0,   1.0, 1.0, 1.0,
-
-	1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0,   1.0, 0.0, 0.0,  0.0, 0.0, 1.0,   1.0, 1.0, 1.0,
-	1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0,
-	0.0, 1.0, 0.0,  0.0, 0.0, 1.0,  1.0, 1.0, 1.0,
-	0.0, 0.0, 1.0,  1.0, 1.0, 1.0,  1.0, 0.0, 0.0,
-	1.0, 1.0, 1.0,  1.0, 0.0, 0.0,  0.0, 1.0, 0.0
 };
 
 GLuint VAO, VBO_pos[2];
 
-int check = 0, xRotate = 0, yRotate = 0;
+int check = 0, xRotate = 0, yRotate = 0, YRotate = 0, object = 0;
 
-float a = 0.0, b = 0.0, c = 0.0, d = 0.0;
-
-bool hide, object, up, left, down, right;
+float a = 0.0, b = 0.0, c = 0.0, d = 0.0, e = 0.0, f = 0.0;
 
 int main(int argc, char** argv)
 {
@@ -102,6 +62,7 @@ int main(int argc, char** argv)
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(width, height);
 	glutCreateWindow("Example");
+	glEnable(GL_DEPTH_TEST);
 
 	glewExperimental = GL_TRUE;
 
@@ -122,8 +83,6 @@ int main(int argc, char** argv)
 	glutDisplayFunc(drawScene);
 	glutReshapeFunc(Reshape);
 	glutKeyboardFunc(Keyboard);
-	glutSpecialFunc(SpecialKeyboard);
-	glutSpecialUpFunc(SpecialKeyboardUp);
 	glutMainLoop();
 }
 
@@ -131,7 +90,7 @@ GLvoid drawScene()
 {
 	GLfloat rColor, gColor, bColor;
 
-	rColor = bColor = gColor = 0.8;
+	rColor = bColor = gColor = 0.9;
 	glClearColor(rColor, gColor, bColor, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -145,58 +104,81 @@ GLvoid drawScene()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_pos[1]);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(colors), colors);
 
-	glm::mat4 Tx = glm::mat4(1.0f);
-	glm::mat4 Ty = glm::mat4(1.0f);
-	glm::mat4 Rx = glm::mat4(1.0f);
-	glm::mat4 Ry = glm::mat4(1.0f);
-	glm::mat4 TR = glm::mat4(1.0f);
-
 	unsigned int modelLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
 
-	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(TR));
-	glRectf(-1.0, -0.005, 1.0, 0.005);
-	glRectf(-0.005, -1.0, 0.005, 1.0);
+	glm::mat4 Rx = glm::mat4(1.0f);
+	glm::mat4 Ry = glm::mat4(1.0f);
+	glm::mat4 R = glm::mat4(1.0f);
 
-	Tx = glm::translate(Tx, glm::vec3(a, 0.0, 0.0));
-	Ty = glm::translate(Ty, glm::vec3(0.0, b, 0.0));
-	Rx = glm::rotate(Rx, glm::radians(30.0f), glm::vec3(1.0, 0.0, 0.0));
-	Ry = glm::rotate(Ry, glm::radians(-30.0f), glm::vec3(0.0, 1.0, 0.0));
-	TR = Tx * Ty * Rx * Ry;
-	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(TR));
+	glm::mat4 T1x = glm::mat4(1.0f);
+	glm::mat4 T1y = glm::mat4(1.0f);
+	glm::mat4 T1z = glm::mat4(1.0f);
+	glm::mat4 R1x = glm::mat4(1.0f);
+	glm::mat4 R1y = glm::mat4(1.0f);
+	glm::mat4 R1Y = glm::mat4(1.0f);
+	glm::mat4 TR1 = glm::mat4(1.0f);
+
+	glm::mat4 T2x = glm::mat4(1.0f);
+	glm::mat4 T2y = glm::mat4(1.0f);
+	glm::mat4 T2z = glm::mat4(1.0f);
+	glm::mat4 R2x = glm::mat4(1.0f);
+	glm::mat4 R2y = glm::mat4(1.0f);
+	glm::mat4 R2Y = glm::mat4(1.0f);
+	glm::mat4 TR2 = glm::mat4(1.0f);
 
 	glm::mat4 Nx = glm::mat4(1.0f);
 	glm::mat4 Ny = glm::mat4(1.0f);
 	glm::mat4 NR = glm::mat4(1.0f);
 
-	Nx = glm::rotate(Nx, glm::radians(c), glm::vec3(1.0, 0.0, 0.0));
-	Ny = glm::rotate(Ny, glm::radians(d), glm::vec3(0.0, 1.0, 0.0));
-	NR = Nx * Ny * TR;
-	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(NR));
+	Rx = glm::rotate(Rx, glm::radians(30.0f), glm::vec3(1.0, 0.0, 0.0));
+	Ry = glm::rotate(Ry, glm::radians(-30.0f), glm::vec3(0.0, 1.0, 0.0));
+	R = Rx * Ry;
 
-	if (check == 1)
+	T1x = glm::translate(T1x, glm::vec3(-0.5, 0.0, 0.0));
+	T1y = glm::translate(T1y, glm::vec3(0.0, 0.3, 0.0));
+	R1x = glm::rotate(R1x, glm::radians(a), glm::vec3(1.0, 0.0, 0.0));
+	R1y = glm::rotate(R1y, glm::radians(b), glm::vec3(0.0, 1.0, 0.0));
+	R1Y = glm::rotate(R1Y, glm::radians(c), glm::vec3(0.0, 1.0, 0.0));
+	TR1 = R * R1Y * T1x * T1y * R1x * R1y;
+
+	T2x = glm::translate(T2x, glm::vec3(0.5, 0.0, 0.0));
+	T2y = glm::translate(T2y, glm::vec3(0.0, 0.3, 0.0));
+	T2z = glm::translate(T2z, glm::vec3(0.0, 0.0, -0.25));
+	R2x = glm::rotate(R2x, glm::radians(d), glm::vec3(1.0, 0.0, 0.0));
+	R2y = glm::rotate(R2y, glm::radians(e), glm::vec3(0.0, 1.0, 0.0));
+	R2Y = glm::rotate(R2Y, glm::radians(f), glm::vec3(0.0, 1.0, 0.0));
+	TR2 = R * R2Y * T2x * T2y * T2z * R2x * R2y;
+
+	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(R));
+
+	for (int i = 0; i < 3; i++)
 	{
-		if (!object)
-		{
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-
-		else if (object)
-		{
-			glDrawArrays(GL_LINES, 0, 36);
-		}
+		glDrawArrays(GL_LINES, i * 2, 2);
 	}
 
-	else if (check == 2)
-	{
-		if (!object)
-		{
-			glDrawArrays(GL_TRIANGLES, 36, 18);
-		}
+	qobj = gluNewQuadric();
+	gluQuadricDrawStyle(qobj, GLU_LINE);
 
-		else if (object)
-		{
-			glDrawArrays(GL_LINES, 36, 18);
-		}
+	if (check == 0)
+	{
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(TR1));
+
+		glDrawArrays(GL_TRIANGLES, 6, 36);
+
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(TR2));
+
+		gluCylinder(qobj, 0.25, 0, 0.5, 20, 10);
+	}
+
+	else if (check == 1)
+	{
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(TR1));
+
+		gluCylinder(qobj, 0.25, 0.25, 0.5, 20, 10);
+
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(TR2));
+
+		gluSphere(qobj, 0.25, 20, 10);
 	}
 
 	glutSwapBuffers();
@@ -212,33 +194,14 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-	case 'c':
-		check = 1;
+	case '1':
+		object = 1;
 		break;
-	case 'p':
-		check = 2;
+	case '2':
+		object = 2;
 		break;
-	case 'h':
-		if (!hide)
-		{
-			glEnable(GL_DEPTH_TEST);
-
-
-			hide = true;
-		}
-		
-		else if (hide)
-		{
-			glDisable(GL_DEPTH_TEST);
-
-			hide = false;
-		}
-		break;
-	case 'w':
-		object = true;
-		break;
-	case 'W':
-		object = false;
+	case '3':
+		object = 0;
 		break;
 	case 'x':
 		xRotate = 1;
@@ -252,13 +215,33 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	case 'Y':
 		yRotate = -1;
 		break;
+	case 'r':
+		YRotate = 1;
+		break;
+	case 'R':
+		YRotate = -1;
+		break;
+	case 'c':
+		if (check == 0)
+		{
+			check = 1;
+		}
+
+		else if (check == 1)
+		{
+			check = 0;
+		}
+		break;
 	case 's':
 		a = 0.0;
 		b = 0.0;
 		c = 0.0;
 		d = 0.0;
+		e = 0.0;
+		f = 0.0;
 		xRotate = 0;
 		yRotate = 0;
+		YRotate = 0;
 		break;
 	case 'q':
 		glutLeaveMainLoop();
@@ -268,88 +251,120 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 	glutPostRedisplay();
 }
 
-GLvoid SpecialKeyboard(int key, int x, int y)
-{
-	switch (key)
-	{
-	case GLUT_KEY_UP:
-		up = true;
-		break;
-	case GLUT_KEY_LEFT:
-		left = true;
-		break;
-	case GLUT_KEY_DOWN:
-		down = true;
-		break;
-	case GLUT_KEY_RIGHT:
-		right = true;
-		break;
-	}
-
-	glutPostRedisplay();
-}
-
-GLvoid SpecialKeyboardUp(int key, int x, int y)
-{
-	switch (key)
-	{
-	case GLUT_KEY_UP:
-		up = false;
-		break;
-	case GLUT_KEY_LEFT:
-		left = false;
-		break;
-	case GLUT_KEY_DOWN:
-		down = false;
-		break;
-	case GLUT_KEY_RIGHT:
-		right = false;
-		break;
-	}
-
-	glutPostRedisplay();
-}
-
 GLvoid TimerFunction(int value)
 {
-	if (up)
-	{
-		b += 0.01;
-	}
-
-	if (left)
-	{
-		a -= 0.01;
-	}
-
-	if (down)
-	{
-		b -= 0.01;
-	}
-
-	if (right)
-	{
-		a += 0.01;
-	}
-
 	if (xRotate == 1)
 	{
-		c += 1.0;
+		if (object == 0)
+		{
+			a += 1.0;
+			d += 1.0;
+		}
+
+		else if (object == 1)
+		{
+			a += 1.0;
+		}
+
+		else if (object == 2)
+		{
+			d += 1.0;
+		}
 	}
 
 	else if (xRotate == -1)
 	{
-		c -= 1.0;
+		if (object == 0)
+		{
+			a -= 1.0;
+			d -= 1.0;
+		}
+
+		else if (object == 1)
+		{
+			a -= 1.0;
+		}
+
+		else if (object == 2)
+		{
+			d -= 1.0;
+		}
 	}
 
 	if (yRotate == 1)
 	{
-		d += 1.0;
+		if (object == 0)
+		{
+			b += 1.0;
+			e += 1.0;
+		}
+
+		else if (object == 1)
+		{
+			b += 1.0;
+		}
+
+		else if (object == 2)
+		{
+			e += 1.0;
+		}
 	}
 
 	else if (yRotate == -1)
 	{
-		d -= 1.0;
+		if (object == 0)
+		{
+			b -= 1.0;
+			e -= 1.0;
+		}
+
+		else if (object == 1)
+		{
+			b -= 1.0;
+		}
+
+		else if (object == 2)
+		{
+			e -= 1.0;
+		}
+	}
+
+	if (YRotate == 1)
+	{
+		if (object == 0)
+		{
+			c += 1.0;
+			f += 1.0;
+		}
+
+		else if (object == 1)
+		{
+			c += 1.0;
+		}
+
+		else if (object == 2)
+		{
+			f += 1.0;
+		}
+	}
+
+	else if (YRotate == -1)
+	{
+		if (object == 0)
+		{
+			c -= 1.0;
+			f -= 1.0;
+		}
+
+		else if (object == 1)
+		{
+			c -= 1.0;
+		}
+
+		else if (object == 2)
+		{
+			f -= 1.0;
+		}
 	}
 
 	glutPostRedisplay();
@@ -448,65 +463,4 @@ char* filetobuf(const char* file)
 	fclose(fptr);
 	buf[length] = 0;
 	return buf;
-}
-
-void read_newline(char* str)
-{
-	char* pos;
-	if ((pos = strchr(str, '\n')) != NULL)
-		*pos = '\0';
-}
-
-void read_obj_file(const char* filename, Model* model)
-{
-	FILE* file;
-	fopen_s(&file, filename, "r");
-
-	if (!file)
-	{
-		perror("Error opening file");
-		exit(EXIT_FAILURE);
-	}
-
-	char line[600];
-
-	model->vertex_count = 0;
-	model->face_count = 0;
-
-	while (fgets(line, sizeof(line), file))
-	{
-		read_newline(line);
-		if (line[0] == 'v' && line[1] == ' ')
-			model->vertex_count++;
-		else if (line[0] == 'f' && line[1] == ' ')
-			model->face_count++;
-	}
-
-	fseek(file, 0, SEEK_SET);
-	model->vertices = (Vertex*)malloc(model->vertex_count * sizeof(Vertex));
-	model->faces = (Face*)malloc(model->face_count * sizeof(Face));
-	size_t vertex_index = 0;    size_t face_index = 0;
-
-	while (fgets(line, sizeof(line), file))
-	{
-		read_newline(line);
-		if (line[0] == 'v' && line[1] == ' ')
-		{
-			int result = sscanf_s(line + 2, "%f %f %f", &model->vertices[vertex_index].x,
-				&model->vertices[vertex_index].y,
-				&model->vertices[vertex_index].z);
-			vertex_index++;
-		}
-		else if (line[0] == 'f' && line[1] == ' ')
-		{
-			unsigned int v1, v2, v3;
-			int result = sscanf_s(line + 2, "%u %u %u", &v1, &v2, &v3);
-			model->faces[face_index].v1 = v1 - 1;
-			model->faces[face_index].v2 = v2 - 1;
-			model->faces[face_index].v3 = v3 - 1;
-			face_index++;
-		}
-	}
-
-	fclose(file);
 }
