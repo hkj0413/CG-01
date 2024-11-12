@@ -23,35 +23,56 @@ GLint width, height;
 GLuint shaderProgramID;
 GLuint vertexShader;
 GLuint fragmentShader;
-GLUquadricObj* qobj;;
 
 char* filetobuf(const char* file);
 
 GLfloat vPositionList[] = {
 	1.0, 0.0, 0.0,   -1.0, 0.0, 0.0,   0.0, -1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 0.0, 1.0,   0.0, 0.0, -1.0,
-	-0.25, -0.25, -0.5,  0.25, -0.25, -0.5,  -0.25, 0.25, -0.5,   0.25, -0.25, -0.5,  0.25, 0.25, -0.5,  -0.25, 0.25, -0.5,  
-	-0.25, 0.25, -0.5,  0.25, 0.25, -0.5,  -0.25, 0.25, 0.0,   0.25, 0.25, -0.5,  0.25, 0.25, 0.0,  -0.25, 0.25, 0.0,
-	-0.25, 0.25, 0.0,  0.25, 0.25, 0.0,  -0.25, -0.25, 0.0,   0.25, 0.25, 0.0,   0.25, -0.25, 0.0,   -0.25, -0.25, 0.0,
-	-0.25, -0.25, 0.0,  0.25, -0.25, 0.0,  -0.25, -0.25, -0.5,   0.25, -0.25, 0.0,  0.25, -0.25, -0.5,  -0.25, -0.25, -0.5,
-	-0.25, -0.25, -0.5,  -0.25, 0.25, -0.5,  -0.25, -0.25, 0.0,   -0.25, -0.25, 0.0,  -0.25, 0.25, -0.5,  -0.25, 0.25, 0.0,
-	0.25, 0.25, -0.5,  0.25, -0.25, -0.5,  0.25, 0.25, 0.0,   0.25, 0.25, 0.0,  0.25, -0.25, -0.5,  0.25, -0.25, 0.0,
+
+	-0.25, -0.25, -0.25,  0.25, -0.25, -0.25,  -0.25, 0.25, -0.25,   0.25, -0.25, -0.25,  0.25, 0.25, -0.25,  -0.25, 0.25, -0.25,
+	-0.25, 0.0, -0.25,  0.25, 0.0, -0.25,  -0.25, 0.0, 0.25,   0.25, 0.0, -0.25,  0.25, 0.0, 0.25,  -0.25, 0.0, 0.25,
+	-0.25, 0.5, 0.0,  0.25, 0.5, 0.0,  -0.25, 0.0, 0.0,   0.25, 0.5, 0.0,   0.25, 0.0, 0.0,   -0.25, 0.0, 0.0,
+	-0.25, -0.25, 0.25,  0.25, -0.25, 0.25,  -0.25, -0.25, -0.25,   0.25, -0.25, 0.25,  0.25, -0.25, -0.25,  -0.25, -0.25, -0.25,
+	-0.25, -0.25, -0.25,  -0.25, 0.25, -0.25,  -0.25, -0.25, 0.25,   -0.25, -0.25, 0.25,  -0.25, 0.25, -0.25,  -0.25, 0.25, 0.25,
+	0.25, 0.25, -0.25,  0.25, -0.25, -0.25,  0.25, 0.25, 0.25,   0.25, 0.25, 0.25,  0.25, -0.25, -0.25,  0.25, -0.25, 0.25,
+
+	-0.25, -0.25, -0.25,  0.25, -0.25, -0.25,  0.25, -0.25, 0.25,  -0.25, -0.25, -0.25,  0.25, -0.25, 0.25,  -0.25, -0.25, 0.25,
+
+	-0.25, -0.25, -0.25,  0.25, -0.25, -0.25,  0.0, 0.25, 0.0,
+	0.25, -0.25, -0.25,  0.25, -0.25, 0.25,  0.0, 0.25, 0.0,
+	0.25, -0.25, 0.25,  -0.25, -0.25, 0.25,  0.0, 0.25, 0.0,
+	-0.25, -0.25, 0.25,  -0.25, -0.25, -0.25,  0.0, 0.25, 0.0,
 };
 
 GLfloat colors[] = { 
-	0.0, 0.0, 0.0,  0.0, 0.0, 0.0,  0.0, 0.0, 0.0,   0.0, 0.0, 0.0,  0.0, 0.0, 0.0,   0.0, 0.0, 0.0,
+	0.9, 0.9, 0.9,  0.9, 0.9, 0.9,  0.9, 0.9, 0.9,   0.9, 0.9, 0.9,  0.9, 0.9, 0.9,   0.9, 0.9, 0.9,
+
 	1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0,   0.0, 1.0, 0.0,  1.0, 1.0, 1.0,   0.0, 0.0, 1.0,
 	0.0, 0.0, 1.0,  1.0, 1.0, 1.0,  1.0, 0.0, 0.0,   1.0, 1.0, 1.0,  0.0, 1.0, 0.0,   1.0, 0.0, 0.0,
 	1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0,   0.0, 1.0, 0.0,  1.0, 1.0, 1.0,   0.0, 0.0, 1.0,
 	0.0, 0.0, 1.0,  1.0, 1.0, 1.0,  1.0, 0.0, 0.0,   1.0, 1.0, 1.0,  0.0, 1.0, 0.0,   1.0, 0.0, 0.0,
 	1.0, 0.0, 0.0,  0.0, 0.0, 1.0,  0.0, 0.0, 1.0,   0.0, 0.0, 1.0,  0.0, 0.0, 1.0,   1.0, 0.0, 0.0,
 	1.0, 1.0, 1.0,  0.0, 1.0, 0.0,  0.0, 1.0, 0.0,   0.0, 1.0, 0.0,  0.0, 1.0, 0.0,   1.0, 1.0, 1.0,
+
+	1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0,   1.0, 0.0, 0.0,  0.0, 0.0, 1.0,   1.0, 1.0, 1.0,
+	1.0, 0.0, 0.0,  0.0, 1.0, 0.0,  0.0, 0.0, 1.0,
+	0.0, 1.0, 0.0,  0.0, 0.0, 1.0,  1.0, 1.0, 1.0,
+	0.0, 0.0, 1.0,  1.0, 1.0, 1.0,  1.0, 0.0, 0.0,
+	1.0, 1.0, 1.0,  1.0, 0.0, 0.0,  0.0, 1.0, 0.0
 };
 
 GLuint VAO, VBO_pos[2];
 
-int check = 0, xRotate = 0, yRotate = 0, YRotate = 0, object = 0;
+glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 2.5f);
+glm::vec3 cameraDirection = glm::vec3(0.0f, 0.0f, 0.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+glm::mat4 view = glm::mat4(1.0f);
 
-float a = 0.0, b = 0.0, c = 0.0, d = 0.0, e = 0.0, f = 0.0;
+int check = 0, front6Rotate = 0, side6Translate = 0, back6Scale = 0;
+
+float all = 0.0, top6 = 0.0, front6 = 0.0, side6 = 0.0, back6 = 1.0;
+
+bool hide, allyRotate, top6Rotate;
 
 int main(int argc, char** argv)
 {
@@ -62,7 +83,6 @@ int main(int argc, char** argv)
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(width, height);
 	glutCreateWindow("Example");
-	glEnable(GL_DEPTH_TEST);
 
 	glewExperimental = GL_TRUE;
 
@@ -90,7 +110,7 @@ GLvoid drawScene()
 {
 	GLfloat rColor, gColor, bColor;
 
-	rColor = bColor = gColor = 0.9;
+	rColor = bColor = gColor = 0.0;
 	glClearColor(rColor, gColor, bColor, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -104,81 +124,108 @@ GLvoid drawScene()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO_pos[1]);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(colors), colors);
 
-	unsigned int modelLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
+	int modelLocation = glGetUniformLocation(shaderProgramID, "modelTransform");
+	int viewLocation = glGetUniformLocation(shaderProgramID, "viewTransform");
+	int projLocation = glGetUniformLocation(shaderProgramID, "projectionTransform");
 
 	glm::mat4 Rx = glm::mat4(1.0f);
 	glm::mat4 Ry = glm::mat4(1.0f);
 	glm::mat4 R = glm::mat4(1.0f);
-
-	glm::mat4 T1x = glm::mat4(1.0f);
+	
 	glm::mat4 T1y = glm::mat4(1.0f);
 	glm::mat4 T1z = glm::mat4(1.0f);
 	glm::mat4 R1x = glm::mat4(1.0f);
 	glm::mat4 R1y = glm::mat4(1.0f);
-	glm::mat4 R1Y = glm::mat4(1.0f);
 	glm::mat4 TR1 = glm::mat4(1.0f);
 
-	glm::mat4 T2x = glm::mat4(1.0f);
 	glm::mat4 T2y = glm::mat4(1.0f);
-	glm::mat4 T2z = glm::mat4(1.0f);
 	glm::mat4 R2x = glm::mat4(1.0f);
-	glm::mat4 R2y = glm::mat4(1.0f);
-	glm::mat4 R2Y = glm::mat4(1.0f);
 	glm::mat4 TR2 = glm::mat4(1.0f);
 
-	glm::mat4 Nx = glm::mat4(1.0f);
-	glm::mat4 Ny = glm::mat4(1.0f);
-	glm::mat4 NR = glm::mat4(1.0f);
+	glm::mat4 TR3 = glm::mat4(1.0f);
 
-	Rx = glm::rotate(Rx, glm::radians(30.0f), glm::vec3(1.0, 0.0, 0.0));
-	Ry = glm::rotate(Ry, glm::radians(-30.0f), glm::vec3(0.0, 1.0, 0.0));
+	glm::mat4 T4y = glm::mat4(1.0f);
+	glm::mat4 TR4 = glm::mat4(1.0f);
+
+	glm::mat4 T5y = glm::mat4(1.0f);
+	glm::mat4 TR5 = glm::mat4(1.0f);
+
+	glm::mat4 S6xyz = glm::mat4(1.0f);
+	glm::mat4 TRS6 = glm::mat4(1.0f);
+
+	Rx = glm::rotate(Rx, glm::radians(20.0f), glm::vec3(1.0, 0.0, 0.0));
+	Ry = glm::rotate(Ry, glm::radians(20.0f), glm::vec3(0.0, 1.0, 0.0));
 	R = Rx * Ry;
+	
+	T1y = glm::translate(T1y, glm::vec3(0.0, -0.25, 0.0));
+	T1z = glm::translate(T1z, glm::vec3(0.0, 0.0, 0.25));
+	R1x = glm::rotate(R1x, glm::radians(front6), glm::vec3(1.0, 0.0, 0.0));
+	R1y = glm::rotate(R1y, glm::radians(all), glm::vec3(0.0, 1.0, 0.0));
+	TR1 = R * R1y * T1y * T1z * R1x;
 
-	T1x = glm::translate(T1x, glm::vec3(-0.5, 0.0, 0.0));
-	T1y = glm::translate(T1y, glm::vec3(0.0, 0.3, 0.0));
-	R1x = glm::rotate(R1x, glm::radians(a), glm::vec3(1.0, 0.0, 0.0));
-	R1y = glm::rotate(R1y, glm::radians(b), glm::vec3(0.0, 1.0, 0.0));
-	R1Y = glm::rotate(R1Y, glm::radians(c), glm::vec3(0.0, 1.0, 0.0));
-	TR1 = R * R1Y * T1x * T1y * R1x * R1y;
+	T2y = glm::translate(T2y, glm::vec3(0.0, 0.25, 0.0));
+	R2x = glm::rotate(R2x, glm::radians(top6), glm::vec3(1.0, 0.0, 0.0));
+	TR2 = R * R1y * T2y * R2x;
 
-	T2x = glm::translate(T2x, glm::vec3(0.5, 0.0, 0.0));
-	T2y = glm::translate(T2y, glm::vec3(0.0, 0.3, 0.0));
-	T2z = glm::translate(T2z, glm::vec3(0.0, 0.0, -0.25));
-	R2x = glm::rotate(R2x, glm::radians(d), glm::vec3(1.0, 0.0, 0.0));
-	R2y = glm::rotate(R2y, glm::radians(e), glm::vec3(0.0, 1.0, 0.0));
-	R2Y = glm::rotate(R2Y, glm::radians(f), glm::vec3(0.0, 1.0, 0.0));
-	TR2 = R * R2Y * T2x * T2y * T2z * R2x * R2y;
+	TR3 = R * R1y;
 
-	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(R));
+	T4y = glm::translate(T4y, glm::vec3(0.0, side6, 0.0));
+	TR4 = R * R1y * T4y;
+
+	T5y = glm::translate(T5y, glm::vec3(0.0, side6, 0.0));
+	TR5 = R * R1y * T5y;
+
+	S6xyz = glm::scale(S6xyz, glm::vec3(back6, back6, 1.0));
+	TRS6 = R * R1y * S6xyz;
+
+	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &R[0][0]);
+
+	glm::mat4 vTransform = glm::mat4(1.0f);
+	vTransform = glm::lookAt(cameraPos, cameraDirection, cameraUp);
+	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &vTransform[0][0]);
+
+	glm::mat4 pTransform = glm::mat4(1.0f);
+	pTransform = glm::perspective(glm::radians(60.0f), (float)width / (float)height, 0.1f, 100.0f);
+	glUniformMatrix4fv(projLocation, 1, GL_FALSE, &pTransform[0][0]);
 
 	for (int i = 0; i < 3; i++)
 	{
 		glDrawArrays(GL_LINES, i * 2, 2);
 	}
 
-	qobj = gluNewQuadric();
-	gluQuadricDrawStyle(qobj, GLU_LINE);
-
 	if (check == 0)
 	{
-		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(TR1));
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &TRS6[0][0]);
 
-		glDrawArrays(GL_TRIANGLES, 6, 36);
+		glDrawArrays(GL_TRIANGLES, 6, 6);
 
-		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(TR2));
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &TR2[0][0]);
 
-		gluCylinder(qobj, 0.25, 0, 0.5, 20, 10);
+		glDrawArrays(GL_TRIANGLES, 12, 6);
+
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &TR1[0][0]);
+
+		glDrawArrays(GL_TRIANGLES, 18, 6);
+
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &TR3[0][0]);
+
+		glDrawArrays(GL_TRIANGLES, 24, 6);
+
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &TR4[0][0]);
+
+		glDrawArrays(GL_TRIANGLES, 30, 6);
+
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &TR5[0][0]);
+
+		glDrawArrays(GL_TRIANGLES, 36, 6);
 	}
 
 	else if (check == 1)
 	{
-		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(TR1));
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &TR1[0][0]);
 
-		gluCylinder(qobj, 0.25, 0.25, 0.5, 20, 10);
+		glDrawArrays(GL_TRIANGLES, 42, 18);
 
-		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(TR2));
-
-		gluSphere(qobj, 0.25, 20, 10);
 	}
 
 	glutSwapBuffers();
@@ -187,6 +234,8 @@ GLvoid drawScene()
 
 GLvoid Reshape(int w, int h)
 {
+	width = w;
+	height = h;
 	glViewport(0, 0, w, h);
 }
 
@@ -194,32 +243,86 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 {
 	switch (key)
 	{
-	case '1':
-		object = 1;
-		break;
-	case '2':
-		object = 2;
-		break;
-	case '3':
-		object = 0;
-		break;
-	case 'x':
-		xRotate = 1;
-		break;
-	case 'X':
-		xRotate = -1;
+	case 'h':
+		if (!hide)
+		{
+			glEnable(GL_DEPTH_TEST);
+
+
+			hide = true;
+		}
+
+		else if (hide)
+		{
+			glDisable(GL_DEPTH_TEST);
+
+			hide = false;
+		}
 		break;
 	case 'y':
-		yRotate = 1;
+		if (!allyRotate)
+		{
+			allyRotate = true;
+		}
+
+		else if (allyRotate)
+		{
+			all = 0.0;
+
+			allyRotate = false;
+		}
 		break;
-	case 'Y':
-		yRotate = -1;
+	case 't':
+		if (!top6Rotate)
+		{
+			top6Rotate = true;
+		}
+
+		else if (top6Rotate)
+		{
+			top6 = 0.0;
+
+			top6Rotate = false;
+		}
 		break;
-	case 'r':
-		YRotate = 1;
+	case 'f':
+		if (front6Rotate == 0)
+		{
+			front6Rotate = 1;
+		}
+
+		else if (front6Rotate == 2)
+		{
+			front6Rotate = 3;
+		}
 		break;
-	case 'R':
-		YRotate = -1;
+	case 's':
+		if (side6Translate == 0)
+		{
+			side6Translate = 1;
+		}
+
+		else if (side6Translate == 2)
+		{
+			side6Translate = 3;
+		}
+		break;
+	case 'b':
+		if (back6Scale == 0)
+		{
+			back6Scale = 1;
+		}
+
+		else if (back6Scale == 2)
+		{
+			back6Scale = 3;
+		}
+		break;
+	case 'z':
+		cameraPos.z += 0.1;;
+		break;
+	case 'Z':
+		cameraPos.z -= 0.1;;
 		break;
 	case 'c':
 		if (check == 0)
@@ -232,17 +335,6 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 			check = 0;
 		}
 		break;
-	case 's':
-		a = 0.0;
-		b = 0.0;
-		c = 0.0;
-		d = 0.0;
-		e = 0.0;
-		f = 0.0;
-		xRotate = 0;
-		yRotate = 0;
-		YRotate = 0;
-		break;
 	case 'q':
 		glutLeaveMainLoop();
 		break;
@@ -253,117 +345,81 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 
 GLvoid TimerFunction(int value)
 {
-	if (xRotate == 1)
+	if (allyRotate)
 	{
-		if (object == 0)
-		{
-			a += 1.0;
-			d += 1.0;
-		}
+		all -= 1.0;
+	}
 
-		else if (object == 1)
-		{
-			a += 1.0;
-		}
+	if (top6Rotate)
+	{
+		top6 += 1.0;
+	}
 
-		else if (object == 2)
+	if (front6Rotate == 1)
+	{
+		front6 += 1.0;
+
+		if (front6 == 90.0)
 		{
-			d += 1.0;
+			front6Rotate = 2;
 		}
 	}
 
-	else if (xRotate == -1)
+	else if (front6Rotate == 3)
 	{
-		if (object == 0)
-		{
-			a -= 1.0;
-			d -= 1.0;
-		}
+		front6 -= 1.0;
 
-		else if (object == 1)
+		if (front6 == 0.0)
 		{
-			a -= 1.0;
-		}
-
-		else if (object == 2)
-		{
-			d -= 1.0;
+			front6Rotate = 0;
 		}
 	}
 
-	if (yRotate == 1)
+	if (side6Translate == 1)
 	{
-		if (object == 0)
-		{
-			b += 1.0;
-			e += 1.0;
-		}
+		side6 += 0.01;
 
-		else if (object == 1)
+		if (side6 >= 0.5)
 		{
-			b += 1.0;
-		}
+			side6 = 0.5;
 
-		else if (object == 2)
-		{
-			e += 1.0;
+			side6Translate = 2;
 		}
 	}
 
-	else if (yRotate == -1)
+	else if (side6Translate == 3)
 	{
-		if (object == 0)
-		{
-			b -= 1.0;
-			e -= 1.0;
-		}
+		side6 -= 0.01;
 
-		else if (object == 1)
+		if (side6 <= 0.0)
 		{
-			b -= 1.0;
-		}
+			side6 = 0.0;
 
-		else if (object == 2)
-		{
-			e -= 1.0;
+			side6Translate = 0;
 		}
 	}
 
-	if (YRotate == 1)
+	if (back6Scale == 1)
 	{
-		if (object == 0)
-		{
-			c += 1.0;
-			f += 1.0;
-		}
+		back6 -= 0.01;
 
-		else if (object == 1)
+		if (back6 <= 0.0)
 		{
-			c += 1.0;
-		}
+			back6 = 0.0;
 
-		else if (object == 2)
-		{
-			f += 1.0;
+			back6Scale = 2;
 		}
 	}
 
-	else if (YRotate == -1)
+	else if (back6Scale == 3)
 	{
-		if (object == 0)
-		{
-			c -= 1.0;
-			f -= 1.0;
-		}
+		back6 += 0.01;
 
-		else if (object == 1)
+		if (back6 >= 1.0)
 		{
-			c -= 1.0;
-		}
+			back6 = 1.0;
 
-		else if (object == 2)
-		{
-			f -= 1.0;
+			back6Scale = 0;
 		}
 	}
 
