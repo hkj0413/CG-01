@@ -38,10 +38,10 @@ GLfloat vPositionList[] = {
 
 	-0.25, -0.25, -0.25,  0.25, -0.25, -0.25,  0.25, -0.25, 0.25,  -0.25, -0.25, -0.25,  0.25, -0.25, 0.25,  -0.25, -0.25, 0.25,
 
-	-0.25, -0.25, -0.25,  0.25, -0.25, -0.25,  0.0, 0.25, 0.0,
-	0.25, -0.25, -0.25,  0.25, -0.25, 0.25,  0.0, 0.25, 0.0,
-	0.25, -0.25, 0.25,  -0.25, -0.25, 0.25,  0.0, 0.25, 0.0,
-	-0.25, -0.25, 0.25,  -0.25, -0.25, -0.25,  0.0, 0.25, 0.0,
+	-0.25, 0.0, 0.0,  0.25, 0.0, 0.0,  0.0, 0.5, 0.25,
+	0.0, 0.0, -0.25,  0.0, 0.0, 0.25,  -0.25, 0.5, 0.0,
+	0.25, 0.0, 0.0,  -0.25, 0.0, 0.0,  0.0, 0.5, -0.25,
+	0.0, 0.0, 0.25,  0.0, 0.0, -0.25,  0.25, 0.5, 0.0,
 };
 
 GLfloat colors[] = { 
@@ -68,11 +68,11 @@ glm::vec3 cameraDirection = glm::vec3(0.0f, 0.0f, 0.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 glm::mat4 view = glm::mat4(1.0f);
 
-int check = 0, front6Rotate = 0, side6Translate = 0, back6Scale = 0;
+int check = 0, front6Rotate = 0, side6Translate = 0, back6Scale = 0, all4Rotate = 0, one4Rotate = 0;
 
-float all = 0.0, top6 = 0.0, front6 = 0.0, side6 = 0.0, back6 = 1.0;
+float all = 0.0, top6 = 0.0, front6 = 0.0, side6 = 0.0, back6 = 1.0, frontback4 = 0.0, a = 0.0, b = 0.0, c = 0.0, d = 0.0;
 
-bool hide, allyRotate, top6Rotate;
+bool hide, allyRotate, top6Rotate, Pstate;
 
 int main(int argc, char** argv)
 {
@@ -153,6 +153,28 @@ GLvoid drawScene()
 	glm::mat4 S6xyz = glm::mat4(1.0f);
 	glm::mat4 TRS6 = glm::mat4(1.0f);
 
+	glm::mat4 TR7 = glm::mat4(1.0f);
+	
+	glm::mat4 T8y = glm::mat4(1.0f);
+	glm::mat4 T8z = glm::mat4(1.0f);
+	glm::mat4 R8x = glm::mat4(1.0f);
+	glm::mat4 TR8 = glm::mat4(1.0f);
+
+	glm::mat4 T9x = glm::mat4(1.0f);
+	glm::mat4 T9y = glm::mat4(1.0f);
+	glm::mat4 R9z = glm::mat4(1.0f);
+	glm::mat4 TR9 = glm::mat4(1.0f);
+
+	glm::mat4 T10y = glm::mat4(1.0f);
+	glm::mat4 T10z = glm::mat4(1.0f);
+	glm::mat4 R10x = glm::mat4(1.0f);
+	glm::mat4 TR10 = glm::mat4(1.0f);
+
+	glm::mat4 T11x = glm::mat4(1.0f);
+	glm::mat4 T11y = glm::mat4(1.0f);
+	glm::mat4 R11z = glm::mat4(1.0f);
+	glm::mat4 TR11 = glm::mat4(1.0f);
+
 	Rx = glm::rotate(Rx, glm::radians(20.0f), glm::vec3(1.0, 0.0, 0.0));
 	Ry = glm::rotate(Ry, glm::radians(20.0f), glm::vec3(0.0, 1.0, 0.0));
 	R = Rx * Ry;
@@ -178,14 +200,48 @@ GLvoid drawScene()
 	S6xyz = glm::scale(S6xyz, glm::vec3(back6, back6, 1.0));
 	TRS6 = R * R1y * S6xyz;
 
+	TR7 = R * R1y;
+
+	T8y = glm::translate(T8y, glm::vec3(0.0, -0.25, 0.0));
+	T8z = glm::translate(T8z, glm::vec3(0.0, 0.0, -0.25));
+	R8x = glm::rotate(R8x, glm::radians(-frontback4 - a), glm::vec3(1.0, 0.0, 0.0));
+	TR8 = R * R1y * T8y * T8z * R8x;
+
+	T9x = glm::translate(T9x, glm::vec3(0.25, 0.0, 0.0));
+	T9y = glm::translate(T9y, glm::vec3(0.0, -0.25, 0.0));
+	R9z = glm::rotate(R9z, glm::radians(-frontback4 - b), glm::vec3(0.0, 0.0, 1.0));
+	TR9 = R * R1y * T9x * T9y * R9z;
+
+	T10y = glm::translate(T10y, glm::vec3(0.0, -0.25, 0.0));
+	T10z = glm::translate(T10z, glm::vec3(0.0, 0.0, 0.25));
+	R10x = glm::rotate(R10x, glm::radians(frontback4 + c), glm::vec3(1.0, 0.0, 0.0));
+	TR10 = R * R1y * T10y * T10z * R10x;
+
+	T11x = glm::translate(T11x, glm::vec3(-0.25, 0.0, 0.0));
+	T11y = glm::translate(T11y, glm::vec3(0.0, -0.25, 0.0));
+	R11z = glm::rotate(R11z, glm::radians(frontback4 + d), glm::vec3(0.0, 0.0, 1.0));
+	TR11 = R * R1y * T11x * T11y * R11z;
+
 	glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &R[0][0]);
 
 	glm::mat4 vTransform = glm::mat4(1.0f);
 	vTransform = glm::lookAt(cameraPos, cameraDirection, cameraUp);
+
 	glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &vTransform[0][0]);
 
 	glm::mat4 pTransform = glm::mat4(1.0f);
-	pTransform = glm::perspective(glm::radians(60.0f), (float)width / (float)height, 0.1f, 100.0f);
+
+	if (!Pstate)
+	{
+		pTransform = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, -100.0f, 100.0f);
+	}
+
+	else if (Pstate)
+	{
+		pTransform = glm::perspective(glm::radians(45.0f), (float)width / (float)height, 0.1f, 50.0f);
+		pTransform = glm::translate(pTransform, glm::vec3(0.0, 0.0, -5.0));
+	}
+
 	glUniformMatrix4fv(projLocation, 1, GL_FALSE, &pTransform[0][0]);
 
 	for (int i = 0; i < 3; i++)
@@ -222,9 +278,25 @@ GLvoid drawScene()
 
 	else if (check == 1)
 	{
-		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &TR1[0][0]);
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &TR7[0][0]);
 
-		glDrawArrays(GL_TRIANGLES, 42, 18);
+		glDrawArrays(GL_TRIANGLES, 42, 6);
+
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &TR8[0][0]);
+
+		glDrawArrays(GL_TRIANGLES, 48, 3);
+
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &TR9[0][0]);
+
+		glDrawArrays(GL_TRIANGLES, 51, 3);
+
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &TR10[0][0]);
+
+		glDrawArrays(GL_TRIANGLES, 54, 3);
+
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, &TR11[0][0]);
+
+		glDrawArrays(GL_TRIANGLES, 57, 3);
 
 	}
 
@@ -318,11 +390,38 @@ GLvoid Keyboard(unsigned char key, int x, int y)
 			back6Scale = 3;
 		}
 		break;
-	case 'z':
-		cameraPos.z += 0.1;;
+	case 'o':
+		if (all4Rotate == 0)
+		{
+			all4Rotate = 1;
+		}
+
+		else if (all4Rotate == 2)
+		{
+			all4Rotate = 3;
+		}
 		break;
-	case 'Z':
-		cameraPos.z -= 0.1;;
+	case 'r':
+		if (one4Rotate == 0)
+		{
+			one4Rotate = 1;
+		}
+
+		else if (one4Rotate == 5)
+		{
+			one4Rotate = 6;
+		}
+		break;
+	case 'p':
+		if (!Pstate)
+		{
+			Pstate = true;
+		}
+
+		else if (Pstate)
+		{
+			Pstate = false;
+		}
 		break;
 	case 'c':
 		if (check == 0)
@@ -420,6 +519,110 @@ GLvoid TimerFunction(int value)
 			back6 = 1.0;
 
 			back6Scale = 0;
+		}
+	}
+
+	if (all4Rotate == 1)
+	{
+		frontback4 += 1.0;
+
+		if (frontback4 == 232.0)
+		{
+			frontback4 = 232.5;
+
+			all4Rotate = 2;
+		}
+	}
+
+	else if (all4Rotate == 3)
+	{
+		frontback4 -= 1.0;
+
+		if (frontback4 == 0.5)
+		{
+			frontback4 = 0.0;
+
+			all4Rotate = 0;
+		}
+	}
+
+	if (one4Rotate == 1)
+	{
+		a += 1.0;
+
+		if (a == 120.0)
+		{
+			one4Rotate = 2;
+		}
+	}
+
+	else if (one4Rotate == 2)
+	{
+		b += 1.0;
+
+		if (b == 120.0)
+		{
+			one4Rotate = 3;
+		}
+	}
+
+	else if (one4Rotate == 3)
+	{
+		c += 1.0;
+
+		if (c == 120.0)
+		{
+			one4Rotate = 4;
+		}
+	}
+
+	else if (one4Rotate == 4)
+	{
+		d += 1.0;
+
+		if (d == 120.0)
+		{
+			one4Rotate = 5;
+		}
+	}
+
+	else if (one4Rotate == 6)
+	{
+		d -= 1.0;
+
+		if (d == 0.0)
+		{
+			one4Rotate = 7;
+		}
+	}
+
+	else if (one4Rotate == 7)
+	{
+		c -= 1.0;
+
+		if (c == 0.0)
+		{
+			one4Rotate = 8;
+		}
+	}
+
+	else if (one4Rotate == 8)
+	{
+		b -= 1.0;
+
+		if (b == 0.0)
+		{
+			one4Rotate = 9;
+		}
+	}
+
+	else if (one4Rotate == 9)
+	{
+		a -= 1.0;
+
+		if (a == 0.0)
+		{
+			one4Rotate = 0;
 		}
 	}
 
